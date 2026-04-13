@@ -42,9 +42,7 @@ venv.bak
 */.ipynb_checkpoints/*
 
 # --- Específico del Proyecto (Datos y Resultados) ---
-data/
-resultados/
-personal/
+otras/
 
 # --- Otros ---
 *.log

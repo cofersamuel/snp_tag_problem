@@ -541,7 +541,7 @@ Se evalúan 4 objetivos por cada solución (máscara de SNPs):
 Este objetivo mide cuántos SNPs se están usando en la solución. Cuanto menor sea, más compacta y barata es la selección (menos marcadores que genotipar, menos complejidad y mayor interpretabilidad). El reto es que reducir demasiado `f1` puede hacer que se pierda capacidad para distinguir haplotipos, por eso se optimiza junto al resto de objetivos y no de forma aislada.
 
 **2) Tolerance real (`f2`, peor caso)**
-La tolerancia real representa la separación del par de haplotipos más difícil de distinguir (el mínimo de todas las distancias entre pares). Es una métrica de robustez: si este valor sube, significa que incluso en el peor escenario hay discriminación suficiente. En términos prácticos evita soluciones que funcionen “de media” pero fallen en casos límite.
+La tolerancia real representa la separación del par de haplotipos más difícil de distinguir (el mínimo de todas las distancias entre pares, la distancia del par de haplotipos más similar). Es una métrica de robustez: si este valor sube, significa que incluso en el peor escenario hay discriminación suficiente. En términos prácticos evita soluciones que funcionen “de media” pero fallen en casos límite.
 
 **3) Hamming media real (`f3`)**
 Esta métrica resume la separación promedio entre todos los pares de haplotipos con los SNPs seleccionados. A diferencia de la tolerancia (que mira el peor caso), aquí se evalúa el comportamiento global del conjunto: valores altos indican que, en general, los haplotipos quedan bien diferenciados. Es útil para asegurar calidad global de discriminación y no solo en extremos.

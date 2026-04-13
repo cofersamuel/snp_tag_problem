@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, as_completed, wait
 from dataclasses import dataclass
 from functools import lru_cache
 from itertools import combinations
@@ -26,6 +25,10 @@ import random
 import seaborn as sns
 import subprocess
 import time
+import json
+from datetime import datetime
+import sys
+import shutil
 
 
 @dataclass
@@ -60,27 +63,37 @@ class ExperimentConfig:
     hapmap_release: str
     hapmap_dir: str
     report_plot_dpi: int
-    report_workers: int
     report_heartbeat_sec: int
-    n_workers: int = 0  # 0 = usar todos los núcleos disponibles
+    # Synthetic dataset diversification (min pairwise Hamming distance target)
+    synthetic_min_pairwise_diff: int
+    synthetic_max_attempts: int
 
 
-def setup_configuration() -> ExperimentConfig:
-    """Configura los parámetros globales y crea los directorios."""
+def setup_configuration(execution_mode: str | None = None, num_blocks: int | None = None) -> ExperimentConfig:
+    """Configura los parámetros globales y crea los directorios.
+
+    Parameters
+    ----------
+    execution_mode : str | None
+        Optional execution mode override ('fast', 'medium', 'full'). If None, defaults to 'medium'.
+    num_blocks : int | None
+        Optional number of blocks override. If None, defaults to 1.
+    """
     import time
     sns.set_theme(style='whitegrid')
     pd.set_option('display.max_columns', 200)
-    EXECUTION_MODE = 'medium' # fast / medium / full | Selector de modo
-    NUM_BLOCKS = 1
+    EXECUTION_MODE = execution_mode if execution_mode is not None else 'medium' # fast / medium / full | Selector de modo
+    NUM_BLOCKS = int(num_blocks) if num_blocks is not None else 1
     MASTER_SEED = 42
     np.random.seed(MASTER_SEED)
     random.seed(MASTER_SEED)
-    DATA_SOURCE = "synthetic" # synthetic / hapmap_phase2
+    DATA_SOURCE = "hapmap_phase2" # synthetic / hapmap_phase2
     N_SNPS = 1032
     SYN_BLOCK_SIZE = int(N_SNPS / max(1, NUM_BLOCKS))
     N_HAPLOTYPES = 40
     BASE_OUT_DIR = "resultados"
     BASE_OUT_MODE_DIR = os.path.join(BASE_OUT_DIR, EXECUTION_MODE)
+    # Solo crear la carpeta base del modo, no los subdirectorios
     FOLDERS = {
         "datos": os.path.join(BASE_OUT_MODE_DIR, "0_datos_previos"),
         "ejecuciones": os.path.join(BASE_OUT_MODE_DIR, "1_ejecuciones"),
@@ -95,10 +108,9 @@ def setup_configuration() -> ExperimentConfig:
         "boxplots": os.path.join(BASE_OUT_MODE_DIR, "2_comparativa", "boxplots"),
     }
     REPORT_PLOT_DPI = 300
-    REPORT_WORKERS = max(1, (os.cpu_count() or 1) - 2)
     REPORT_HEARTBEAT_SEC = 60
-    for folder in FOLDERS.values():
-        os.makedirs(folder, exist_ok=True)
+    # Solo crear la carpeta base del modo
+    os.makedirs(BASE_OUT_MODE_DIR, exist_ok=True)
         
     MODE_CONFIG = {
         'fast': {'POP_SIZE': 10, 'N_GEN': 2, 'OFFSPRING': 10, 'PC': 0.7, 'MOEAD_NEIGHBORS': 5, 'N_RUNS': 2},
@@ -147,7 +159,7 @@ def setup_configuration() -> ExperimentConfig:
         print(f"      • ORIGEN_DATOS={DATA_SOURCE} | NUM_BLOQUES={NUM_BLOQUES_EFECTIVO} (solicitados: {NUM_BLOCKS}) | BLOCK_START={BLOCK_START} | N_SNPS={N_SNPS} | PM={1.0/N_SNPS:.6f}")
     else:
         print(f"      • ORIGEN_DATOS={DATA_SOURCE} | NUM_BLOQUES={NUM_BLOCKS} | N_SNPS={N_SNPS} | PM={1.0/N_SNPS:.6f}")
-    print(f"      • REPORT_DPI={REPORT_PLOT_DPI} | REPORT_WORKERS={REPORT_WORKERS} | HEARTBEAT={REPORT_HEARTBEAT_SEC}s")
+    print(f"      • REPORT_DPI={REPORT_PLOT_DPI} | HEARTBEAT={REPORT_HEARTBEAT_SEC}s")
     
     return ExperimentConfig(
         execution_mode=EXECUTION_MODE,
@@ -179,26 +191,245 @@ def setup_configuration() -> ExperimentConfig:
         hapmap_release="r21",
         hapmap_dir=HAPMAP_DIR,
         report_plot_dpi=REPORT_PLOT_DPI,
-        report_workers=REPORT_WORKERS,
         report_heartbeat_sec=REPORT_HEARTBEAT_SEC,
-        n_workers=0  # 0 = usar todos los núcleos disponibles (os.cpu_count())
+        # Synthetic generator settings: target min pairwise Hamming distance
+        synthetic_min_pairwise_diff=100,
+        synthetic_max_attempts=1000,
     )
+
+
+def create_dataset_tree(cfg: ExperimentConfig, dataset_type: str):
+    """Create a per-dataset directory tree and return (base_dataset_dir, folders_dict).
+
+    Naming convention: resultados/<mode>/<dataset_type>/<num_blocks>_bloques/
+    """
+    # Siempre añadir timestamp al nombre del bloque
+    ts = datetime.now().strftime('%Y%m%dT%H%M%S')
+    base_dataset_dir = os.path.join(cfg.base_out_dir, cfg.execution_mode, dataset_type, f"{cfg.num_blocks}_bloques_{ts}")
+
+    data_dir = os.path.join(base_dataset_dir, '0_datos_previos')
+    ejec_dir = os.path.join(base_dataset_dir, '1_ejecuciones')
+    ejec_csv_dir = os.path.join(ejec_dir, 'csv')
+    comp_dir = os.path.join(base_dataset_dir, '2_comparativa')
+    comp_heatmaps = os.path.join(comp_dir, 'heatmaps')
+    comp_frentes = os.path.join(comp_dir, 'frentes')
+    comp_metricas = os.path.join(comp_dir, 'metricas')
+    comp_rankings = os.path.join(comp_dir, 'rankings')
+    comp_resumenes = os.path.join(comp_dir, 'resumenes')
+    boxplots_dir = os.path.join(comp_dir, 'boxplots')
+
+    for p in [data_dir, ejec_dir, ejec_csv_dir, comp_dir, comp_heatmaps, comp_frentes, comp_metricas, comp_rankings, comp_resumenes, boxplots_dir]:
+        os.makedirs(p, exist_ok=True)
+
+    folders = {
+        'datos': data_dir,
+        'ejecuciones': ejec_dir,
+        'csv': ejec_csv_dir,
+        'comparativa_root': comp_dir,
+        'comparativa': comp_dir,
+        'heatmaps': comp_heatmaps,
+        'resumenes': comp_resumenes,
+        'rankings': comp_rankings,
+        'metricas': comp_metricas,
+        'frentes': comp_frentes,
+        'boxplots': boxplots_dir,
+    }
+
+    return base_dataset_dir, folders
 
 def load_target_dataset(cfg: ExperimentConfig):
     """Carga o genera los haplotipos basados en la configuración."""
     if cfg.data_source == "synthetic":
-        H = generate_ld_haplotype_block(
+        # Generar datos sintéticos con los parámetros de configuración
+        H, attempts, achieved_min = generate_ld_haplotype_block(
             n_haplotypes=cfg.n_haplotypes, n_snps=cfg.n_snps,
-            block_size=cfg.syn_block_size, flip_prob=cfg.syn_flip_prob, seed=cfg.master_seed)
+            block_size=cfg.syn_block_size, flip_prob=cfg.syn_flip_prob, seed=cfg.master_seed,
+            min_pairwise_diff=cfg.synthetic_min_pairwise_diff,
+            max_attempts=cfg.synthetic_max_attempts)
+
         snp_ids = [f"snp_{i}" for i in range(cfg.n_snps)]
         snp_positions = np.arange(cfg.n_snps, dtype=int)
         haplotype_ids = [f"hap_{i}" for i in range(cfg.n_haplotypes)]
+
+        # Calcular estadísticas de distancias
+        try:
+            n = H.shape[0]
+            dists = []
+            for a in range(n):
+                for b in range(a+1, n):
+                    dists.append(int((H[a] != H[b]).sum()))
+            dists = np.array(dists) if dists else np.array([0])
+            min_d, max_d, mean_d = int(dists.min()), int(dists.max()), float(dists.mean())
+            theoretical_tol = max(0, min_d - 1)
+
+            # Preparar rutas de salida usando helper centralizado
+            dataset_type = 'synthetic'
+            # If cfg.folders already points to a per-dataset tree created upstream, reuse it
+            if cfg.folders and cfg.folders.get('datos') and f"{cfg.num_blocks}_bloques" in cfg.folders.get('datos'):
+                base_dataset_dir = os.path.dirname(cfg.folders['datos'])
+                local_folders = cfg.folders
+            else:
+                base_dataset_dir, local_folders = create_dataset_tree(cfg, dataset_type)
+            # Override cfg.folders so subsequent pipeline stages write into the per-dataset tree
+            cfg.folders = local_folders
+            data_dir = local_folders['datos']
+            ejec_csv_dir = local_folders['csv']
+            comp_dir = local_folders['comparativa']
+
+            # Exportar usando la función ya existente para nombres con mode tag
+            _exportar_dataset_seleccionado(H, snp_ids, snp_positions, haplotype_ids, cfg.folders, cfg.execution_mode)
+
+            # También guardar metadata adicional en JSON
+            metadata = {
+                'min_dist': int(min_d),
+                'max_dist': int(max_d),
+                'mean_dist': float(mean_d),
+                'theoretical_tolerance': int(theoretical_tol),
+                'n_haplotypes': int(n),
+                'n_snps': int(H.shape[1]),
+                'generator_params': {
+                    'min_pairwise_diff': int(cfg.synthetic_min_pairwise_diff),
+                    'max_attempts': int(cfg.synthetic_max_attempts),
+                },
+                'attempts': int(attempts),
+                'achieved_min': int(achieved_min)
+            }
+            metadata_path = os.path.join(data_dir, 'metadata.json')
+            with open(metadata_path, 'w') as jf:
+                json.dump(metadata, jf, indent=2)
+
+            # Construir un log de terminal más completo con la salida en español esperada
+            def osc8_link(path, label=None):
+                if label is None:
+                    label = os.path.basename(path)
+                url = f'file://{os.path.abspath(path)}'
+                return f"\033]8;;{url}\033\\{label}\033]8;;\033\\"
+
+            # Rutas de plots esperadas (serán creadas por etapas posteriores)
+            mode = cfg.execution_mode
+            expected_plots = {
+                'heatmap_matriz': os.path.join(cfg.folders['heatmaps'], f'heatmap_matriz_haplotipos_{mode}.png'),
+                'bloques_ld': os.path.join(cfg.folders['heatmaps'], f'bloques_ld_haplotipos_{mode}.png'),
+                'zoom_10x10': os.path.join(cfg.folders['heatmaps'], f'zoom_matriz_haplotipos_10x10_{mode}.png'),
+                'hist_freq': os.path.join(cfg.folders['heatmaps'], f'histograma_frecuencia_alelica_{mode}.png'),
+                'std_snps': os.path.join(cfg.folders['heatmaps'], f'desviacion_estandar_snps_{mode}.png'),
+                'count_alleles': os.path.join(cfg.folders['heatmaps'], f'conteo_alelos_por_haplotipo_{mode}.png'),
+                'hist_hamming': os.path.join(cfg.folders['heatmaps'], f'histograma_distancia_hamming_{mode}.png'),
+                'heatmap_corr': os.path.join(cfg.folders['heatmaps'], f'heatmap_correlacion_completa_{mode}.png'),
+                'hist_corr': os.path.join(cfg.folders['heatmaps'], f'histograma_correlaciones_ld_{mode}.png'),
+                'cdf_corr': os.path.join(cfg.folders['heatmaps'], f'cdf_correlacion_absoluta_ld_{mode}.png'),
+            }
+
+            report_lines = []
+            report_lines.append('')
+            report_lines.append('  ⚙ CONFIGURACIÓN')
+            report_lines.append(f"      • Modo={cfg.execution_mode} | POP_SIZE={cfg.pop_size} | N_GEN={cfg.n_gen} | OFFSPRING={cfg.offspring} | PC={cfg.pc} | PM={cfg.pm:.6f} | N_RUNS={cfg.n_runs}")
+            report_lines.append('')
+            report_lines.append('  📊 Metadatos y Dimensiones del Dataset')
+            report_lines.append('  ───────────────────────────────────────')
+            report_lines.append(f"      • ORIGEN_DATOS={cfg.data_source} | NUM_BLOQUES={cfg.num_blocks} | N_SNPS={cfg.n_snps} | PM={cfg.pm:.6f}")
+            report_lines.append(f"      • REPORT_DPI={cfg.report_plot_dpi} | HEARTBEAT={cfg.report_heartbeat_sec}s")
+            report_lines.append(f"      ✅ Generador sintético alcanzó min_pairwise_diff={int(metadata['achieved_min'])} tras {int(metadata['attempts'])} intentos.")
+            report_lines.append(f"      ✅ Sintético H: min_dist={metadata['min_dist']}, max_dist={metadata['max_dist']}, mean_dist={metadata['mean_dist']:.1f}. Tolerancia teórica={metadata['theoretical_tolerance']}")
+            report_lines.append(f"      ✅ Dataset exportado: {metadata['n_snps']} SNPs x {metadata['n_haplotypes']} haplotipos")
+            report_lines.append(f"      🖼  Matriz de haplotipos (CSV): {os.path.basename(os.path.join(data_dir, f'matriz_haplotipos_seleccionada_{mode}.csv'))}")
+            report_lines.append(f"      🖼  Metadatos de SNPs (CSV): {os.path.basename(os.path.join(data_dir, f'metadatos_snps_seleccionados_{mode}.csv'))}")
+            report_lines.append('')
+            report_lines.append('\n'.join(['╔' + '═'*78 + '╗','║                  DIAGNÓSTICO DE DATOS Y DESEQUILIBRIO (LD)                   ║','╚' + '═'*78 + '╝']))
+
+            # Añadir links a plots esperados
+            report_lines.append('')
+            report_lines.append('  🧬 Visualización de la Estructura de Haplotipos')
+            report_lines.append('  ───────────────────────────────────────────────')
+            report_lines.append(f"      🖼  Mapa de calor de haplotipos: {os.path.basename(expected_plots['heatmap_matriz'])}")
+            report_lines.append(f"      🖼  Estructura de bloques LD (1 bloques reales): {os.path.basename(expected_plots['bloques_ld'])}")
+            report_lines.append(f"      🖼  Zoom matriz H (10x10): {os.path.basename(expected_plots['zoom_10x10'])}")
+
+            report_lines.append('')
+            report_lines.append('  📈 Análisis de Variabilidad y Frecuencia Alélica')
+            report_lines.append('  ─────────────────────────────────────────────────')
+            report_lines.append(f"      🖼  Distribución de frecuencia alélica: {os.path.basename(expected_plots['hist_freq'])}")
+            report_lines.append(f"      🖼  Variabilidad por SNP: {os.path.basename(expected_plots['std_snps'])}")
+            report_lines.append(f"      🖼  Alelos dominantes por haplotipo: {os.path.basename(expected_plots['count_alleles'])}")
+            report_lines.append(f"      🖼  Distribución distancias de Hamming: {os.path.basename(expected_plots['hist_hamming'])}")
+
+            report_lines.append('')
+            report_lines.append('  🔗 Coeficientes Globales de Correlación LD')
+            report_lines.append('  ──────────────────────────────────────────')
+            # compute LD summary now so we can show some numbers
+            ld_mean, corrs, corr_full = full_ld_check(H)
+            total_pairs = corrs.size
+            report_lines.append(f"      • Correlación media absoluta (global): {ld_mean:.4f}")
+            report_lines.append(f"      • Total de pares evaluados: {total_pairs}")
+            report_lines.append(f"      🖼  Mapa de calor de correlación (LD): {os.path.basename(expected_plots['heatmap_corr'])}")
+            report_lines.append(f"      🖼  Distribución de correlaciones (LD): {os.path.basename(expected_plots['hist_corr'])}")
+            report_lines.append(f"      🖼  CDF de correlación LD: {os.path.basename(expected_plots['cdf_corr'])}")
+
+            report_lines.append('')
+            report_lines.append('  ⚖ Veredicto de Desequilibrio de Ligamento')
+            report_lines.append('  ───────────────────────────────────────────')
+            pct_over = 0.0
+            try:
+                pct_over = 100.0 * (np.abs(corrs) >= cfg.thresh_opt_abs_corr).sum() / max(1, corrs.size)
+            except Exception:
+                pct_over = 0.0
+            is_opt = (np.abs(ld_mean) >= cfg.thresh_opt_mean) or (pct_over >= (cfg.thresh_opt_pct * 100.0))
+            report_lines.append(f"      • Correlación media absoluta (global): {ld_mean:.4f}")
+            report_lines.append(f"      • % pares con |corr| >= {cfg.thresh_opt_abs_corr}: {pct_over:.2f}%")
+            report_lines.append(f"      • Total de pares evaluados: {total_pairs}")
+            report_lines.append(f"      • es_optimo: {str(bool(is_opt))}")
+            report_lines.append(f"      ✅ Verificación previa: {'ÓPTIMO' if is_opt else 'NO ÓPTIMO'}")
+
+            # Similitud genotípica (pares)
+            # calcular algunos percentiles y pares extremos
+            dlist = []
+            for a in range(H.shape[0]):
+                for b in range(a+1, H.shape[0]):
+                    dlist.append(((a,b), int((H[a]!=H[b]).sum())))
+            dvals = np.array([v for (_,v) in dlist]) if dlist else np.array([0])
+            p33 = float(np.percentile(dvals,33))
+            p66 = float(np.percentile(dvals,66))
+            report_lines.append('')
+            report_lines.append('  📐 Análisis de Similitud Genotípica (Pares de Haplotipos)')
+            report_lines.append('  ──────────────────────────────────────────────────────────')
+            report_lines.append(f"      • Número de pares de haplotipos: {len(dvals)}")
+            report_lines.append(f"      • Pares mostrados: 3 similares / 3 distintos")
+            report_lines.append(f"      • Vista parcial: primeros 32 SNPs")
+            report_lines.append(f"      • Percentiles (Hamming): P33={p33:.2f}, P66={p66:.2f}")
+
+            # Encontrar 3 pares más similares y 3 más distintos
+            sorted_pairs = sorted(dlist, key=lambda x: x[1])
+            top_sim = sorted_pairs[:3]
+            top_dist = sorted_pairs[-3:][::-1]
+            report_lines.append('')
+            report_lines.append('    🤝 Pares de mayor similitud genética')
+            for (ia, ib), val in top_sim:
+                report_lines.append(f"      • Par ({ia+1}, {ib+1}) | Hamming={val} | muy similar")
+                report_lines.append(f"        h{ia+1:03d}: {(_as_bits(H[ia,:32]))}...")
+                report_lines.append(f"        h{ib+1:03d}: {(_as_bits(H[ib,:32]))}...")
+            report_lines.append('')
+            report_lines.append('    ↔ Pares de mayor divergencia genética')
+            for (ia, ib), val in top_dist:
+                report_lines.append(f"      • Par ({ia+1}, {ib+1}) | Hamming={val} | muy distinto")
+                report_lines.append(f"        h{ia+1:03d}: {(_as_bits(H[ia,:32]))}...")
+                report_lines.append(f"        h{ib+1:03d}: {(_as_bits(H[ib,:32]))}...")
+
+            # Sumar cierre
+            # NOTE: do not write a partial terminal log here; the full stdout/stderr
+            # will be captured at runtime and copied into the dataset folder at the end
+            # of the pipeline. This avoids truncated logs.
+            print_status("Terminal log will be saved at pipeline end.")
+
+        except Exception as e:
+            print_status(f"Error en post-procesado sintético: {e}", success=False)
+            raise
     else:
         H, snp_ids, snp_positions, haplotype_ids = load_hapmap_phase2_block(
             chr_num=cfg.hapmap_chr, pop=cfg.hapmap_pop, release=cfg.hapmap_release,
             hapmap_dir=cfg.hapmap_dir, block_start=cfg.block_start, block_len=cfg.block_len,
             auto_download=cfg.auto_download)
         cfg.n_haplotypes = int(H.shape[0])
+        # Do NOT create per-dataset folders again; use cfg.folders as set in main
     return H, snp_ids, snp_positions, haplotype_ids
 
 def _exportar_dataset_seleccionado(H, snp_ids, snp_positions, haplotype_ids, folders, mode_tag):
@@ -285,8 +516,13 @@ def print_table(df, title=None):
         print(df.to_string(index=False))
 
 
-def generate_ld_haplotype_block(n_haplotypes=40, n_snps=1200, block_size=50, flip_prob=0.02, seed=42):
-    """Genera una matriz haplotipo-SNP binaria con estructura de bloques de LD."""
+def generate_ld_haplotype_block(n_haplotypes=40, n_snps=1200, block_size=50, flip_prob=0.02, seed=42,
+                                min_pairwise_diff: int = 0, max_attempts: int = 1000):
+    """Genera una matriz haplotipo-SNP binaria con estructura de bloques de LD.
+
+    Optionally enforces a minimum pairwise Hamming distance between haplotypes
+    (best-effort, bounded by max_attempts).
+    """
     rng = np.random.default_rng(seed)
     n_blocks = int(np.ceil(n_snps / block_size))
     base_patterns = rng.integers(0, 2, size=(n_haplotypes, n_blocks), dtype=np.int8)
@@ -302,7 +538,58 @@ def generate_ld_haplotype_block(n_haplotypes=40, n_snps=1200, block_size=50, fli
             col[flip_mask] = 1 - col[flip_mask]
             X[:, snp_idx] = col
             snp_idx += 1
-    return X
+
+    # If no enforcement requested, return immediately
+    if not min_pairwise_diff or min_pairwise_diff <= 0:
+        return X
+
+    # Helper: compute pairwise Hamming distances (flattened for i<j)
+    def _pairwise_dists(H):
+        n = H.shape[0]
+        idx_i, idx_j = np.triu_indices(n, k=1)
+        # XOR and sum across SNP axis
+        diffs = (H[idx_i] != H[idx_j]).sum(axis=1)
+        return diffs, idx_i, idx_j
+
+    attempts = 0
+    H = X.copy()
+    diffs, idx_i, idx_j = _pairwise_dists(H)
+    cur_min = int(diffs.min()) if diffs.size > 0 else 0
+    while cur_min < min_pairwise_diff and attempts < max_attempts:
+        # select the pair with smallest distance
+        arg = int(np.argmin(diffs))
+        i = int(idx_i[arg]); j = int(idx_j[arg])
+
+        # choose which haplotype to alter (pick the one with smaller mean distance)
+        mean_i = ((H[i] != H).sum(axis=1)).mean()
+        mean_j = ((H[j] != H).sum(axis=1)).mean()
+        hap_to_mut = i if mean_i <= mean_j else j
+
+        # positions where they are equal are candidates to flip
+        eq_pos = np.where(H[i] == H[j])[0]
+        if eq_pos.size == 0:
+            # fallback: flip a random position
+            pos = rng.integers(0, n_snps, size=1)
+        else:
+            needed = min_pairwise_diff - cur_min
+            flip_count = min(eq_pos.size, max(1, int(np.ceil(needed))))
+            pos = rng.choice(eq_pos, size=flip_count, replace=False)
+
+        # apply flips
+        H[hap_to_mut, pos] = 1 - H[hap_to_mut, pos]
+
+        # recompute distances
+        diffs, idx_i, idx_j = _pairwise_dists(H)
+        cur_min = int(diffs.min()) if diffs.size > 0 else 0
+        attempts += 1
+
+    if cur_min < min_pairwise_diff:
+        print(f"      ⚠ No se pudo alcanzar min_pairwise_diff={min_pairwise_diff} tras {attempts} intentos. Logrado {cur_min}.")
+    else:
+        print(f"      ✅ Generador sintético alcanzó min_pairwise_diff={cur_min} tras {attempts} intentos.")
+
+    # Return also attempts and achieved minimum distance for diagnostics
+    return H, attempts, cur_min
 
 def _hapmap_phase2_prefix(chr_num: int, pop: str, release: str) -> str:
     return f"genotypes_chr{chr_num}_{pop}_{release}_nr_fwd"
@@ -399,7 +686,7 @@ def load_hapmap_phase2_block(
         haplotype_ids = sample_ids
     else:
         # Algunos dumps no traen una correspondencia 1:1 clara en sample vs columnas de phased.
-        # Para la optimización solo necesitamos H; usamos IDs genéricos si no cuadra.
+        # Para el procesamiento solo necesitamos H; usamos IDs genéricos si no cuadra.
         print(
             f"      • [HAPMAP] Aviso: sample trae {len(sample_ids)} IDs pero phased tiene {phased.shape[1]} haplotipos. Usando haplotype_ids genéricos."
         )
@@ -472,15 +759,16 @@ def evaluate_candidate(mask, H, pair_idx=None):
     b = Hs[pair_idx[:, 1], :]
     # Calcular la distancia de Hamming (suma de diferencias absolutas) para cada par
     d = np.abs(a - b).sum(axis=1).astype(float)
-    # El objetivo es maximizar la resolución (mínima distancia entre cualquier par)
-    tolerance_real = float(d.min())
+    # Tolerancia a datos faltantes (definición del paper): min(D_ij) - 1
+    # Se acota inferiormente a 0 para evitar valores negativos en casos límite.
+    tolerance_real = float(max(0.0, d.min() - 1.0))
     # El objetivo es maximizar la separación promedio entre pares
     hamming_avg_real = float(d.mean())
     # El objetivo es minimizar la varianza de las distancias (uniformidad)
     balance_var = float(d.var())
     # El objetivo es minimizar el número de SNPs seleccionados
     compactness = float(k)
-    # Definir los objetivos para el optimizador (f2 y f3 en negativo para maximizar)
+    # Definir los objetivos del modelo (f2 y f3 en negativo para maximizar)
     f1 = compactness        # Minimizar tamaño del conjunto
     f2 = -tolerance_real    # Maximizar resolución mínima
     f3 = -hamming_avg_real  # Maximizar distancia promedio
@@ -541,7 +829,7 @@ def _evaluar_poblacion_vectorizado(X_bool: np.ndarray,
     D = (diff_matrix.astype(np.int32) @ X_bool.T.astype(np.int32)).T.astype(float)
     # D shape: (pop_size, n_pairs)
 
-    tolerancia = D.min(axis=1)        # (pop_size,)
+    tolerancia = np.maximum(0.0, D.min(axis=1) - 1.0)  # tolerancia de faltantes (paper)
     hamming_med = D.mean(axis=1)      # (pop_size,)
     varianza = D.var(axis=1)          # (pop_size,)
 
@@ -555,9 +843,9 @@ def _evaluar_poblacion_vectorizado(X_bool: np.ndarray,
 
 
 class TagSNPProblem(Problem):
-    """Problema de selección de Tag SNPs para optimización multiobjetivo."""
+    """Problema de selección de Tag SNPs para búsqueda multiobjetivo."""
 
-    def __init__(self, H: np.ndarray, pair_idx: np.ndarray):
+    def __init__(self, H: np.ndarray, pair_idx: np.ndarray, normalize_for_search: bool = False):
         """
         Parameters
         ----------
@@ -566,18 +854,35 @@ class TagSNPProblem(Problem):
         """
         self.H = H
         self.pair_idx = pair_idx
+        self.normalize_for_search = bool(normalize_for_search)
         # Precomputa la matriz de diferencias una sola vez — evita recalculo en cada generacion
         self.diff_matrix = (
             H[pair_idx[:, 0], :] != H[pair_idx[:, 1], :]
         ).astype(np.int16)            # (n_pairs, n_snps)
 
         n_var = H.shape[1]
+        # Escalas teóricas para normalización interna en búsqueda (MOEA/D)
+        self._scale_f1 = max(1.0, float(n_var))
+        self._scale_f2 = max(1.0, float(n_var))
+        self._scale_f3 = max(1.0, float(n_var))
+        # varianza máxima aproximada para variable acotada en [0, n_var]
+        self._scale_f4 = max(1.0, (float(n_var) ** 2) / 4.0)
+
         super().__init__(n_var=n_var, n_obj=4, n_ieq_constr=0, xl=0, xu=1, vtype=bool)
 
     def _evaluate(self, X, out, *args, **kwargs):
         """Evalua toda la poblacion de forma vectorizada en un solo pase NumPy."""
         X_bool = X.astype(bool)
-        out['F'] = _evaluar_poblacion_vectorizado(X_bool, self.diff_matrix)
+        F_raw = _evaluar_poblacion_vectorizado(X_bool, self.diff_matrix)
+        if self.normalize_for_search:
+            F_scaled = F_raw.copy()
+            F_scaled[:, 0] = F_scaled[:, 0] / self._scale_f1
+            F_scaled[:, 1] = F_scaled[:, 1] / self._scale_f2
+            F_scaled[:, 2] = F_scaled[:, 2] / self._scale_f3
+            F_scaled[:, 3] = F_scaled[:, 3] / self._scale_f4
+            out['F'] = F_scaled
+        else:
+            out['F'] = F_raw
 
 def snp_distinguishability(H, pair_idx=None):
     if pair_idx is None:
@@ -590,6 +895,40 @@ def snp_distinguishability(H, pair_idx=None):
     diff = (a != b).astype(np.int8)
     # Suma las diferencias por cada SNP y devuelve el resultado como float
     return diff.sum(axis=0).astype(float)
+
+
+def _build_distinguishability_groups(scores_desc_order: np.ndarray, dscore: np.ndarray):
+    """Agrupa índices SNP contiguos con la misma distinguibilidad (orden descendente)."""
+    groups = []
+    if len(scores_desc_order) == 0:
+        return groups
+    current = [int(scores_desc_order[0])]
+    current_score = float(dscore[scores_desc_order[0]])
+    for idx in scores_desc_order[1:]:
+        score = float(dscore[idx])
+        if score == current_score:
+            current.append(int(idx))
+        else:
+            groups.append(np.array(current, dtype=int))
+            current = [int(idx)]
+            current_score = score
+    groups.append(np.array(current, dtype=int))
+    return groups
+
+
+def _build_order_with_random_ties(score_groups: list, rng: np.random.Generator) -> np.ndarray:
+    """
+    Mantiene el orden greedy por score, pero rompe empates de forma aleatoria.
+    """
+    if not score_groups:
+        return np.array([], dtype=int)
+    parts = []
+    for group in score_groups:
+        if len(group) <= 1:
+            parts.append(group)
+        else:
+            parts.append(rng.permutation(group))
+    return np.concatenate(parts).astype(int, copy=False)
 
 def greedy_construct(H, coverage_target=1, sorted_idx=None, pair_idx=None):
     if pair_idx is None:
@@ -637,6 +976,7 @@ class GreedyHybridTagSNPSampling(Sampling):  # Inicialización híbrida (Greedy 
         self.rng = np.random.default_rng(seed)
         dscore = snp_distinguishability(H)
         self.sorted_idx = np.argsort(-dscore)
+        self.score_groups = _build_distinguishability_groups(self.sorted_idx, dscore)
 
     def _do(self, problem, n_samples, **kwargs):
         X = np.zeros((n_samples, problem.n_var), dtype=bool)
@@ -646,7 +986,8 @@ class GreedyHybridTagSNPSampling(Sampling):  # Inicialización híbrida (Greedy 
 
         for i in range(n_greedy):
             c = int(coverages[i]) if len(coverages) > 0 else 1
-            X[i] = greedy_construct(self.H, coverage_target=max(1, c), sorted_idx=self.sorted_idx)
+            sorted_idx_i = _build_order_with_random_ties(self.score_groups, self.rng)
+            X[i] = greedy_construct(self.H, coverage_target=max(1, c), sorted_idx=sorted_idx_i)
 
         for i in range(n_greedy, n_samples):
             row = self.rng.random(problem.n_var) < 0.05
@@ -663,6 +1004,7 @@ class GreedyPureTagSNPSampling(Sampling):  # Inicialización 100% Greedy
         self.rng = np.random.default_rng(seed)
         dscore = snp_distinguishability(H)
         self.sorted_idx = np.argsort(-dscore)
+        self.score_groups = _build_distinguishability_groups(self.sorted_idx, dscore)
 
     def _do(self, problem, n_samples, **kwargs):
         X = np.zeros((n_samples, problem.n_var), dtype=bool)
@@ -670,7 +1012,8 @@ class GreedyPureTagSNPSampling(Sampling):  # Inicialización 100% Greedy
 
         for i in range(n_samples):
             c = int(coverages[i]) if len(coverages) > 0 else 1
-            row = greedy_construct(self.H, coverage_target=max(1, c), sorted_idx=self.sorted_idx)
+            sorted_idx_i = _build_order_with_random_ties(self.score_groups, self.rng)
+            row = greedy_construct(self.H, coverage_target=max(1, c), sorted_idx=sorted_idx_i)
             if not row.any():
                 row[self.rng.integers(0, problem.n_var)] = True
             X[i] = row
@@ -786,9 +1129,8 @@ class RunResult:
 
 def _ejecutar_un_experimento(args: dict) -> 'RunResult':
     """
-    Función de trabajador a nivel de módulo (picklable).
+    Función de ejecución a nivel de módulo (picklable).
     Ejecuta una única llamada minimize() y devuelve un RunResult.
-    Diseñada para ser invocada en subprocesos separados mediante ProcessPoolExecutor.
     """
     algo_name  = args['algo_name']
     init_name  = args['init_name']
@@ -800,7 +1142,7 @@ def _ejecutar_un_experimento(args: dict) -> 'RunResult':
     ref_dirs   = args['ref_dirs']
 
     # Reconstruir el problema en el subproceso (no se puede compartir entre procesos)
-    problema = TagSNPProblem(H, pair_idx)
+    problema = TagSNPProblem(H, pair_idx, normalize_for_search=(algo_name == 'MOEAD'))
     algo = build_algorithm(
         problem=problema, H=H, algo_name=algo_name, init_name=init_name,
         cfg=cfg, seed=seed, ref_dirs=ref_dirs
@@ -813,16 +1155,34 @@ def _ejecutar_un_experimento(args: dict) -> 'RunResult':
 
     n_var = problema.n_var
     Xf = np.array(res.X, dtype=bool) if getattr(res, 'X', None) is not None else np.empty((0, n_var), dtype=bool)
-    Ff = np.array(res.F, dtype=float) if getattr(res, 'F', None) is not None else np.empty((0, 4), dtype=float)
-    if Ff.shape[0] == 0 and Xf.shape[0] > 0:
+    # Para garantizar métricas comparables, siempre reconstruimos F en escala cruda
+    if Xf.shape[0] > 0:
         Ff, _ = evaluate_population(Xf, H, pair_idx=pair_idx)
+    else:
+        Ff = np.empty((0, 4), dtype=float)
 
     # Extraer historial generacional
     F_history = []
     for hist in getattr(res, 'history', []) or []:
         F_gen = None
+        X_gen = None
         opt = getattr(hist, 'opt', None)
-        if opt is not None:
+        pop = getattr(hist, 'pop', None)
+
+        # 1) Intento preferente: reconstruir F crudo desde X de la población de la generación
+        if pop is not None:
+            try:
+                X_gen = np.array(pop.get('X'), dtype=bool)
+            except Exception:
+                try:
+                    X_gen = np.array(getattr(pop, 'X', None), dtype=bool)
+                except Exception:
+                    X_gen = None
+            if X_gen is not None and getattr(X_gen, 'size', 0) > 0:
+                F_gen, _ = evaluate_population(X_gen, H, pair_idx=pair_idx)
+
+        # 2) Fallback: usar F reportada por pymoo
+        if F_gen is None and opt is not None:
             try:
                 F_gen = np.array(opt.get('F'), dtype=float)
             except Exception:
@@ -831,7 +1191,6 @@ def _ejecutar_un_experimento(args: dict) -> 'RunResult':
                 except Exception:
                     F_gen = None
         if F_gen is None or getattr(F_gen, 'size', 0) == 0:
-            pop = getattr(hist, 'pop', None)
             if pop is not None:
                 try:
                     F_gen = np.array(pop.get('F'), dtype=float)
@@ -856,9 +1215,7 @@ def _ejecutar_un_experimento(args: dict) -> 'RunResult':
 
 def run_all_experiments(problem, H, cfg, n_runs=None, master_seed=None):
     """
-    Ejecuta todos los experimentos multiobjetivo en paralelo usando ProcessPoolExecutor.
-    Cada llamada minimize() es completamente independiente, por lo que el paralelismo
-    es seguro y produce resultados idénticos a la ejecucion secuencial para las mismas semillas.
+    Ejecuta todos los experimentos multiobjetivo de forma secuencial.
     """
     if n_runs is None:
         n_runs = cfg.n_runs
@@ -890,32 +1247,31 @@ def run_all_experiments(problem, H, cfg, n_runs=None, master_seed=None):
                 })
 
     total_runs = len(trabajos)
-    n_workers  = cfg.n_workers if cfg.n_workers > 0 else os.cpu_count()
-    n_workers  = min(n_workers, total_runs)  # No usar más workers que tareas
-
-    print_subsection("Fase de Optimización Evolutiva", icon="🧬")
-    print(f"    • Iniciando {total_runs} experimentos en {n_workers} núcleos en paralelo")
+    print_subsection("Fase Evolutiva", icon="🧬")
+    print(f"    • Iniciando {total_runs} experimentos en modo secuencial")
 
     resultados_desordenados = {}
     done_runs = 0
     w = len(str(total_runs))
 
-    with ProcessPoolExecutor(max_workers=n_workers) as executor:
-        futuros = {executor.submit(_ejecutar_un_experimento, t): t for t in trabajos}
-        for futuro in as_completed(futuros):
-            tarea = futuros[futuro]
-            try:
-                rr = futuro.result()
-            except Exception as e:
-                print(f"      • ⚠ Error en [{tarea['algo_name']}-{tarea['init_name']}] "
-                      f"ejecucion {tarea['run_idx']}: {e}")
-                continue
-            done_runs += 1
-            print(f"      • [Progreso: {done_runs:>{w}}/{total_runs}] | "
-                  f"[{rr.algorithm}-{rr.init}] ejecucion {rr.run}/{n_runs} "
-                  f"({rr.elapsed_sec:.1f}s)")
-            key = (rr.algorithm, rr.init, rr.run)
-            resultados_desordenados[key] = rr
+    for tarea in trabajos:
+        try:
+            rr = _ejecutar_un_experimento(tarea)
+        except Exception as e:
+            print(
+                f"      • ⚠ Error en [{tarea['algo_name']}-{tarea['init_name']}] "
+                f"ejecucion {tarea['run_idx']}: {e}"
+            )
+            continue
+
+        done_runs += 1
+        print(
+            f"      • [Progreso: {done_runs:>{w}}/{total_runs}] | "
+            f"[{rr.algorithm}-{rr.init}] ejecucion {rr.run}/{n_runs} "
+            f"({rr.elapsed_sec:.1f}s)"
+        )
+        key = (rr.algorithm, rr.init, rr.run)
+        resultados_desordenados[key] = rr
 
     # Reordenar resultados para mantener consistencia con la version secuencial
     resultados = []
@@ -1120,7 +1476,7 @@ def _build_generation_rows_for_run(rr, ideal, safe_denom):
     return rows, processed_generations
 
 
-def build_generation_metrics(run_results, ideal=None, nadir=None, n_workers=1, heartbeat_sec=30):
+def build_generation_metrics(run_results, ideal=None, nadir=None, heartbeat_sec=30):
     # Si no hay resultados, retornar un DataFrame vacío
     if not run_results:
         return pd.DataFrame()
@@ -1145,52 +1501,19 @@ def build_generation_metrics(run_results, ideal=None, nadir=None, n_workers=1, h
 
     print(f"      • Iniciando métricas generacionales: {total_runs} ejecuciones con historial ({total_gens} generaciones estimadas)")
 
-    workers = int(n_workers) if n_workers is not None else 1
-    workers = max(1, min(workers, total_runs))
-
-    if workers == 1:
-        for rr in valid_runs:
-            run_rows, gen_count = _build_generation_rows_for_run(rr, ideal, safe_denom)
-            rows_by_key[(rr.algorithm, rr.init, rr.run)] = run_rows
-            done_runs += 1
-            done_gens += gen_count
-            now = time.time()
-            if now >= next_heartbeat or done_runs == total_runs:
-                elapsed = now - started
-                rate = done_runs / elapsed if elapsed > 0 else 0.0
-                eta = (total_runs - done_runs) / rate if rate > 0 else float('inf')
-                eta_txt = f"{eta:.1f}s" if np.isfinite(eta) else "--"
-                print(f"      • [Métricas generacionales] runs={done_runs}/{total_runs} | gens={done_gens}/{total_gens} | transcurrido={elapsed:.1f}s | ETA={eta_txt}")
-                next_heartbeat = now + heartbeat
-    else:
-        print(f"      • Paralelizando métricas generacionales con {workers} procesos")
-        with ProcessPoolExecutor(max_workers=workers) as executor:
-            future_to_key = {
-                executor.submit(_build_generation_rows_for_run, rr, ideal, safe_denom): (rr.algorithm, rr.init, rr.run)
-                for rr in valid_runs
-            }
-            pending = set(future_to_key.keys())
-            while pending:
-                done, pending = wait(pending, timeout=heartbeat, return_when=FIRST_COMPLETED)
-                for fut in done:
-                    key = future_to_key[fut]
-                    try:
-                        run_rows, gen_count = fut.result()
-                    except Exception as e:
-                        print(f"      • ⚠ Error en métricas generacionales {key}: {e}")
-                        run_rows, gen_count = [], 0
-                    rows_by_key[key] = run_rows
-                    done_runs += 1
-                    done_gens += gen_count
-
-                now = time.time()
-                if now >= next_heartbeat or done_runs == total_runs:
-                    elapsed = now - started
-                    rate = done_runs / elapsed if elapsed > 0 else 0.0
-                    eta = (total_runs - done_runs) / rate if rate > 0 else float('inf')
-                    eta_txt = f"{eta:.1f}s" if np.isfinite(eta) else "--"
-                    print(f"      • [Métricas generacionales] runs={done_runs}/{total_runs} | gens={done_gens}/{total_gens} | transcurrido={elapsed:.1f}s | ETA={eta_txt}")
-                    next_heartbeat = now + heartbeat
+    for rr in valid_runs:
+        run_rows, gen_count = _build_generation_rows_for_run(rr, ideal, safe_denom)
+        rows_by_key[(rr.algorithm, rr.init, rr.run)] = run_rows
+        done_runs += 1
+        done_gens += gen_count
+        now = time.time()
+        if now >= next_heartbeat or done_runs == total_runs:
+            elapsed = now - started
+            rate = done_runs / elapsed if elapsed > 0 else 0.0
+            eta = (total_runs - done_runs) / rate if rate > 0 else float('inf')
+            eta_txt = f"{eta:.1f}s" if np.isfinite(eta) else "--"
+            print(f"      • [Métricas generacionales] runs={done_runs}/{total_runs} | gens={done_gens}/{total_gens} | transcurrido={elapsed:.1f}s | ETA={eta_txt}")
+            next_heartbeat = now + heartbeat
 
     rows = []
     for rr in valid_runs:
@@ -1230,7 +1553,7 @@ def plot_pareto_fronts(df_input, algorithm_name, init_name=None, folders=None, m
 
     axis_labels = {
         'Compactness': 'Compacidad (Nº Tag SNPs)',
-        'Tolerance': 'Tasa de Tolerancia',
+        'Tolerance': 'Tolerancia',
         'Hamming': 'Distancia de Hamming Promedio',
         'Balance': 'Varianza / Balance',
     }
@@ -1293,20 +1616,6 @@ def plot_pareto_fronts(df_input, algorithm_name, init_name=None, folders=None, m
                 label=str(init_val),
             )
 
-            if len(df) > 3:
-                try:
-                    sns.regplot(
-                        data=df, x=x_col, y=y_col, scatter=False,
-                        lowess=True, ax=ax, color=color,
-                        line_kws={'alpha': 0.75, 'linestyle': '--', 'linewidth': 1.8}
-                    )
-                except Exception:
-                    sns.regplot(
-                        data=df, x=x_col, y=y_col, scatter=False,
-                        ax=ax, color=color,
-                        line_kws={'alpha': 0.75, 'linestyle': '--', 'linewidth': 1.8}
-                    )
-
             x_lim, y_lim = axis_limits[(x_col, y_col)]
             ax.set_xlim(x_lim)
             ax.set_ylim(y_lim)
@@ -1325,6 +1634,45 @@ def plot_pareto_fronts(df_input, algorithm_name, init_name=None, folders=None, m
             save_report_figure(save_path, dpi=dpi, tight=True, fig=fig)
             print_saved_plot(save_path, f"Frente Pareto {algorithm_name} ({init_val})")
         plt.close(fig)
+
+
+def _seleccionar_runs_representativos_por_hv(run_results, df_runs):
+    """Selecciona 1 run por (algoritmo, init) usando mediana de Hypervolume.
+
+    Criterio:
+    1) Para cada grupo (algorithm, init), tomar HV mediano.
+    2) Elegir el run con |HV - mediana(HV)| mínimo.
+    3) Desempate determinista por run ascendente y luego seed ascendente.
+    4) Si el grupo no tiene HV finito, usar run/seed mínimos.
+    """
+    if df_runs is None or df_runs.empty:
+        return []
+
+    required = {'algorithm', 'init', 'run', 'seed', 'Hypervolume'}
+    if not required.issubset(df_runs.columns):
+        return []
+
+    selected_keys = []
+    for (algo, init_name), g in df_runs.groupby(['algorithm', 'init'], dropna=False):
+        g = g.copy()
+        g['run'] = pd.to_numeric(g['run'], errors='coerce')
+        g['seed'] = pd.to_numeric(g['seed'], errors='coerce')
+        hv_num = pd.to_numeric(g['Hypervolume'], errors='coerce')
+        g_valid = g[hv_num.notna()].copy()
+
+        if not g_valid.empty:
+            hv_vals = pd.to_numeric(g_valid['Hypervolume'], errors='coerce').to_numpy(dtype=float)
+            hv_med = float(np.median(hv_vals))
+            g_valid['hv_dist'] = np.abs(pd.to_numeric(g_valid['Hypervolume'], errors='coerce') - hv_med)
+            chosen = g_valid.sort_values(['hv_dist', 'run', 'seed'], ascending=[True, True, True]).iloc[0]
+        else:
+            chosen = g.sort_values(['run', 'seed'], ascending=[True, True]).iloc[0]
+
+        selected_keys.append((str(algo), str(init_name), int(chosen['run']), int(chosen['seed'])))
+
+    rr_lookup = {(str(rr.algorithm), str(rr.init), int(rr.run), int(rr.seed)): rr for rr in run_results}
+    selected_runs = [rr_lookup[k] for k in selected_keys if k in rr_lookup]
+    return selected_runs
 
 def aggregate_results(df_runs):
     # Verifica si el DataFrame de ejecuciones está vacío
@@ -2035,11 +2383,9 @@ def generate_final_reports(run_results, PAIR_IDX, pair_hamming, cfg):
     FOLDERS = cfg.folders
     N_SNPS = cfg.n_snps
     REPORT_DPI = cfg.report_plot_dpi
-    REPORT_WORKERS = cfg.report_workers
     REPORT_HEARTBEAT_SEC = cfg.report_heartbeat_sec
-    import time
-    START_TIME = time.time()
-    print(f"  ⚙️  Configuración de reportes: DPI={REPORT_DPI} | workers={REPORT_WORKERS} | heartbeat={REPORT_HEARTBEAT_SEC}s")
+    # START_TIME movido al bloque __main__ para capturar todo el pipeline
+    print(f"  ⚙️  Configuración de reportes: DPI={REPORT_DPI} | modo=secuencial | heartbeat={REPORT_HEARTBEAT_SEC}s")
 
     if len(run_results) > 0:
         mode_tag_local = EXECUTION_MODE
@@ -2086,7 +2432,6 @@ def generate_final_reports(run_results, PAIR_IDX, pair_hamming, cfg):
             run_results,
             ideal_global,
             nadir_global,
-            n_workers=REPORT_WORKERS,
             heartbeat_sec=REPORT_HEARTBEAT_SEC
         )
         print(f"      • Tiempo bloque 'Procesamiento de Métricas': {time.time() - t_block:.1f}s")
@@ -2113,9 +2458,16 @@ def generate_final_reports(run_results, PAIR_IDX, pair_hamming, cfg):
             print('      • ⚠️ Histórico generacional no disponible.')
     
         mode_tag_local = EXECUTION_MODE
-    
+
+        runs_para_frentes = _seleccionar_runs_representativos_por_hv(run_results, df_runs)
+        if runs_para_frentes:
+            print(f"      • Frentes estilo paper: {len(runs_para_frentes)} runs representativos (mediana HV por algoritmo/init).")
+        else:
+            runs_para_frentes = list(run_results)
+            print("      • ⚠️ No fue posible seleccionar runs por mediana HV; se usan todos los runs para frentes.")
+
         rows_obj = []
-        for rr in run_results:
+        for rr in runs_para_frentes:
             if rr.F_final is None or len(rr.F_final) == 0:
                 continue
             for row in rr.F_final:
@@ -2332,11 +2684,62 @@ def generate_final_reports(run_results, PAIR_IDX, pair_hamming, cfg):
     
 
 if __name__ == '__main__':
-    print_header('PIPELINE DE OPTIMIZACIÓN TAG SNP')
-    
-    # 1. Configuración y carga
-    cfg = setup_configuration()
-    H, snp_ids, snp_positions, haplotype_ids = load_target_dataset(cfg)
+    START_TIME = time.time()
+    print_header('PIPELINE TAG SNP')
+
+    # CLI: allow quick override of mode, data source and num blocks
+    import argparse
+    parser = argparse.ArgumentParser(description='Run TAG-SNP pipeline')
+    parser.add_argument('--mode', '-m', choices=['fast', 'medium', 'full'], default='medium', help='Execution mode (fast/medium/full)')
+    parser.add_argument('--data-source', '-d', choices=['synthetic', 'hapmap_phase2'], default=None, help='Data source to use')
+    args = parser.parse_args()
+
+    # Prepare a temp log to capture full stdout/stderr for the entire pipeline
+    import tempfile
+    temp_log_fh = tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix='.log')
+    temp_log = temp_log_fh.name
+    log_fh = temp_log_fh
+
+    class Tee:
+        def __init__(self, *streams):
+            self.streams = streams
+        def write(self, data):
+            for s in self.streams:
+                try:
+                    s.write(data)
+                except Exception:
+                    pass
+        def flush(self):
+            for s in self.streams:
+                try:
+                    s.flush()
+                except Exception:
+                    pass
+
+    # swap stdout/stderr to tee
+    orig_stdout = sys.stdout
+    orig_stderr = sys.stderr
+    sys.stdout = Tee(orig_stdout, log_fh)
+    sys.stderr = Tee(orig_stderr, log_fh)
+
+    try:
+        # 1. Configuración y carga (allow overriding mode)
+        cfg = setup_configuration(execution_mode=args.mode)
+        if args.data_source is not None:
+            cfg.data_source = args.data_source
+
+        # Create per-dataset tree early so we can later copy the full log into it
+        base_dataset_dir, local_folders = create_dataset_tree(cfg, cfg.data_source)
+        cfg.folders = local_folders
+
+        H, snp_ids, snp_positions, haplotype_ids = load_target_dataset(cfg)
+    except Exception as e:
+        # restore stdout/stderr temporarily to ensure further exceptions are visible
+        sys.stdout = orig_stdout
+        sys.stderr = orig_stderr
+        log_fh.flush()
+        log_fh.close()
+        raise
     _exportar_dataset_seleccionado(H, snp_ids, snp_positions, haplotype_ids, cfg.folders, cfg.execution_mode)
     
     # 2. Exploración y Diagnóstico
@@ -2346,8 +2749,8 @@ if __name__ == '__main__':
     # El análisis de similitud genética también es diagnóstico
     PAIR_IDX, pair_hamming, p33, p66 = setup_evolutionary_environment(H, cfg)
     
-    # 3. Optimización Multiobjetivo
-    print_header('MOTOR DE OPTIMIZACIÓN MULTIOBJETIVO')
+    # 3. Búsqueda Multiobjetivo
+    print_header('MOTOR MULTIOBJETIVO')
     
     # 4. Ejecutar Algoritmos
     resultados = execute_algorithms(H, PAIR_IDX, pair_hamming, p33, p66, cfg)
@@ -2355,4 +2758,22 @@ if __name__ == '__main__':
     # 5. Generar Reportes Finales
     print_header('SÍNTESIS Y REPORTES EXPERIMENTALES')
     generate_final_reports(resultados, PAIR_IDX, pair_hamming, cfg)
+
+    # FINALIZACIÓN: restaurar stdout/stderr, cerrar log temporal y copiarlo al dataset
+    try:
+        sys.stdout = orig_stdout
+        sys.stderr = orig_stderr
+    except Exception:
+        pass
+    try:
+        log_fh.flush()
+        log_fh.close()
+    except Exception:
+        pass
+    try:
+        final_log_path = os.path.join(base_dataset_dir, 'terminal_output.log')
+        shutil.copyfile(temp_log, final_log_path)
+        print_status(f"Terminal log saved: {final_log_path}")
+    except Exception as e:
+        print_status(f"Could not copy pipeline log to dataset folder: {e}", success=False)
 
