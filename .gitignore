@@ -35,6 +35,8 @@ venv.bak
 *.swp
 *.swo
 *~
+.agents/
+.github/
 .DS_Store
 
 # --- Jupyter Notebooks ---
@@ -44,8 +46,10 @@ venv.bak
 # --- Específico del Proyecto (Datos y Resultados) ---
 otras/
 
+resultados/
+ejecuciones_guardadas/
+personal/
+
 # --- Otros ---
 *.log
-*.gz
-*.json
 !block_map_1032.json # Mantener el mapa de bloques si es necesario para la ejecución

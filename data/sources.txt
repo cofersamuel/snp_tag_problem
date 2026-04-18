@@ -1,0 +1,1 @@
+ftp.ncbi.nlm.nih.gov/hapmap/phasing/2006-07_phaseII/phased/

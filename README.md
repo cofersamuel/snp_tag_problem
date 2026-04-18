@@ -1,3 +1,27 @@
+La adquisición del dataset Hinds et al. (2005) fue un proceso de "arqueología de datos" para asegurar que estuviéramos replicando exactamente el experimento del artículo de Moqa et al. (2022). Aquí tienes la traza técnica de cómo lo conseguimos:
+
+1. Identificación de la Fuente Original
+El artículo de Moqa et al. (2022) cita el dataset Hinds et al. (2005) [2], pero no proporciona un enlace directo al bloque específico. Sin embargo, mencionan que siguen la metodología de Ting et al. (2010) [9], el artículo precursor que definió el uso del bloque de 1032 SNPs.
+
+2. Rastreo del Artículo de Ting (2010)
+Al investigar el artículo de Ting, encontramos que el software original y los datos fueron depositados en el sitio web del laboratorio de los autores en la Universidad Nacional Chung Cheng (CCU) de Taiwán.
+
+3. Localización y Descarga
+Localizamos un servidor activo (cilab.cs.ccu.edu.tw) que contenía un archivo comprimido titulado Code_MoTagSNPsSel.zip.
+
+Descargamos el archivo directamente desde el servidor del laboratorio.
+Dentro del ZIP, encontramos un fichero llamado input.txt.
+4. Verificación de los Datos
+Al abrir el fichero input.txt, confirmamos que cumplía exactamente con las especificaciones del problema:
+
+Dimensiones: 48 filas por 1032 columnas.
+Formato: Texto binario plano (0s y 1s), donde cada fila representa un patrón haplotípico (clase alélica) y cada columna un SNP.
+Contenido: El README del código de Ting confirmaba explícitamente: "The example input.txt file, including 1032 SNPs, is used in the paper 'Multi-Objective Tag SNPs Selection Using Evolutionary Algorithms'".
+5. Integración en el Proyecto
+Finalmente, movimos ese fichero a nuestra carpeta local como data/hinds2005_1032.txt y desarrollamos el cargador específico (load_hinds2005_block) para interpretar este formato de cadenas binarias, que es muy distinto al formato comprimido de HapMap Phase II.
+
+En resumen: No se descargó de una base de datos genómica general (donde el bloque de 1032 podría haber variado), sino directamente del paquete de replicación oficial de los autores del algoritmo original.
+
 # 🧬 Selección de Tag SNPs con pymoo
 
 
@@ -180,30 +204,27 @@ Estos valores controlan coste computacional y calidad de resultados. Pequeños c
 
 A continuación, se definen el resto de parámetros:
 
-## Carga de datos (sintéticos o HapMap Phase II)
+## Carga de datos (Sintéticos o Hinds 2005)
 
 En esta sección se construye la matriz de haplotipos `H` (0/1) que alimenta toda la optimización. El tamaño del problema se mantiene estrictamente en **N_SNPS = 1032**, respetando la estructura del marco experimental del TFG.
 
 - **Opción A — `synthetic`**: genera datos sintéticos con estructura de LD (rápido y controlado).
-- **Opción B — `hapmap_phase2`**: carga un bloque real de HapMap Phase II (r21) desde `data/hapmap_phase2/`.
+- **Opción B — `hinds2005`**: carga el bloque real de Hinds et al. (2005) desde `data/hinds2005_1032.txt`.
 
 El selector se controla con la variable `DATA_SOURCE` en la configuración global.
 
 ### Control de Densidad de Bloques LD (`NUM_BLOCKS`)
 
-El parámetro `NUM_BLOCKS` (recomendado de 1 a 10) permite alterar la **densidad interna** de desequilibrio de ligamiento dentro de la ventana de 1032 SNPs, actuando de forma diferente según el origen de los datos:
+El parámetro `NUM_BLOCKS` (recomendado de 1 a 10) permite alterar la **densidad interna** de desequilibrio de ligamiento dentro de la ventana de 1032 SNPs en datos sintéticos:
 
 1. **En datos Sintéticos:** El generador matemático divide estrictamente los 1032 SNPs en exactamente la cantidad de bloques dictada por `NUM_BLOCKS`. Por ejemplo, `NUM_BLOCKS=10` genera 10 sub-regiones independientes dentro de los 1032 SNPs. Esto es ideal para probar los límites matemáticos del algoritmo.
-2. **En datos HapMap (Reales):** El ADN humano presenta recombinación biológica inmutable. Un escaneo del Cromosoma 21 demuestra que la densidad natural de recombinaciones es extremadamente alta: *cualquier* ventana aleatoria de 1032 SNPs contiene rutinariamente más de 150 pequeños "bloques" biológicos.
-   - **Mecanismo de Fallback:** Al ser biológicamente imposible forzar "1 a 10" bloques en 1032 SNPs reales, el script incluye un mecanismo de búsqueda dinámica mediado por el `hapmap_block_scanner.py`. Este escáner (que se corre una sola vez) mapea todo el cromosoma y genera un índice (`block_map_1032.json`). 
-   - Cuando ejecutas el experimento con HapMap y solicitas un `NUM_BLOCKS` determinado, el script consulta el JSON y **selecciona dinámicamente un punto de inicio (`BLOCK_START`)** que apunte a una ventana de 1032 SNPs cuya densidad natural sea idéntica (o la más matemáticamente cercana) a tu petición. Esto evita el sesgo de buscar siempre en el mismo índice `0`.
 
 ## 🧬 Generación/carga de haplotipos (`H`)
 
 La siguiente celda construye la matriz de datos `H` que alimenta toda la optimización.
 
 - Si `DATA_SOURCE == "synthetic"`: se generan haplotipos sintéticos con LD (bloques ligados).
-- Si `DATA_SOURCE == "hapmap_phase2"`: se carga un bloque real de HapMap Phase II (r21) ya descargado en `data/hapmap_phase2/`.
+- Si `DATA_SOURCE == "hinds2005"`: se carga el bloque real de Hinds et al. (2005) ya proporcionado en `data/hinds2005_1032.txt`.
 
 ### Resultado
 Una matriz `H` con forma `(n_haplotypes, n_snps)` donde cada fila representa un haplotipo binario (0/1).
