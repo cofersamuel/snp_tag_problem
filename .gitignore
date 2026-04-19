@@ -35,8 +35,6 @@ venv.bak
 *.swp
 *.swo
 *~
-.agents/
-.github/
 .DS_Store
 
 # --- Jupyter Notebooks ---
@@ -45,11 +43,14 @@ venv.bak
 
 # --- Específico del Proyecto (Datos y Resultados) ---
 otras/
+README_former.md
 
-resultados/
+# --- Disable for AI scope ---
+snp_tag/results/
+snp_tag/input/
 ejecuciones_guardadas/
 personal/
+.agents/
+.github/
 
 # --- Otros ---
-*.log
-!block_map_1032.json # Mantener el mapa de bloques si es necesario para la ejecución
