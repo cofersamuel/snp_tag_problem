@@ -34,6 +34,7 @@ CLAVES_TUNABLES_REQUERIDAS = (
     'intentos_max_sintetico',
     'report_plot_dpi',
     'prob_aleatoria_gi',
+    'ratio_greedy_ting',
 )
 
 
@@ -173,6 +174,7 @@ PARAMETROS_CONFIGURACION = {
         'medium': {'tam_pob': 100, 'n_gen': 50, 'descendencia': 100, 'n_runs': 2},
         'high': {'tam_pob': 120, 'n_gen': 100, 'descendencia': 120, 'n_runs': 3},
         'full': {'tam_pob': 200, 'n_gen': 500, 'descendencia': 200, 'n_runs': 5},
+        'full_20': {'tam_pob': 200, 'n_gen': 500, 'descendencia': 200, 'n_runs': 20},
     },
 
     # Fuentes de datos permitidas al construir configuración.
@@ -257,7 +259,8 @@ class ConfiguracionExperimento:
     # Parámetros con valores por defecto (deben ir al final)
     INIT_PERMITIDAS: List[str] = field(default_factory=lambda: [
         'random_sparse', 'random_dense',
-        'greedy_hybrid', 'greedy_pure'
+        'greedy_hybrid', 'greedy_pure',
+        'greedy_ting'
     ])
 
     ALGORITMOS_PERMITIDOS: List[str] = field(default_factory=lambda: list(ALGORITMOS_DISPONIBLES))
@@ -275,6 +278,9 @@ class ConfiguracionExperimento:
     
     # Probabilidad de bit=1 en inicialización aleatoria de GI 50/50
     prob_aleatoria_gi: float = PARAMS_TUNABLES_DEFECTO['prob_aleatoria_gi']
+
+    # Proporcion de poblacion creada con greedy Ting
+    ratio_greedy_ting: float = PARAMS_TUNABLES_DEFECTO['ratio_greedy_ting']
     
     algoritmos_activos: List[str] = field(default_factory=list)
     opciones_init: List[str] = field(default_factory=list)
@@ -288,7 +294,7 @@ def es_opcion_init_valida(nombre_init: str) -> bool:
     """
     Verifica si una estrategia de inicialización es compatible con el sistema.
     """
-    if nombre_init in ['random_sparse', 'random_dense', 'greedy_hybrid', 'greedy_pure']:
+    if nombre_init in ['random_sparse', 'random_dense', 'greedy_hybrid', 'greedy_pure', 'greedy_ting']:
         return True
     return False
 
@@ -402,6 +408,10 @@ def construir_configuracion(modo: str = 'medium', data_source: str = 'hinds2005'
     if not (0.0 <= prob_vec <= 1.0):
         raise ValueError("'prob_vecindad_moead' debe estar en [0, 1].")
 
+    ratio_greedy_ting = float(params['ratio_greedy_ting'])
+    if not (0.0 <= ratio_greedy_ting <= 1.0):
+        raise ValueError("'ratio_greedy_ting' debe estar en [0, 1].")
+
     n_snps = int(params['n_snps'])
     num_bloques = int(params['num_bloques'])
     # Calcular el tamaño de cada bloque LD a partir del número de bloques solicitado.
@@ -433,6 +443,7 @@ def construir_configuracion(modo: str = 'medium', data_source: str = 'hinds2005'
         intentos_max_sintetico=int(params['intentos_max_sintetico']),
         report_plot_dpi=int(params['report_plot_dpi']),
         prob_aleatoria_gi=float(params['prob_aleatoria_gi']),
+        ratio_greedy_ting=ratio_greedy_ting,
         algoritmos_activos=algoritmos_activos,
         opciones_init=opciones_init,
         modo_normalizacion=resolver_modo_normalizacion(params.get('modo_normalizacion')),

@@ -23,7 +23,8 @@ from pymoo.util.misc import vectorized_cdist
 import numpy as np
 
 from snp_tag.core.sampling import (
-    MuestreoAleatorioDisperso, MuestreoGreedyHibrido, MuestreoGreedyPuro
+    MuestreoAleatorioDisperso, MuestreoGreedyHibrido, MuestreoGreedyPuro,
+    MuestreoGreedyTing
 )
 from snp_tag.config import ConfiguracionExperimento
 
@@ -132,6 +133,13 @@ def fabricar_algoritmo(problema, H, nombre_algo, nombre_init, cfg: Configuracion
         )
     elif base_init == 'greedy_pure':
         sampling = MuestreoGreedyPuro(H, problema.pair_idx, semilla=semilla)
+    elif base_init == 'greedy_ting':
+        sampling = MuestreoGreedyTing(
+            H,
+            problema.pair_idx,
+            ratio_greedy=cfg.ratio_greedy_ting,
+            semilla=semilla,
+        )
     else:
         raise ValueError(f"Estrategia de muestreo no soportada: {nombre_init}")
 
