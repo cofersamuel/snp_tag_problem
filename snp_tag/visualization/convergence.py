@@ -62,7 +62,7 @@ def graficar_evolucion_generacional(df_gen: pd.DataFrame, dir_salida: Optional[s
 
     g_min, g_max = float(df_plot['generation'].min()), float(df_plot['generation'].max())
 
-    algoritmos_preferidos = ['NSGA2', 'NSGA3', 'SPEA2', 'MOEAD']
+    algoritmos_preferidos = ['NSGA2', 'NSGA3', 'SPEA2', 'MOEAD_TCHE', 'MOEAD_PBI', 'MOEAD_WS']
     algoritmos_presentes = sorted(df_plot['algorithm'].dropna().unique().tolist())
     algoritmos_ordenados = [a for a in algoritmos_preferidos if a in algoritmos_presentes]
     algoritmos_ordenados.extend([a for a in algoritmos_presentes if a not in algoritmos_ordenados])

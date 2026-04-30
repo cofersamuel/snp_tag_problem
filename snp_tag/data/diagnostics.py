@@ -91,8 +91,7 @@ def ejecutar_diagnostico_ld(H, cfg: ConfiguracionExperimento, rutas_ld=None):
     n_bloques = len(segmentos)
     
     # 1. Caracterización Global
-    print(f"\n  🔗 \033[1mCaracterización Global de Correlación (LD)\033[0m")
-    print("  " + "─" * 46)
+    imprimir_subseccion("Caracterización Global de Correlación (LD)", icono="🔗")
     print(f"      • \033[1mCorrelación media absoluta (global |r|)\033[0m: {media_ld:.4f}")
     print(f"      • \033[1mTotal de pares evaluados\033[0m: {len(corrs)}")
     
@@ -102,30 +101,36 @@ def ejecutar_diagnostico_ld(H, cfg: ConfiguracionExperimento, rutas_ld=None):
         imprimir_grafico_guardado(rutas_ld['cdf'], "CDF de correlación LD")
     
     # 2. Resumen Estructural
-    print(f"\n  ⚖️ \033[1mResumen Estructural del Dataset\033[0m")
-    print("  " + "─" * 35)
-    print(f"      • \033[1mEstructura detectada\033[0m: {n_bloques} bloques de ligamiento")
+    imprimir_subseccion("Resumen Estructural del Dataset", icono="⚖️")
+    # Para datos sintéticos, usar el número de bloques estructurales configurado;
+    # para datos reales (hinds2005), usar el conteo detectado estadísticamente.
+    n_bloques_informe = (
+        int(cfg.num_bloques)
+        if cfg.origen_datos == 'synthetic'
+        else n_bloques
+    )
+    naturaleza = 'Benchmark biológico (Hinds)' if cfg.origen_datos == 'hinds2005' else 'Simulación sintetizada'
+    print(f"      • \033[1mEstructura detectada\033[0m: {n_bloques_informe} bloques de ligamiento")
     print(f"      • \033[1mCorrelación media absoluta (|r|)\033[0m: {media_ld:.4f}")
-    print(f"      • \033[1mNaturaleza del dato\033[0m: {'Benchmark biológico (Hinds)' if cfg.origen_datos == 'hinds2005' else 'Simulación sintetizada'}")
+    print(f"      • \033[1mNaturaleza del dato\033[0m: {naturaleza}")
 
     # 3. Similitud Genotípica
     dvals, p33, p66, top_sim, top_dist = analizar_similitud_genotipica(H)
-    print(f"\n  📐 \033[1mAnálisis de Similitud Genotípica (Pares de Haplotipos)\033[0m")
-    print("  " + "─" * 58)
+    imprimir_subseccion("Análisis de Similitud Genotípica (Pares de Haplotipos)", icono="📐")
     print(f"      • \033[1mNúmero de pares de haplotipos\033[0m: {len(dvals)}")
     print(f"      • \033[1mPares mostrados\033[0m: 3 similares / 3 distintos")
     print(f"      • \033[1mVista parcial\033[0m: primeros 32 SNPs")
     print(f"      • \033[1mPercentiles (Hamming)\033[0m: P33={p33:.2f}, P66={p66:.2f}")
     print(f"      • [Etiquetas: <=P33 -> muy similar | (P33,P66] -> intermedio | >P66 -> muy distinto]")
 
-    print("\n    🤝 \033[1mPares de mayor similitud genética\033[0m")
+    imprimir_subseccion("Pares de mayor similitud genética", icono="🤝")
     for (ia, ib), val in top_sim:
         etiqueta = "muy similar" if val <= p33 else "intermedio"
         print(f"      •  \033[1mPar ({ia+1}, {ib+1})\033[0m | Hamming=\033[1m{val}\033[0m | {etiqueta}")
         print(f"        h{ia+1:03d}: {obtener_bit_string_estilizado(H[ia, :32])}...")
         print(f"        h{ib+1:03d}: {obtener_bit_string_estilizado(H[ib, :32])}...")
 
-    print("\n    ↔️ \033[1mPares de mayor divergencia genética\033[0m")
+    imprimir_subseccion("Pares de mayor divergencia genética", icono="↔️")
     for (ia, ib), val in top_dist:
         etiqueta = "muy distinto" if val > p66 else "intermedio"
         print(f"      •  \033[1mPar ({ia+1}, {ib+1})\033[0m | Hamming=\033[1m{val}\033[0m | {etiqueta}")

@@ -14,6 +14,20 @@ from snp_tag.config import ConfiguracionExperimento
 from snp_tag.utils.terminal import imprimir_estado, imprimir_grafico_guardado
 from snp_tag.utils.filesystem import crear_arbol_directorios_dataset
 
+
+def filtrar_snps_monomorficos(H: np.ndarray):
+    """
+    Filtra SNPs monomórficos con el criterio de Ting: 0 < suma_columna < n_haplotipos.
+    """
+    if H.size == 0:
+        return H, np.array([], dtype=int)
+
+    n_haplotipos = int(H.shape[0])
+    suma_columnas = H.sum(axis=0)
+    mascara_polimorficos = (suma_columnas > 0) & (suma_columnas < n_haplotipos)
+    indices_utiles = np.where(mascara_polimorficos)[0].astype(int)
+    return H[:, mascara_polimorficos], indices_utiles
+
 def generar_bloque_haplotipico_ld(n_haplotipos=40, n_snps=1200, tam_bloque=50, 
                                  prob_flip=0.02, semilla=42, 
                                  dif_min_pares: int = 0, intentos_max: int = 1000):
@@ -90,14 +104,22 @@ def cargar_bloque_hinds2005(ruta_fichero: str):
         raise ValueError(f"El archivo '{ruta_fichero}' carece de datos válidos.")
         
     H = np.array([[int(c) for c in fila] for fila in filas], dtype=np.int8)
-    n_patrones, n_snps = H.shape
-    snp_ids = [f"snp_{i}" for i in range(n_snps)]
-    posiciones_snp = np.arange(n_snps, dtype=int)
+    n_patrones, n_snps_entrada = H.shape
+
+    H_filtrado, idx_utiles = filtrar_snps_monomorficos(H)
+    n_patrones, n_snps = H_filtrado.shape
+
+    snp_ids = [f"snp_{i}" for i in idx_utiles.tolist()]
+    posiciones_snp = idx_utiles.copy()
     haplotipo_ids = [f"patron_{i}" for i in range(n_patrones)]
     
     ruta_rel = os.path.relpath(ruta_fichero)
-    print(f"       \033[92m✅ Hinds 2005 cargado: {n_patrones} patrones alelicos × {n_snps} SNPs desde '{ruta_rel}'\033[0m")
-    return H, snp_ids, posiciones_snp, haplotipo_ids
+    print(
+        "       \033[92m✅  Hinds 2005 cargado y filtrado: "
+        f"{n_patrones} patrones alelicos × {n_snps} SNPs polimórficos "
+        f"(de {n_snps_entrada} originales) desde '{ruta_rel}'\033[0m"
+    )
+    return H_filtrado, snp_ids, posiciones_snp, haplotipo_ids
 
 def exportar_dataset(H, snp_ids, posiciones_snp, haplotipo_ids, carpetas, modo_etiqueta):
     """
@@ -111,7 +133,7 @@ def exportar_dataset(H, snp_ids, posiciones_snp, haplotipo_ids, carpetas, modo_e
     ruta_meta = os.path.join(carpetas['datos'], f'metadatos_snps_seleccionados_{modo_etiqueta}.csv')
     df_meta.to_csv(ruta_meta, index=False)
     
-    print(f"       \033[92m✅ Dataset exportado: {len(snp_ids)} SNPs x {len(haplotipo_ids)} haplotipos\033[0m")
+    print(f"       \033[92m✅  Dataset exportado: {len(snp_ids)} SNPs x {len(haplotipo_ids)} haplotipos\033[0m")
     imprimir_grafico_guardado(ruta_csv, "Matriz de haplotipos (CSV)")
     imprimir_grafico_guardado(ruta_meta, "Metadatos de SNPs (CSV)")
 
@@ -126,9 +148,17 @@ def cargar_dataset_objetivo(cfg: ConfiguracionExperimento):
             dif_min_pares=cfg.dif_min_pares_sintetico, intentos_max=cfg.intentos_max_sintetico
         )
         
-        snp_ids = [f"snp_{i}" for i in range(cfg.n_snps)]
-        posiciones_snp = np.arange(cfg.n_snps, dtype=int)
+        n_snps_entrada = int(H.shape[1])
+        H, idx_utiles = filtrar_snps_monomorficos(H)
+        snp_ids = [f"snp_{i}" for i in idx_utiles.tolist()]
+        posiciones_snp = idx_utiles.copy()
         haplotipo_ids = [f"hap_{i}" for i in range(cfg.n_haplotipos)]
+
+        print(
+            "       \033[92m✅  Synthetic filtrado: "
+            f"{H.shape[0]} haplotipos × {H.shape[1]} SNPs polimórficos "
+            f"(de {n_snps_entrada} originales)\033[0m"
+        )
         
         # Gestión de directorios: solo crear si no fueron configurados por el orquestador
         if not getattr(cfg, 'carpetas', None):
@@ -162,4 +192,6 @@ def cargar_dataset_objetivo(cfg: ConfiguracionExperimento):
     else:
         raise ValueError(f"Fuente de datos '{cfg.origen_datos}' no reconocida.")
         
+    cfg.n_snps = int(H.shape[1])
+    cfg.pm = 1.0 / max(1, cfg.n_snps)
     return H, snp_ids, posiciones_snp, haplotipo_ids

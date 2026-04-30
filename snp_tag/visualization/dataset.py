@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import os
+from typing import Optional
 from scipy.stats import cumfreq
 from snp_tag.data.diagnostics import detectar_bloques_ld
 from snp_tag.utils.terminal import imprimir_grafico_guardado
@@ -117,9 +118,36 @@ def graficar_ld_detallado(corr_full, corrs, carpetas, etiqueta_modo, dpi=200):
         'cdf': ruta_cdf
     }
 
-def graficar_bloques_ld(H, carpetas, etiqueta_modo, dpi=200):
-    """Visualiza los bloques de ligamiento detectados sobre la matriz."""
-    segmentos = detectar_bloques_ld(H)
+def graficar_bloques_ld(H, carpetas, etiqueta_modo, dpi=200, cfg=None):
+    """
+    Visualiza los bloques de ligamiento sobre la matriz haplotípica.
+
+    Para datos sintéticos (cfg.origen_datos == 'synthetic'), los segmentos se
+    reconstruyen directamente desde cfg.num_bloques, que es la fuente autoritativa
+    de la estructura LD impuesta durante la generación. Para datos reales (hinds2005)
+    se sigue usando el detector estadístico basado en hotspots de recombinación.
+    """
+    # Seleccionar estrategia de segmentación según el origen del dataset
+    if cfg is not None and getattr(cfg, 'origen_datos', None) == 'synthetic':
+        # Reconstruir bloques estructurales desde la configuración
+        n_snps_real = H.shape[1]
+        num_bloques = max(1, int(cfg.num_bloques))
+        tam_bloque = max(1, n_snps_real // num_bloques)
+        segmentos = []
+        inicio = 0
+        for _ in range(num_bloques):
+            fin = min(inicio + tam_bloque, n_snps_real)
+            if inicio >= n_snps_real:
+                break
+            segmentos.append((inicio, fin))
+            inicio = fin
+        # Absorber SNPs residuales en el último bloque (resto de la división entera)
+        if segmentos and segmentos[-1][1] < n_snps_real:
+            segmentos[-1] = (segmentos[-1][0], n_snps_real)
+    else:
+        # Detección estadística estándar para datos reales
+        segmentos = detectar_bloques_ld(H)
+
     n_bloques = len(segmentos)
     
     H_f = H.astype(float)

@@ -44,8 +44,21 @@ def imprimir_subseccion(titulo: str, icono: str = "🔹"):
     """
     Imprime un encabezado de subsección descriptivo y en negrita.
     """
-    # Un solo espacio tras el icono para coincidir con el log de referencia
-    print(f"\n  {icono} \033[1m{titulo}\033[0m")
+    # Estandarización de iconos: eliminar VS16 existentes para evitar duplicados
+    icono_base = icono.replace("\ufe0f", "")
+    
+    # Lista de emojis que requieren VS16 y espacio extra por renderizado terminal
+    necesitan_vs16 = ["⚙", "⚖", "⏱", "⚠️", "↔"]
+    if icono_base in necesitan_vs16:
+        icono_final = icono_base + "\ufe0f"
+        # Tres espacios: uno suele ser 'absorbido' por el renderizado del glifo ancho
+        espaciado = "   "
+    else:
+        icono_final = icono_base
+        espaciado = "  "
+
+    # Imprimir con el espaciado calculado
+    print(f"\n  {icono_final}{espaciado}\033[1m{titulo}\033[0m")
     print("  " + "─" * (len(titulo) + 6))
 
 def imprimir_metadato(etiqueta: str, valor: str, sangria: int = 6):
@@ -59,7 +72,7 @@ def imprimir_paso(mensaje: str, icono: str = "🚀"):
     """
     Imprime un hito del proceso evolutivo.
     """
-    print(f"    • {mensaje}") if icono == "" else print(f"\n  {icono} \033[1m{mensaje}\033[0m")
+    print(f"    • {mensaje}") if icono == "" else print(f"\n  {icono}  \033[1m{mensaje}\033[0m")
 
 def imprimir_estado(mensaje: str, exito: bool = True):
     """
@@ -68,7 +81,7 @@ def imprimir_estado(mensaje: str, exito: bool = True):
     icono = "✅" if exito else "❌"
     color = "\033[92m" if exito else "\033[91m"
     reset = "\033[0m"
-    print(f"       {color}{icono} {mensaje}{reset}")
+    print(f"       {color}{icono}  {mensaje}{reset}")
 
 def imprimir_grafico_guardado(ruta: str, descripcion: str):
     """

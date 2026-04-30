@@ -11,7 +11,8 @@ import numpy as np
 import os
 import pandas as pd
 from typing import List, Tuple
-from snp_tag.utils.terminal import imprimir_grafico_guardado
+from matplotlib.colors import ListedColormap, BoundaryNorm
+from snp_tag.utils.terminal import imprimir_grafico_guardado, imprimir_subseccion
 
 def graficar_rendimiento_tiempo(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str, dpi=300):
     """Visualiza el tiempo de ejecución y su relación con el tamaño del frente."""
@@ -79,7 +80,13 @@ def graficar_comparativa_objetivos(df_runs: pd.DataFrame, dir_salida: str, etiqu
     
     # 3. Graficado exacto
     plt.figure(figsize=(14, 8))
-    sns.heatmap(heat_norm_better, annot=heat_df_plot, fmt='.3f', cmap='RdYlGn', linewidths=0.5)
+    ax = sns.heatmap(heat_norm_better, annot=heat_df_plot, fmt='.3f', cmap='RdYlGn', linewidths=0.5)
+    
+    # Personalizar la barra de color (leyenda)
+    cbar = ax.collections[0].colorbar
+    cbar.set_ticks([0, 1])
+    cbar.set_ticklabels(['Peor', 'Mejor'])
+    
     plt.title('Comparativa de Algoritmos: Rojo (Peor) vs Verde (Mejor)', fontsize=15, pad=20)
     plt.tight_layout()
     
@@ -223,32 +230,123 @@ def graficar_boxplot_metricas(df_runs: pd.DataFrame, dir_salida: str, etiqueta_m
     plt.close('all')
     return artefactos
 
-def graficar_ranking_global(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str, dpi=300):
+
+def graficar_analisis_estadistico(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str, dpi=300):
     """
-    Calcula y visualiza el ranking acumulado de los métodos basado en métricas clave.
+    Realiza el test de Friedman y el post-hoc de Nemenyi, generando un Heatmap de significancia
+    y un gráfico de barras de rangos promedio con la Diferencia Crítica (CD).
     """
     if df_runs.empty: return
     
+    import scipy.stats as ss
+    try:
+        import scikit_posthocs as sp
+    except ImportError:
+        print("      • ⚠️  'scikit-posthocs' no está instalado. Omitiendo análisis de Nemenyi.")
+        return
+
+    # Crear subdirectorio base para estadísticos
+    dir_stats = os.path.join(dir_salida, 'estadistica')
+    os.makedirs(dir_stats, exist_ok=True)
+    
     df_plot = df_runs.copy()
-    df_plot['method'] = df_plot['algorithm'] + '-' + df_plot['init']
+    df_plot['config'] = df_plot['algorithm'] + '-' + df_plot['init']
     
-    # Agrupar por media
-    resumen = df_plot.groupby('method')[['Range', 'SumMin', 'MinSum']].mean().reset_index()
+    # 1. Preparar datos
+    metricas = ['Range', 'SumMin', 'MinSum', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'Hypervolume']
+    disponibles = [m for m in metricas if m in df_plot.columns]
+    higher_is_better = ['Hypervolume', 'Range', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance']
     
-    for m in ['Range', 'SumMin', 'MinSum']:
-        asce = True if m in ['SumMin', 'MinSum'] else False
-        resumen[f'{m}_rank'] = resumen[m].rank(ascending=asce)
+    if not disponibles:
+        return
+
+    dimensiones = [
+        ('config', 'Método (Algoritmo + Inicialización)', 'method'),
+        ('algorithm', 'Algoritmo', 'algorithm'),
+        ('init', 'Inicialización', 'init')
+    ]
+
+    for col_group, titulo, sufijo_archivo in dimensiones:
+        # Crear subdirectorio específico
+        dir_dim = os.path.join(dir_stats, sufijo_archivo)
+        os.makedirs(dir_dim, exist_ok=True)
+
+        # Media de cada configuración por métrica
+        resumen = df_plot.groupby(col_group)[disponibles].mean().reset_index()
         
-    resumen['Puntuación Total'] = resumen[[c for c in resumen.columns if '_rank' in c]].sum(axis=1)
-    resumen = resumen.sort_values('Puntuación Total')
-    
-    plt.figure(figsize=(12, 6))
-    sns.barplot(data=resumen, x='method', y='Puntuación Total', palette='viridis', hue='method', legend=False)
-    plt.xticks(rotation=35, ha='right')
-    plt.title('Ranking Global por Suma de Posiciones (Métricas de Convergencia)')
-    plt.tight_layout()
-    
-    ruta = os.path.join(dir_salida, f'ranking_global_{etiqueta_modo}.png')
-    plt.savefig(ruta, dpi=dpi)
-    imprimir_grafico_guardado(ruta, "Gráfico de Ranking Global")
-    plt.close()
+        # Matriz de rangos
+        rank_matrix = []
+        for m in disponibles:
+            asce = False if any(k in m for k in higher_is_better) else True
+            rank_matrix.append(resumen[m].rank(ascending=asce).values)
+        
+        rank_matrix = np.array(rank_matrix) # Shape: (metrics, configs)
+        
+        # 2. Test de Friedman
+        stat, p_value = ss.friedmanchisquare(*rank_matrix.T)
+        
+        imprimir_subseccion(f"TEST DE FRIEDMAN ({titulo})", icono="📊️")
+        print(f"      Estadístico: {stat:.4f}")
+        print(f"      P-valor: {p_value:.4e}")
+        print(f"      Significativo (p < 0.05): {'Sí' if p_value < 0.05 else 'No'}\n")
+        
+        if p_value >= 0.05:
+            print(f"      • ⚠️  Test de Friedman no significativo para {titulo}. Omitiendo post-hoc.")
+            continue
+            
+        # 3. Post-hoc de Nemenyi
+        p_values_nemenyi = sp.posthoc_nemenyi_friedman(rank_matrix)
+        p_values_nemenyi.columns = resumen[col_group]
+        p_values_nemenyi.index = resumen[col_group]
+        
+        # 4. Heatmap de Significancia (Nemenyi) - Triangular
+        plt.figure(figsize=(14, 12))
+        mask = np.triu(np.ones_like(p_values_nemenyi, dtype=bool))
+        
+        # Definimos un mapa de colores discreto: 
+        # Verde Intenso (<0.01), Verde Claro (0.01-0.05), Rojo/Salmón (>=0.05)
+        cmap = ListedColormap(['#228B22', '#90EE90', '#FFC1C1'])
+        norm = BoundaryNorm([0, 0.01, 0.05, 1.0], cmap.N)
+        
+        # Crear el heatmap con la máscara
+        ax = sns.heatmap(p_values_nemenyi, mask=mask, annot=False, 
+                         cmap=cmap, norm=norm, linewidths=0.5, linecolor='white',
+                         cbar_kws={"ticks": [0.005, 0.03, 0.5], "label": "Nivel de Significancia"})
+        ax.grid(False)
+        
+        # Ajustar etiquetas de la barra de color
+        cbar = ax.collections[0].colorbar
+        cbar.set_ticklabels(['p < 0.01', '0.01 ≤ p < 0.05', 'NS (p ≥ 0.05)'])
+        
+        plt.xticks(rotation=45, ha='right')
+        plt.yticks(rotation=0)
+        plt.suptitle(f'Diagrama de Significancia Nemenyi - {titulo} (Triangular)', fontsize=16, y=0.98)
+        plt.title('Comparaciones por pares (p-valores)', fontsize=12, pad=10)
+        plt.subplots_adjust(top=0.90, bottom=0.2)
+        
+        nombre_heatmap = f'heatmap_nemenyi_{etiqueta_modo}.png' if col_group == 'config' else f'heatmap_nemenyi_{sufijo_archivo}_{etiqueta_modo}.png'
+        ruta_heatmap = os.path.join(dir_dim, nombre_heatmap)
+        
+        plt.savefig(ruta_heatmap, dpi=dpi, bbox_inches='tight')
+        imprimir_grafico_guardado(ruta_heatmap, f"Heatmap de Significancia Nemenyi ({titulo})")
+        plt.close()
+        
+        # 5. Gráfico de Rangos Promedio
+        avg_ranks = np.mean(rank_matrix, axis=0)
+        resumen['AvgRank'] = avg_ranks
+        resumen = resumen.sort_values('AvgRank')
+        
+        plt.figure(figsize=(12, 6))
+        sns.barplot(data=resumen, x=col_group, y='AvgRank', palette='viridis', hue=col_group, legend=False)
+        plt.xticks(rotation=45, ha='right')
+        plt.title(f'Ranking Promedio - {titulo} (Menor es Mejor)')
+        plt.ylabel('Rango Promedio')
+        plt.xlabel('Configuración')
+        plt.tight_layout()
+        
+        nombre_barras = f'rangos_promedio_{etiqueta_modo}.png' if col_group == 'config' else f'rangos_promedio_{sufijo_archivo}_{etiqueta_modo}.png'
+        ruta_barras = os.path.join(dir_dim, nombre_barras)
+        
+        plt.savefig(ruta_barras, dpi=dpi)
+        imprimir_grafico_guardado(ruta_barras, f"Gráfico de Rangos Promedio ({titulo})")
+        plt.close()

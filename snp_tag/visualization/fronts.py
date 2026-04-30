@@ -13,16 +13,60 @@ import pandas as pd
 from typing import Optional, Dict, List, Tuple
 from pandas.plotting import parallel_coordinates
 from matplotlib.lines import Line2D
+import statsmodels.api as sm
 import warnings
+
+from snp_tag.engine.metrics import decodificar_objetivos_reales
+
+
+def _normalizar_columnas_frentes(df_base: pd.DataFrame) -> pd.DataFrame:
+    """Normaliza alias de columnas de frentes al esquema canónico actual."""
+    if df_base is None or df_base.empty:
+        return df_base
+
+    df = df_base.copy()
+    alias_a_canonico = {
+        'f2_neg_tolerance': 'f2_transformed_tolerance',
+        'f3_neg_hamming_avg': 'f3_transformed_hamming_avg',
+    }
+    for alias, canonica in alias_a_canonico.items():
+        if canonica not in df.columns and alias in df.columns:
+            df.rename(columns={alias: canonica}, inplace=True)
+    return df
+
+
+def _anexar_objetivos_reales(df_base: pd.DataFrame, modo_transformacion_objetivos: str = 'neg') -> pd.DataFrame:
+    """Añade columnas en escala física para visualización consistente entre modos."""
+    df_base = _normalizar_columnas_frentes(df_base)
+    requeridas = ['f1_compactness', 'f2_transformed_tolerance', 'f3_transformed_hamming_avg', 'f4_balance_var']
+    faltantes = [c for c in requeridas if c not in df_base.columns]
+    if faltantes:
+        raise ValueError(f"Faltan columnas transformadas para graficar: {faltantes}")
+
+    objetivos_reales = decodificar_objetivos_reales(
+        df_base[requeridas].to_numpy(dtype=float),
+        modo_transformacion_objetivos=modo_transformacion_objetivos,
+    )
+
+    df = df_base.copy()
+    df['Compacidad'] = objetivos_reales['compacidad']
+    df['Tolerancia'] = objetivos_reales['tolerancia_real']
+    df['Hamming'] = objetivos_reales['hamming_prom_real']
+    df['Balance'] = objetivos_reales['balance_var']
+    df['min_cobertura'] = objetivos_reales['min_cobertura']
+    return df[df['min_cobertura'] >= 1.0].copy()
 
 def graficar_frentes_pareto(df_datos: pd.DataFrame, nombre_algoritmo: str,
                             nombre_init: Optional[str] = None,
                             carpetas: Optional[Dict] = None,
                             etiqueta_modo: Optional[str] = None,
                             dpi: int = 300,
-                            emitir_log: bool = True) -> List[Tuple[str, str]]:
+                            emitir_log: bool = True,
+                            limites_ejes: Optional[Dict[str, Tuple[float, float]]] = None,
+                            modo_transformacion_objetivos: str = 'neg') -> List[Tuple[str, str]]:
     """
     Representa el frente de Pareto mediante cuatro proyecciones 2D entre objetivos.
+    Permite estandarizar los límites de los ejes si se proporciona 'limites_ejes'.
     """
     df_algo = df_datos[df_datos['algorithm'].str.upper() == nombre_algoritmo.upper()].copy()
     if df_algo.empty:
@@ -30,18 +74,21 @@ def graficar_frentes_pareto(df_datos: pd.DataFrame, nombre_algoritmo: str,
 
     artefactos = []
 
-    # Renombrar para claridad interna
-    df_algo['Compacidad'] = df_algo['f1_compactness']
-    df_algo['Tolerancia'] = -df_algo['f2_neg_tolerance']
-    df_algo['Hamming'] = -df_algo['f3_neg_hamming_avg']
-    df_algo['Balance'] = df_algo['f4_balance_var']
+    # Decodificar objetivos a escala real
+    df_algo = _anexar_objetivos_reales(
+        df_algo,
+        modo_transformacion_objetivos=modo_transformacion_objetivos,
+    )
 
     init_col = 'init' if 'init' in df_algo.columns else 'init_type'
     unidades_init = [nombre_init] if nombre_init else sorted(df_algo[init_col].unique())
 
     # Paleta de colores consistente
     colores_init = {
-        'random': '#ff7f0e', 'greedy_hybrid': '#1f77b4', 'greedy_pure': '#2ca02c'
+        'random_sparse': '#ff7f0e',
+        'random_dense': '#9467bd',
+        'greedy_hybrid': '#1f77b4',
+        'greedy_pure': '#2ca02c',
     }
 
     etiquetas_ejes = {
@@ -69,12 +116,26 @@ def graficar_frentes_pareto(df_datos: pd.DataFrame, nombre_algoritmo: str,
         for ax, x_col, y_col, titulo in proyecciones:
             sns.scatterplot(data=df, x=x_col, y=y_col, ax=ax, s=60, alpha=0.8, color=color, edgecolor='w')
             
-            # Línea de tendencia (Mediana móvil)
+            # Línea de tendencia suavizada (LOWESS - Locally Weighted Scatterplot Smoothing)
             datos_ord = df[[x_col, y_col]].sort_values(by=x_col).dropna()
-            if len(datos_ord) > 4:
-                ventana = max(5, int(0.1 * len(datos_ord)))
-                y_mediana = datos_ord[y_col].rolling(window=ventana, center=True, min_periods=1).median()
-                ax.plot(datos_ord[x_col], y_mediana, color='red', linewidth=2, alpha=0.9)
+            # Umbral mínimo de puntos y varianza para evitar errores numéricos
+            if len(datos_ord) > 12 and datos_ord[x_col].std() > 1e-5:
+                try:
+                    with warnings.catch_warnings():
+                        # Silenciamos advertencias internas de statsmodels por divisiones por cero en datasets pequeños
+                        warnings.filterwarnings("ignore", category=RuntimeWarning, message=".*divide.*")
+                        z = sm.nonparametric.lowess(datos_ord[y_col], datos_ord[x_col], frac=0.3)
+                    ax.plot(z[:, 0], z[:, 1], color='#e41a1c', linewidth=2.5, alpha=0.8, zorder=5)
+                except Exception:
+                    # Si falla el suavizado estadístico, simplemente no dibujamos la línea
+                    pass
+
+            # Aplicar límites estandarizados si están disponibles
+            if limites_ejes:
+                if x_col in limites_ejes:
+                    ax.set_xlim(limites_ejes[x_col])
+                if y_col in limites_ejes:
+                    ax.set_ylim(limites_ejes[y_col])
 
             ax.set_title(titulo, fontsize=13)
             ax.set_xlabel(etiquetas_ejes[x_col])
@@ -94,44 +155,57 @@ def graficar_frentes_pareto(df_datos: pd.DataFrame, nombre_algoritmo: str,
     return artefactos
 
 def graficar_correlacion_objetivos_pareto(df_total: pd.DataFrame, carpetas: Dict, etiqueta_modo: str,
-                                          dpi: int = 300, emitir_log: bool = True) -> List[Tuple[str, str]]:
+                                          dpi: int = 300, emitir_log: bool = True,
+                                          modo_transformacion_objetivos: str = 'neg') -> List[Tuple[str, str]]:
     """Genera un heatmap de la correlación de objetivos en los frentes de Pareto (Réplica Legacy)."""
     if df_total.empty:
         return []
     
+    # Preparar datos en escala real para legibilidad consistente
+    df_corr = _anexar_objetivos_reales(
+        df_total,
+        modo_transformacion_objetivos=modo_transformacion_objetivos,
+    )[['Compacidad', 'Tolerancia', 'Hamming', 'Balance']].copy()
+    
     # Calcular correlación entre objetivos. Se suprimen advertencias en caso de objetivos constantes.
     with np.errstate(divide='ignore', invalid='ignore'):
-        corr_obj = df_total[['f1_compactness', 'f2_neg_tolerance', 'f3_neg_hamming_avg', 'f4_balance_var']].corr()
+        corr_obj = df_corr.corr()
     
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(corr_obj, annot=True, fmt='.2f', cmap='vlag', center=0)
-    plt.title('Correlación entre objetivos en frentes finales')
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(corr_obj, annot=True, fmt='.2f', cmap='vlag', center=0, square=True,
+                vmin=-1, vmax=1,
+                linewidths=.5, cbar_kws={"shrink": .8})
+    plt.title('Correlación entre objetivos (Valores Reales)', fontsize=15, pad=20)
     plt.tight_layout()
     
-    dir_otros = carpetas.get('frentes_others', carpetas.get('frentes'))
+    dir_otros = carpetas.get('frentes_otros', carpetas.get('frentes'))
     ruta = os.path.join(dir_otros, f'correlacion_objetivos_pareto_{etiqueta_modo}.png')
     plt.savefig(ruta, dpi=dpi, bbox_inches='tight')
     if emitir_log:
         from snp_tag.utils.terminal import imprimir_grafico_guardado
-        imprimir_grafico_guardado(ruta, "Correlación objetivos Pareto")
+        imprimir_grafico_guardado(ruta, "Correlación objetivos Pareto (Valores Reales)")
     plt.close()
-    return [(ruta, "Correlación objetivos Pareto")]
+    return [(ruta, "Correlación objetivos Pareto (Valores Reales)")]
 
 def graficar_coordenadas_paralelas_pareto(df_total: pd.DataFrame, seed: int, carpetas: Dict, etiqueta_modo: str,
-                                          dpi: int = 300, emitir_log: bool = True) -> List[Tuple[str, str]]:
+                                          dpi: int = 300, emitir_log: bool = True,
+                                          modo_transformacion_objetivos: str = 'neg') -> List[Tuple[str, str]]:
     """Representa frentes en coordenadas paralelas normalizadas, por cada (algo, init) (Réplica Legacy)."""
     if df_total.empty:
         return []
     
     warnings.filterwarnings('ignore')
-    df_par = df_total.copy()
+    df_par = _anexar_objetivos_reales(
+        df_total,
+        modo_transformacion_objetivos=modo_transformacion_objetivos,
+    )
     init_col = 'init'
     algo_col = 'algorithm'
 
-    df_par['Compacidad ($f_1$ min)'] = df_par['f1_compactness']
-    df_par['Tolerancia Real ($f_2$ max)'] = -df_par['f2_neg_tolerance']
-    df_par['Hamming Real ($f_3$ max)'] = -df_par['f3_neg_hamming_avg']
-    df_par['Varianza ($f_4$ min)'] = df_par['f4_balance_var']
+    df_par['Compacidad ($f_1$ min)'] = df_par['Compacidad']
+    df_par['Tolerancia Real ($f_2$ max)'] = df_par['Tolerancia']
+    df_par['Hamming Real ($f_3$ max)'] = df_par['Hamming']
+    df_par['Varianza ($f_4$ min)'] = df_par['Balance']
 
     display_cols = [
         'Compacidad ($f_1$ min)',
@@ -149,8 +223,18 @@ def graficar_coordenadas_paralelas_pareto(df_total: pd.DataFrame, seed: int, car
         else:
             df_norm[c] = 0.0
 
-    style_map = {'random': '--', 'greedy_hybrid': '-', 'greedy_pure': '-.'}
-    color_map = {'random': '#ff7f0e', 'greedy_hybrid': '#1f77b4', 'greedy_pure': '#2ca02c'}
+    style_map = {
+        'random_sparse': '--',
+        'random_dense': ':',
+        'greedy_hybrid': '-',
+        'greedy_pure': '-.',
+    }
+    color_map = {
+        'random_sparse': '#ff7f0e',
+        'random_dense': '#9467bd',
+        'greedy_hybrid': '#1f77b4',
+        'greedy_pure': '#2ca02c',
+    }
 
     algorithms = sorted(df_norm[algo_col].dropna().astype(str).unique().tolist())
     init_values = sorted(df_norm[init_col].dropna().astype(str).unique().tolist())
@@ -195,4 +279,81 @@ def graficar_coordenadas_paralelas_pareto(df_total: pd.DataFrame, seed: int, car
             
             plt.close(fig)
 
+    return artefactos
+
+def graficar_frentes_pareto_agregados(df_datos: pd.DataFrame, titulo_gen: str, 
+                                     nombre_archivo: str,
+                                     hue_col: str = 'init',
+                                     carpetas: Optional[Dict] = None,
+                                     dpi: int = 300,
+                                     emitir_log: bool = True,
+                                     limites_ejes: Optional[Dict[str, Tuple[float, float]]] = None,
+                                     modo_transformacion_objetivos: str = 'neg') -> List[Tuple[str, str]]:
+    """
+    Genera un único gráfico de Pareto agregado (2x2) combinando múltiples configuraciones.
+    Diferencia las categorías mediante colores (hue).
+    """
+    if df_datos.empty:
+        return []
+
+    # Preparar datos para el gráfico
+    df = _anexar_objetivos_reales(
+        df_datos,
+        modo_transformacion_objetivos=modo_transformacion_objetivos,
+    )
+
+    etiquetas_ejes = {
+        'Compacidad': 'Compacidad (Nº Tag SNPs)',
+        'Tolerancia': 'Tolerancia',
+        'Hamming': 'Distancia Hamming Promedio',
+        'Balance': 'Varianza (Balance)'
+    }
+
+    fig, axes = plt.subplots(2, 2, figsize=(16, 14))
+    fig.suptitle(titulo_gen, fontsize=18, weight='bold')
+
+    proyecciones = [
+        (axes[0, 0], 'Compacidad', 'Tolerancia', '(a) Compacidad vs. Tolerancia'),
+        (axes[0, 1], 'Tolerancia', 'Hamming', '(b) Tolerancia vs. Hamming'),
+        (axes[1, 0], 'Hamming', 'Balance', '(c) Hamming vs. Balance'),
+        (axes[1, 1], 'Compacidad', 'Balance', '(d) Compacidad vs. Balance')
+    ]
+
+    # Determinar paleta según el número de categorías
+    n_colors = df[hue_col].nunique()
+    palette = 'tab10' if n_colors <= 10 else 'husl'
+
+    for ax, x_col, y_col, titulo in proyecciones:
+        sns.scatterplot(data=df, x=x_col, y=y_col, ax=ax, hue=hue_col, 
+                        s=50, alpha=0.7, palette=palette, edgecolor='w')
+        
+        # Aplicar límites estandarizados si están disponibles
+        if limites_ejes:
+            if x_col in limites_ejes: ax.set_xlim(limites_ejes[x_col])
+            if y_col in limites_ejes: ax.set_ylim(limites_ejes[y_col])
+
+        ax.set_title(titulo, fontsize=14, weight='semibold')
+        ax.set_xlabel(etiquetas_ejes[x_col], fontsize=12)
+        ax.set_ylabel(etiquetas_ejes[y_col], fontsize=12)
+        ax.get_legend().remove() # Quitamos leyenda individual para poner una global
+
+    # Añadir leyenda única fuera de los subplots
+    handles, labels = axes[0, 0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc='center right', title=hue_col.capitalize(), 
+               bbox_to_anchor=(1.12, 0.5), fontsize=11, title_fontsize=13)
+
+    plt.tight_layout(rect=[0, 0, 0.98, 0.95])
+    
+    artefactos = []
+    if carpetas:
+        dir_frentes = carpetas.get('frentes_pareto', carpetas.get('frentes'))
+        ruta = os.path.join(dir_frentes, nombre_archivo)
+        fig.savefig(ruta, dpi=dpi, bbox_inches='tight')
+        artefactos.append((ruta, f"Frente Agregado: {titulo_gen}"))
+        
+        if emitir_log:
+            from snp_tag.utils.terminal import imprimir_grafico_guardado
+            imprimir_grafico_guardado(ruta, f"Frente Agregado: {titulo_gen}")
+            
+    plt.close(fig)
     return artefactos

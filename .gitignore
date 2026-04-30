@@ -46,11 +46,14 @@ otras/
 README_former.md
 
 # --- Disable for AI scope ---
+
 snp_tag/results/
 snp_tag/input/
 ejecuciones_guardadas/
 personal/
+brain/
 .agents/
 .github/
+scripts/
 
 # --- Otros ---

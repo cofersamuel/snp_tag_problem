@@ -40,7 +40,7 @@ def crear_arbol_directorios_dataset(cfg: ConfiguracionExperimento, tipo_dataset:
         'frentes': frentes_root,
         'frentes_pareto': frentes_root / 'frentes_pareto',
         'frentes_paralelas': frentes_root / 'coordenadas_paralelas',
-        'frentes_others': frentes_root / 'others',
+        'frentes_otros': frentes_root / 'otros',
         'metricas_convergencia': comparativa_root / '2_metricas_convergencia',
         'sintesis': sintesis_root,
         'sintesis_boxplots': sintesis_root / '0_boxplots',

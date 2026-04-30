@@ -9,7 +9,7 @@ import numpy as np
 from pymoo.core.sampling import Sampling
 from snp_tag.core.problem import calcular_distinguibilidad_snps
 
-def construir_solucion_greedy(H, pair_idx, cobertura_objetivo=1, indices_ordenados=None):
+def construir_solucion_greedy(H, pair_idx, indices_ordenados=None):
     """
     Construye una solución mediante una aproximación voraz.
     """
@@ -21,19 +21,19 @@ def construir_solucion_greedy(H, pair_idx, cobertura_objetivo=1, indices_ordenad
         indices_ordenados = np.argsort(-puntuacion)
         
     seleccionados = np.zeros(n_snps, dtype=bool)
-    cubiertos = np.zeros(n_pares, dtype=np.int32)
+    cubiertos = np.zeros(n_pares, dtype=bool)
     
     a = H[pair_idx[:, 0], :]
     b = H[pair_idx[:, 1], :]
     discrepancia = (a != b)
     
     for s in indices_ordenados:
-        if np.all(cubiertos >= cobertura_objetivo):
+        if np.all(cubiertos):
             break
-        contribucion = discrepancia[:, s].astype(np.int32)
-        if np.any((cubiertos < cobertura_objetivo) & (contribucion > 0)):
+        contribucion = discrepancia[:, s]
+        if np.any((~cubiertos) & contribucion):
             seleccionados[s] = True
-            cubiertos += contribucion
+            cubiertos = cubiertos | contribucion
             
     if not seleccionados.any():
         seleccionados[indices_ordenados[0]] = True
@@ -80,12 +80,12 @@ class MuestreoAleatorioDisperso(Sampling):
 
 class MuestreoGreedyHibrido(Sampling):
     """Combina construcción greedy con relleno aleatorio disperso."""
-    def __init__(self, H, pair_idx, cobertura_max=5, ratio_aleatorio=0.2, semilla=42):
+    def __init__(self, H, pair_idx, ratio_greedy=0.5, prob_aleatoria=0.5, semilla=42):
         super().__init__()
         self.H = H
         self.pair_idx = pair_idx
-        self.cobertura_max = cobertura_max
-        self.ratio_aleatorio = ratio_aleatorio
+        self.ratio_greedy = float(ratio_greedy)
+        self.prob_aleatoria = float(prob_aleatoria)
         self.rng = np.random.default_rng(semilla)
         puntuacion = calcular_distinguibilidad_snps(H, pair_idx)
         self.indices_ordenados = np.argsort(-puntuacion)
@@ -93,25 +93,24 @@ class MuestreoGreedyHibrido(Sampling):
 
     def _do(self, problem, n_samples, **kwargs):
         X = np.zeros((n_samples, problem.n_var), dtype=bool)
-        n_aleatorio = int(n_samples * self.ratio_aleatorio)
-        n_greedy = n_samples - n_aleatorio
-        coberturas = np.linspace(1, self.cobertura_max, n_greedy).astype(int) if n_greedy > 0 else []
+        n_greedy = int(round(n_samples * self.ratio_greedy))
+        n_greedy = min(max(n_greedy, 0), n_samples)
+        n_aleatorio = n_samples - n_greedy
         for i in range(n_greedy):
             orden = _ordenar_con_desempate_aleatorio(self.grupos, self.rng)
-            X[i] = construir_solucion_greedy(self.H, self.pair_idx, max(1, int(coberturas[i])), orden)
+            X[i] = construir_solucion_greedy(self.H, self.pair_idx, orden)
         for i in range(n_greedy, n_samples):
-            fila = self.rng.random(problem.n_var) < 0.05
+            fila = self.rng.random(problem.n_var) < self.prob_aleatoria
             if not fila.any(): fila[self.rng.integers(0, problem.n_var)] = True
             X[i] = fila
         return X
 
 class MuestreoGreedyPuro(Sampling):
     """Inicialización basada íntegramente en la heurística voraz."""
-    def __init__(self, H, pair_idx, cobertura_max=5, semilla=42):
+    def __init__(self, H, pair_idx, semilla=42):
         super().__init__()
         self.H = H
         self.pair_idx = pair_idx
-        self.cobertura_max = cobertura_max
         self.rng = np.random.default_rng(semilla)
         puntuacion = calcular_distinguibilidad_snps(H, pair_idx)
         self.indices_ordenados = np.argsort(-puntuacion)
@@ -119,8 +118,7 @@ class MuestreoGreedyPuro(Sampling):
 
     def _do(self, problem, n_samples, **kwargs):
         X = np.zeros((n_samples, problem.n_var), dtype=bool)
-        coberturas = np.linspace(1, self.cobertura_max, n_samples).astype(int)
         for i in range(n_samples):
             orden = _ordenar_con_desempate_aleatorio(self.grupos, self.rng)
-            X[i] = construir_solucion_greedy(self.H, self.pair_idx, max(1, int(coberturas[i])), orden)
+            X[i] = construir_solucion_greedy(self.H, self.pair_idx, orden)
         return X

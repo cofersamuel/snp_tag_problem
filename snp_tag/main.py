@@ -32,7 +32,13 @@ from snp_tag.data.loader import cargar_dataset_objetivo, exportar_dataset
 from snp_tag.data.diagnostics import ejecutar_diagnostico_ld, analizar_similitud_genotipica, calcular_ld_completo, detectar_bloques_ld
 from snp_tag.core.algorithm import construir_direcciones_referencia
 from snp_tag.engine.runner import ejecutar_suite_completa
-from snp_tag.engine.metrics import evaluar_metricas_finales, construir_metricas_generacionales
+from snp_tag.engine.metrics import (
+    evaluar_metricas_finales,
+    construir_metricas_generacionales,
+    decodificar_objetivos_reales,
+    filtrar_soluciones_factibles,
+    obtener_referencias_estaticas_dataset,
+)
 from snp_tag.visualization.dataset import (
     graficar_mapa_calor_haplotipos, graficar_bloques_ld, 
     graficar_histograma_hamming, graficar_variabilidad_snps,
@@ -42,42 +48,98 @@ from snp_tag.visualization.dataset import (
 from snp_tag.visualization.fronts import (
     graficar_frentes_pareto, 
     graficar_correlacion_objetivos_pareto,
-    graficar_coordenadas_paralelas_pareto
+    graficar_coordenadas_paralelas_pareto,
+    graficar_frentes_pareto_agregados
 )
 from snp_tag.visualization.convergence import graficar_evolucion_generacional
 from snp_tag.visualization.reporting import (
-    graficar_boxplot_metricas, graficar_ranking_global,
+    graficar_boxplot_metricas,
     graficar_rendimiento_tiempo, graficar_comparativa_objetivos,
-    graficar_violin_metricas, graficar_media_std_metricas
+    graficar_violin_metricas, graficar_media_std_metricas,
+    graficar_analisis_estadistico
 )
 
 
-def _tarea_plot_frentes(tipo_tarea, df_fronts_total, carpetas, etiqueta_modo, dpi, semilla):
+def _tarea_plot_frentes(
+    tipo_tarea,
+    df_fronts_total,
+    carpetas,
+    etiqueta_modo,
+    dpi,
+    semilla,
+    limites_ejes=None,
+    modo_transformacion_objetivos='neg',
+):
     """Dispatcher picklable para paralelizar tareas de graficado de frentes."""
     salida = {'tarea': tipo_tarea, 'artefactos': []}
     if tipo_tarea == 'correlation':
         salida['artefactos'] = graficar_correlacion_objetivos_pareto(
-            df_fronts_total, carpetas, etiqueta_modo, dpi=dpi, emitir_log=False
+            df_fronts_total,
+            carpetas,
+            etiqueta_modo,
+            dpi=dpi,
+            emitir_log=False,
+            modo_transformacion_objetivos=modo_transformacion_objetivos,
         )
     elif tipo_tarea == 'parallel':
         salida['artefactos'] = graficar_coordenadas_paralelas_pareto(
-            df_fronts_total, semilla, carpetas, etiqueta_modo, dpi=dpi, emitir_log=False
+            df_fronts_total,
+            semilla,
+            carpetas,
+            etiqueta_modo,
+            dpi=dpi,
+            emitir_log=False,
+            modo_transformacion_objetivos=modo_transformacion_objetivos,
         )
     elif tipo_tarea == 'all_fronts':
         artefactos = []
-        for algo in ['NSGA3', 'MOEAD', 'NSGA2', 'SPEA2']:
-            df_algo = df_fronts_total[df_fronts_total['algorithm'] == algo]
+        # 1. Gráficos individuales por (algo, init) y agregados por algoritmo
+        algoritmos_preferidos = ['NSGA3', 'MOEAD_TCHE', 'MOEAD_PBI', 'MOEAD_WS', 'NSGA2', 'SPEA2']
+        algoritmos_presentes = sorted(df_fronts_total['algorithm'].dropna().unique().tolist())
+        algoritmos_ordenados = [a for a in algoritmos_preferidos if a in algoritmos_presentes]
+        algoritmos_ordenados.extend([a for a in algoritmos_presentes if a not in algoritmos_ordenados])
+
+        for algo in algoritmos_ordenados:
+            df_algo = df_fronts_total[df_fronts_total['algorithm'] == algo].copy()
             if not df_algo.empty:
+                # Mantener individuales
                 artefactos.extend(
                     graficar_frentes_pareto(
-                        df_algo,
-                        algo,
-                        carpetas=carpetas,
-                        etiqueta_modo=etiqueta_modo,
+                        df_algo, algo, carpetas=carpetas, etiqueta_modo=etiqueta_modo,
                         dpi=dpi,
                         emitir_log=False,
+                        limites_ejes=limites_ejes,
+                        modo_transformacion_objetivos=modo_transformacion_objetivos,
                     )
                 )
+                # NUEVO: Gráfico agregado por algoritmo (todas sus inits juntas)
+                nombre_agg = f'frentes_pareto_agregados_{algo.lower()}_{etiqueta_modo}.png'
+                artefactos.extend(
+                    graficar_frentes_pareto_agregados(
+                        df_algo, f"Frentes de Pareto Agregados: {algo}", 
+                        nombre_agg, hue_col='init', carpetas=carpetas, 
+                        dpi=dpi,
+                        emitir_log=False,
+                        limites_ejes=limites_ejes,
+                        modo_transformacion_objetivos=modo_transformacion_objetivos,
+                    )
+                )
+        
+        # 2. NUEVO: Gráfico global de todos los frentes
+        if not df_fronts_total.empty:
+            df_global = df_fronts_total.copy()
+            df_global['Configuración'] = df_global['algorithm'] + " (" + df_global['init'] + ")"
+            nombre_global = f'frentes_pareto_global_{etiqueta_modo}.png'
+            artefactos.extend(
+                graficar_frentes_pareto_agregados(
+                    df_global, "Comparativa Global de Frentes de Pareto", 
+                    nombre_global, hue_col='Configuración', carpetas=carpetas,
+                    dpi=dpi,
+                    emitir_log=False,
+                    limites_ejes=limites_ejes,
+                    modo_transformacion_objetivos=modo_transformacion_objetivos,
+                )
+            )
         salida['artefactos'] = artefactos
     return salida
 
@@ -102,35 +164,51 @@ def inicializar_configuracion(modo='medium', data_source='hinds2005'):
 
 def informar_configuracion(cfg: ConfiguracionExperimento):
     """Muestra un resumen de la configuración en la terminal."""
-    imprimir_subseccion("CONFIGURACIÓN", icono="⚙")
+    imprimir_subseccion("CONFIGURACIÓN", icono="⚙️")
     print(f"      • Modo={cfg.modo_ejecucion} | POP_SIZE={cfg.tam_poblacion} | N_GEN={cfg.n_generaciones} | "
           f"OFFSPRING={cfg.n_descendencia} | PC={cfg.pc} | PM={cfg.pm:.6f} | N_RUNS={cfg.n_ejecuciones}")
 
 
-def _construir_df_fronts_desde_resultados(resultados):
+def _construir_df_fronts_desde_resultados(resultados, modo_transformacion_objetivos: str = 'neg'):
     """Construye un DataFrame tabular de soluciones de frentes finales para CSV/plots."""
     columnas = [
         'algorithm', 'init', 'run', 'seed',
-        'f1_compactness', 'f2_neg_tolerance', 'f3_neg_hamming_avg', 'f4_balance_var'
+        'f1_compactness',
+        'f2_transformed_tolerance',
+        'f3_transformed_hamming_avg',
+        'f4_balance_var',
     ]
     filas = []
     for rr in resultados:
         if rr.F_final is None or len(rr.F_final) == 0:
             continue
-        for f in rr.F_final:
+        F_factibles = filtrar_soluciones_factibles(
+            rr.F_final,
+            modo_transformacion_objetivos=modo_transformacion_objetivos,
+        )
+        for f in F_factibles:
             filas.append({
                 'algorithm': rr.algoritmo,
                 'init': rr.inicializacion,
                 'run': rr.replica,
                 'seed': rr.semilla,
                 'f1_compactness': f[0],
-                'f2_neg_tolerance': f[1],
-                'f3_neg_hamming_avg': f[2],
+                'f2_transformed_tolerance': f[1],
+                'f3_transformed_hamming_avg': f[2],
                 'f4_balance_var': f[3],
             })
     if not filas:
         return pd.DataFrame(columns=columnas)
-    return pd.DataFrame(filas, columns=columnas)
+    df = pd.DataFrame(filas, columns=columnas)
+    # Elimina duplicados exactos (puntos repetidos en el frente final)
+    subset = [
+        'algorithm', 'init', 'run', 'seed',
+        'f1_compactness',
+        'f2_transformed_tolerance',
+        'f3_transformed_hamming_avg',
+        'f4_balance_var',
+    ]
+    return df.drop_duplicates(subset=subset, keep='first').reset_index(drop=True)
 
 
 def _inferir_modo_desde_nombre_csv(ruta_csv: Path, prefijo: str):
@@ -141,6 +219,36 @@ def _inferir_modo_desde_nombre_csv(ruta_csv: Path, prefijo: str):
     return nombre[len(prefijo):-4]
 
 
+def _normalizar_columnas_frentes_csv(df_fronts: pd.DataFrame):
+        """Normaliza nombres de columnas de frentes para compatibilidad en report-only.
+
+        Esquema canónico actual:
+            - f2_transformed_tolerance
+            - f3_transformed_hamming_avg
+
+        Alias compatibles (reportes antiguos):
+            - f2_neg_tolerance
+            - f3_neg_hamming_avg
+        """
+        if df_fronts is None or df_fronts.empty:
+                return df_fronts, []
+
+        df_norm = df_fronts.copy()
+        columnas_renombradas = []
+
+        alias_a_canonico = {
+                'f2_neg_tolerance': 'f2_transformed_tolerance',
+                'f3_neg_hamming_avg': 'f3_transformed_hamming_avg',
+        }
+
+        for alias, canonica in alias_a_canonico.items():
+                if canonica not in df_norm.columns and alias in df_norm.columns:
+                        df_norm.rename(columns={alias: canonica}, inplace=True)
+                        columnas_renombradas.append((alias, canonica))
+
+        return df_norm, columnas_renombradas
+
+
 def _seleccionar_mas_reciente(ruta_input: Path, patron: str):
     """Devuelve el CSV más reciente por fecha de modificación."""
     candidatos = [p for p in ruta_input.glob(patron) if p.is_file()]
@@ -149,24 +257,16 @@ def _seleccionar_mas_reciente(ruta_input: Path, patron: str):
     return max(candidatos, key=lambda p: p.stat().st_mtime)
 
 
-def _cargar_dataframes_report_only(ruta_input: Path, csv_detallado_arg: str):
+def _cargar_dataframes_report_only(ruta_input: Path):
     """Carga CSVs desde snp_tag/input para ejecutar sólo reportes/visualización."""
     if not ruta_input.exists() or not ruta_input.is_dir():
         raise FileNotFoundError(f"No existe el directorio de entrada fijo: {ruta_input}")
 
-    if csv_detallado_arg:
-        ruta_detallado = Path(csv_detallado_arg)
-        if not ruta_detallado.is_absolute():
-            ruta_detallado = ruta_input / ruta_detallado
-        ruta_detallado = ruta_detallado.resolve()
-        if not ruta_detallado.exists() or not ruta_detallado.is_file():
-            raise FileNotFoundError(f"CSV detallado no encontrado: {ruta_detallado}")
-    else:
-        ruta_detallado = _seleccionar_mas_reciente(ruta_input, 'resultados_detallados_*.csv')
-        if ruta_detallado is None:
-            raise FileNotFoundError(
-                f"No se encontró ningún 'resultados_detallados_*.csv' en {ruta_input}"
-            )
+    ruta_detallado = _seleccionar_mas_reciente(ruta_input, 'resultados_detallados_*.csv')
+    if ruta_detallado is None:
+        raise FileNotFoundError(
+            f"No se encontró ningún 'resultados_detallados_*.csv' en {ruta_input}"
+        )
 
     print(f"      • CSV detallado seleccionado: {ruta_detallado}")
     df_final = pd.read_csv(ruta_detallado)
@@ -188,7 +288,7 @@ def _cargar_dataframes_report_only(ruta_input: Path, csv_detallado_arg: str):
         print(f"      • CSV histórico seleccionado: {ruta_hist}")
         df_gen = pd.read_csv(ruta_hist)
     else:
-        print("      • ⚠️ No se encontró CSV histórico; se omitirá el bloque de convergencia.")
+        print("      • ⚠️  No se encontró CSV histórico; se omitirá el bloque de convergencia.")
         df_gen = pd.DataFrame()
 
     ruta_fronts = None
@@ -200,11 +300,15 @@ def _cargar_dataframes_report_only(ruta_input: Path, csv_detallado_arg: str):
         ruta_fronts = _seleccionar_mas_reciente(ruta_input, 'frentes_pareto_*.csv')
 
     if ruta_fronts is None:
-        print("      • ⚠️ No hay CSV de frentes; se omitirá Pareto con aviso explícito.")
+        print("      • ⚠️  No hay CSV de frentes; se omitirá Pareto con aviso explícito.")
         df_fronts = pd.DataFrame()
     else:
         print(f"      • CSV frentes seleccionado: {ruta_fronts}")
         df_fronts = pd.read_csv(ruta_fronts)
+        df_fronts, columnas_renombradas = _normalizar_columnas_frentes_csv(df_fronts)
+        if columnas_renombradas:
+            detalle = ', '.join([f"{src}→{dst}" for src, dst in columnas_renombradas])
+            print(f"      • Compatibilidad report-only aplicada en frentes: {detalle}")
 
     return df_final, df_gen, df_fronts, modo_detectado
 
@@ -222,19 +326,49 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
     t0_frentes = time.time()
 
     cols_fronts = {
-        'algorithm', 'init', 'f1_compactness', 'f2_neg_tolerance',
-        'f3_neg_hamming_avg', 'f4_balance_var'
+        'algorithm', 'init', 'f1_compactness', 'f2_transformed_tolerance',
+        'f3_transformed_hamming_avg', 'f4_balance_var'
     }
 
     if df_fronts_total.empty:
-        print("      • ⚠️ Pareto omitido: no hay datos de frentes disponibles (CSV frentes ausente/vacío).")
+        print("      • ⚠️  Pareto omitido: no hay datos de frentes disponibles (CSV frentes ausente/vacío).")
     elif not cols_fronts.issubset(set(df_fronts_total.columns)):
         faltantes = sorted(cols_fronts - set(df_fronts_total.columns))
+        alias_disponibles = []
+        if 'f2_neg_tolerance' in df_fronts_total.columns:
+            alias_disponibles.append('f2_neg_tolerance')
+        if 'f3_neg_hamming_avg' in df_fronts_total.columns:
+            alias_disponibles.append('f3_neg_hamming_avg')
+        mensaje_alias = (
+            f" Alias detectados en CSV: {sorted(alias_disponibles)}."
+            if alias_disponibles else ""
+        )
         print(
-            "      • ⚠️ Pareto omitido: el CSV de frentes no contiene columnas requeridas: "
-            f"{faltantes}"
+            "      • ⚠️  Pareto omitido: el CSV de frentes no contiene columnas requeridas: "
+            f"{faltantes}.{mensaje_alias}"
         )
     else:
+        # Cálculo de límites globales para estandarizar ejes (unificar escala entre algoritmos)
+        limites_ejes = {}
+        objetivos_reales = decodificar_objetivos_reales(
+            df_fronts_total[
+                ['f1_compactness', 'f2_transformed_tolerance', 'f3_transformed_hamming_avg', 'f4_balance_var']
+            ].to_numpy(dtype=float),
+            modo_transformacion_objetivos=cfg.modo_transformacion_objetivos,
+        )
+        mapping_objetivos = {
+            'Compacidad': pd.Series(objetivos_reales['compacidad']),
+            'Tolerancia': pd.Series(objetivos_reales['tolerancia_real']),
+            'Hamming': pd.Series(objetivos_reales['hamming_prom_real']),
+            'Balance': pd.Series(objetivos_reales['balance_var']),
+        }
+        for nombre, serie in mapping_objetivos.items():
+            vmin, vmax = serie.min(), serie.max()
+            if not pd.isna(vmin) and not pd.isna(vmax):
+                rango = vmax - vmin
+                margen = rango * 0.05 if rango > 0 else 0.5
+                limites_ejes[nombre] = (vmin - margen, vmax + margen)
+
         max_workers = calcular_max_workers_paralelo()
         tareas_plot = ['all_fronts', 'correlation', 'parallel']
         with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
@@ -247,6 +381,8 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
                     cfg.modo_ejecucion,
                     cfg.report_plot_dpi,
                     cfg.semilla_maestra,
+                    limites_ejes,
+                    cfg.modo_transformacion_objetivos,
                 )
                 for t in tareas_plot
             ]
@@ -256,17 +392,17 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
                     resultado = future.result()
                     resultados_tareas[resultado.get('tarea')] = resultado.get('artefactos', [])
                 except Exception as e:
-                    print(f"      • ⚠️ Error en graficado paralelo: {e}")
+                    print(f"      • ⚠️  Error en graficado paralelo: {e}")
 
-        print("\n    🔗 Correlación de Objetivos")
+        imprimir_subseccion("Correlación de Objetivos", icono="🔗")
         for ruta, descripcion in resultados_tareas.get('correlation', []):
             imprimir_grafico_guardado(ruta, descripcion)
 
-        print("\n    📈 Coordenadas Paralelas")
+        imprimir_subseccion("Coordenadas Paralelas", icono="📈")
         for ruta, descripcion in resultados_tareas.get('parallel', []):
             imprimir_grafico_guardado(ruta, descripcion)
 
-        print("\n    🎯 Frentes de Pareto")
+        imprimir_subseccion("Frentes de Pareto", icono="🎯")
         for ruta, descripcion in resultados_tareas.get('all_fronts', []):
             imprimir_grafico_guardado(ruta, descripcion)
 
@@ -284,9 +420,9 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
         for ruta, descripcion in sorted(artefactos_conv, key=lambda x: (x[1], x[0])):
             imprimir_grafico_guardado(ruta, descripcion)
     else:
-        print("      • ⚠️ Convergencia omitida: no hay histórico generacional válido.")
+        print("      • ⚠️  Convergencia omitida: no hay histórico generacional válido.")
 
-    imprimir_subseccion("Síntesis Estadística Comparativa", icono="📊")
+    imprimir_subseccion("Síntesis Estadística Comparativa", icono="📊️")
     if not df_final.empty:
         tareas_estadisticas = [
             ('boxplots', cfg.carpetas['sintesis_boxplots']),
@@ -312,27 +448,56 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
                     resultado = future.result()
                     resultados_est[resultado.get('tarea')] = resultado.get('artefactos', [])
                 except Exception as e:
-                    print(f"      • ⚠️ Error en síntesis estadística paralela: {e}")
+                    print(f"      • ⚠️  Error en síntesis estadística paralela: {e}")
 
-        print("\n    📦 \033[1mResumen Global (Boxplots)\033[0m")
+        imprimir_subseccion("Resumen Global (Boxplots)", icono="📦")
         for ruta, descripcion in resultados_est.get('boxplots', []):
             imprimir_grafico_guardado(ruta, descripcion)
 
-        print("\n    🎻 \033[1mDistribuciones Detalladas (Violin Plots)\033[0m")
+        imprimir_subseccion("Distribuciones Detalladas (Violin Plots)", icono="🎻")
         for ruta, descripcion in resultados_est.get('violin', []):
             imprimir_grafico_guardado(ruta, descripcion)
 
-        print("\n    📉 \033[1mAnálisis de Tendencia Central (Media ± Std)\033[0m")
+        imprimir_subseccion("Análisis de Tendencia Central (Media ± Std)", icono="📉")
         for ruta, descripcion in resultados_est.get('mean_std', []):
             imprimir_grafico_guardado(ruta, descripcion)
 
-    imprimir_subseccion("Resumen Estadístico de Métricas", icono="📊")
+    imprimir_subseccion("Top 10 por Métrica", icono="🏆")
+    if not df_final.empty:
+        metricas_top10 = [
+            ('Range', False, '↑'),
+            ('SumMin', True, '↓'),
+            ('MinSum', True, '↓'),
+            ('MaxToleranceRate', False, '↑'),
+            ('AvgToleranceRate', False, '↑'),
+            ('AvgHammingDistance', False, '↑'),
+            ('Hypervolume', False, '↑')
+        ]
+        
+        df_mean = df_final.groupby(['algorithm', 'init']).mean(numeric_only=True).reset_index()
+        df_std = df_final.groupby(['algorithm', 'init']).std(numeric_only=True).reset_index()
+        
+        for metrica, ascending, flecha in metricas_top10:
+            if metrica in df_mean.columns:
+                print(f"    • \033[1m{metrica}\033[0m ({flecha})")
+                df_sorted = df_mean.sort_values(by=metrica, ascending=ascending).head(10)
+                for idx, row in enumerate(df_sorted.itertuples(), 1):
+                    val_mean = getattr(row, metrica)
+                    
+                    std_val = df_std.loc[(df_std['algorithm'] == row.algorithm) & (df_std['init'] == row.init), metrica].values
+                    str_std = f" ± {std_val[0]:.4f}" if len(std_val) > 0 and pd.notna(std_val[0]) else " ± 0.0000"
+                    
+                    print(f"        {idx:2d}. {row.algorithm} ({row.init}): {val_mean:.4f}{str_std}")
+        print()
+
+    imprimir_subseccion("Resumen Estadístico de Métricas", icono="📊️")
     if not df_final.empty:
         graficar_comparativa_objetivos(df_final, cfg.carpetas['rankings'], cfg.modo_ejecucion)
 
-    imprimir_subseccion("Ranking Global por Suma de Posiciones", icono="🏆")
+
+    imprimir_subseccion("Análisis Estadístico Riguroso (Friedman + Nemenyi)", icono="📈")
     if not df_final.empty:
-        graficar_ranking_global(df_final, cfg.carpetas['rankings'], cfg.modo_ejecucion)
+        graficar_analisis_estadistico(df_final, cfg.carpetas['rankings'], cfg.modo_ejecucion)
 
 
 def ejecutar_pipeline_report_only(args):
@@ -346,8 +511,7 @@ def ejecutar_pipeline_report_only(args):
 
     imprimir_subseccion("Carga de CSVs para Report-Only", icono="📥")
     df_final, df_gen, df_fronts_total, modo_detectado = _cargar_dataframes_report_only(
-        ruta_input,
-        args.report_only_csv,
+        ruta_input
     )
 
     if modo_detectado:
@@ -393,8 +557,13 @@ def ejecutar_pipeline(args):
     
     print(f"      • ORIGEN_DATOS={cfg.origen_datos} ({'Hinds et al. 2005 / Perlegen' if cfg.origen_datos == 'hinds2005' else 'Simulación'}) | "
           f"N_SNPS={len(snp_ids)} | N_PATRONES={len(hap_ids)} | PM={cfg.pm:.6f}")
-    print(f"      • FICHERO={fichero_rel} | GREEDY_MAX_COVERAGE={cfg.cobertura_max_greedy}")
-    print(f"      • REPORT_DPI={cfg.report_plot_dpi} | NORMALIZATION_MODE={cfg.modo_normalizacion}")
+    print(f"      • FICHERO={fichero_rel}")
+    modo_eval_display = 'absolute' if cfg.modo_evaluacion == 'absoluta' else cfg.modo_evaluacion
+    print(
+        f"      • REPORT_DPI={cfg.report_plot_dpi} | EVALUATION_MODE={modo_eval_display} | "
+        f"NORMALIZATION_MODE={cfg.modo_normalizacion} | SEED_MODE={cfg.modo_semillas} | "
+        f"OBJ_TRANSFORM={cfg.modo_transformacion_objetivos}"
+    )
     
     # 3. Diagnóstico y EDA
     imprimir_encabezado("DIAGNÓSTICO DE DATOS Y DESEQUILIBRIO (LD)")
@@ -402,7 +571,7 @@ def ejecutar_pipeline(args):
     # Análisis de Similitud (EDA Visual)
     imprimir_subseccion("Visualización de la Estructura de Haplotipos", icono="🧬")
     graficar_mapa_calor_haplotipos(H, cfg.carpetas, cfg.modo_ejecucion)
-    graficar_bloques_ld(H, cfg.carpetas, cfg.modo_ejecucion)
+    graficar_bloques_ld(H, cfg.carpetas, cfg.modo_ejecucion, cfg=cfg)
     
     imprimir_subseccion("Análisis de Variabilidad y Frecuencia Alélica", icono="📈")
     graficar_histograma_alelico(H, cfg.carpetas, cfg.modo_ejecucion)
@@ -424,16 +593,20 @@ def ejecutar_pipeline(args):
     
     # 5. Ejecución Evolutiva
     imprimir_encabezado("MOTOR MULTIOBJETIVO")
-    print(f"  ⚙️ \033[1mConfiguración del Motor Evolutivo\033[0m")
-    print("  " + "─" * 37)
+    imprimir_subseccion("Configuración del Motor Evolutivo", icono="⚙️")
     
     # Línea de resumen de parámetros ( must be exact)
     print(f"      • Modo={cfg.modo_ejecucion} | POP_SIZE={cfg.tam_poblacion} | N_GEN={cfg.n_generaciones} | "
           f"OFFSPRING={cfg.n_descendencia} | PC={cfg.pc} | PM={cfg.pm:.6f} | N_RUNS={cfg.n_ejecuciones}")
     
-    n_ejec_total = 4 * len(cfg.opciones_init) * cfg.n_ejecuciones
-    print(f"      • Desglose: 4 algoritmos x {len(cfg.opciones_init)} inicializaciones x {cfg.n_ejecuciones} runs = {n_ejec_total} ejecuciones")
-    print(f"      • Configuraciones únicas (algoritmo-init): {4 * len(cfg.opciones_init)}")
+    n_algoritmos = len(cfg.algoritmos_activos)
+    n_ejec_total = n_algoritmos * len(cfg.opciones_init) * cfg.n_ejecuciones
+    print(
+        f"      • Desglose: {n_algoritmos} algoritmos x {len(cfg.opciones_init)} inicializaciones "
+        f"x {cfg.n_ejecuciones} runs = {n_ejec_total} ejecuciones"
+    )
+    print(f"      • Configuraciones únicas (algoritmo-init): {n_algoritmos * len(cfg.opciones_init)}")
+    print(f"      • Algoritmos activos: {', '.join(cfg.algoritmos_activos)}")
     
     dirs_ref, n_part = construir_direcciones_referencia(cfg.tam_poblacion)
     print(f"      • Puntos de referencia (ref_dirs): {len(dirs_ref)} | Particiones: {n_part}")
@@ -461,25 +634,31 @@ def ejecutar_pipeline(args):
     # Procesamiento de Métricas Progresivo
     imprimir_subseccion("Procesamiento de Métricas (con progreso)", icono="🧮")
     print(f"    • Iniciando métricas finales: {len(resultados)} ejecuciones")
-    
+    t0_fin = time.time()
     df_final, ideal_g, nadir_g = evaluar_metricas_finales(
         resultados, n_snps_total=cfg.n_snps, 
         modo_normalizacion=cfg.modo_normalizacion,
-        hamming_pares=dvals
+        hamming_pares=dvals,
+        modo_transformacion_objetivos=cfg.modo_transformacion_objetivos,
     )
+    print(f"      • Métricas finales completadas: {len(resultados)} ejecuciones en {time.time() - t0_fin:.1f}s")
     
     print(f"\n    • Iniciando métricas generacionales: {len(resultados)} ejecuciones con historial")
     t0_gen = time.time()
     df_gen = construir_metricas_generacionales(
         resultados, ideal_g, nadir_g, n_snps_total=cfg.n_snps,
         modo_normalizacion=cfg.modo_normalizacion,
-        hamming_pares=dvals
+        hamming_pares=dvals,
+        modo_transformacion_objetivos=cfg.modo_transformacion_objetivos,
     )
     print(f"      • Métricas generacionales completadas: {len(resultados)} ejecuciones en {time.time() - t0_gen:.1f}s")
 
-    df_fronts_total = _construir_df_fronts_desde_resultados(resultados)
+    df_fronts_total = _construir_df_fronts_desde_resultados(
+        resultados,
+        modo_transformacion_objetivos=cfg.modo_transformacion_objetivos,
+    )
     
-    imprimir_subseccion("Trazabilidad y Exportación de Datos (CSV)", icono="📊")
+    imprimir_subseccion("Trazabilidad y Exportación de Datos (CSV)", icono="📊️")
     ruta_csv = os.path.join(cfg.carpetas['ejecuciones'], f"resultados_detallados_{cfg.modo_ejecucion}.csv")
     df_final.to_csv(ruta_csv, index=False)
     imprimir_grafico_guardado(ruta_csv, "Resultados detallados por ejecución")
@@ -493,8 +672,22 @@ def ejecutar_pipeline(args):
     imprimir_grafico_guardado(ruta_fronts_csv, "Soluciones de frentes finales (CSV)")
     
     imprimir_subseccion("Puntos Críticos del Espacio de Objetivos", icono="📍")
-    imprimir_metadato("Punto Ideal Global (mejor)", str(ideal_g))
-    imprimir_metadato("Punto Nadir Global (peor)", str(nadir_g))
+    imprimir_metadato("Punto Ideal Empírico (mejor)", str(ideal_g))
+    imprimir_metadato("Punto Nadir Empírico (peor)", str(nadir_g))
+    
+    if cfg.modo_normalizacion in ('static_dataset_limits', 'static_proportional_limits'):
+        ideal_teorico, denom_teorico = obtener_referencias_estaticas_dataset(
+            n_snps_total=cfg.n_snps,
+            hamming_pares=dvals,
+            modo_transformacion_objetivos=cfg.modo_transformacion_objetivos,
+            modo_normalizacion=cfg.modo_normalizacion,
+        )
+        nadir_teorico = denom_teorico + ideal_teorico - 1e-9
+        ref_hv_teorico = ideal_teorico + 1.1 * denom_teorico
+        
+        imprimir_metadato("Punto Ideal Teórico (Ref)", str(ideal_teorico))
+        imprimir_metadato("Punto Nadir Teórico (Ref)", str(nadir_teorico))
+        imprimir_metadato("Punto Ref. Hipervolumen (1.1)", str(ref_hv_teorico))
     
     # 7. Reportes Visuales
     ejecutar_reportes_visualizacion(cfg, df_final, df_gen, df_fronts_total)
@@ -509,18 +702,16 @@ def ejecutar_pipeline(args):
     return ruta_base
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Tag SNP Modular Pipeline')
+    parser = argparse.ArgumentParser(description='Tag SNP Modular Pipeline', add_help=False)
+    parser.add_argument('-h', '--help', action='help', help='Mostrar este mensaje de ayuda y salir')
     parser.add_argument('--mode', '-m', choices=list(MODOS_DISPONIBLES), default='medium')
     parser.add_argument('--data-source', '-d', choices=list(FUENTES_DATOS_DISPONIBLES), default='hinds2005')
     parser.add_argument(
         '--report-only-csv',
-        nargs='?',
-        const='',
-        default=None,
-        metavar='CSV_DETALLADO',
+        action='store_true',
         help=(
-            "Activa modo report-only. Si se indica CSV_DETALLADO, se busca en snp_tag/input "
-            "(o ruta absoluta). Si no se indica, se usa el más reciente en snp_tag/input."
+            "Activa el modo de reporte exclusivo. El sistema selecciona automáticamente los CSV "
+            "más recientes en el directorio snp_tag/input/ para generar las visualizaciones."
         ),
     )
     args = parser.parse_args()
@@ -537,7 +728,7 @@ if __name__ == '__main__':
             sys.stdout = Tee(orig_stdout, f)
             sys.stderr = Tee(orig_stderr, f)
             
-            if args.report_only_csv is not None:
+            if args.report_only_csv:
                 ruta_base = ejecutar_pipeline_report_only(args)
             else:
                 ruta_base = ejecutar_pipeline(args)
@@ -552,7 +743,7 @@ if __name__ == '__main__':
             
     except Exception as e:
         # Si algo falla antes de devolver ruta_base, imprimimos el error en el stdout original
-        orig_stdout.write(f"\n❌ Error fatal durante la ejecución: {e}\n")
+        orig_stdout.write(f"\n❌  Error fatal durante la ejecución: {e}\n")
         raise
     finally:
         # Restauración incondicional de los flujos originales
