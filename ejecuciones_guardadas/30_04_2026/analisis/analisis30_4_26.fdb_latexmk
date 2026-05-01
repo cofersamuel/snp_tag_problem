@@ -1,7 +1,7 @@
 # Fdb version 4
-["pdflatex"] 1777659645.04793 "/home/cofer/Documents/University/TFG/snp_tag_tfg/ejecuciones_guardadas/30_04_2026/analisis/analisis30_4_26.tex" "analisis30_4_26.pdf" "analisis30_4_26" 1777659645.84804 0
+["pdflatex"] 1777660272.95848 "/home/cofer/Documents/University/TFG/snp_tag_tfg/ejecuciones_guardadas/30_04_2026/analisis/analisis30_4_26.tex" "analisis30_4_26.pdf" "analisis30_4_26" 1777660317.37001 0
   "/etc/texmf/web2c/texmf.cnf" 1764589853.34358 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/cofer/Documents/University/TFG/snp_tag_tfg/ejecuciones_guardadas/30_04_2026/analisis/analisis30_4_26.tex" 1777659491.25139 133602 ab9cf0864fa9f6ffa889c731f283eb55 ""
+  "/home/cofer/Documents/University/TFG/snp_tag_tfg/ejecuciones_guardadas/30_04_2026/analisis/analisis30_4_26.tex" 1777660126.16277 133595 cb051e224b8f791a2c6308e26bc70f95 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecbi1000.tfm" 1136768653 3072 e6fe53b666f9cbd66cb135c6fdea66d3 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecbx0700.tfm" 1136768653 3584 ca0c423beaacd28d53ddce5a826cd558 ""
@@ -143,10 +143,10 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1764589877.64097 5472669 54eaf61a88b6b7896ebd0dac973cb29c ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1764590053 8214240 4f42951ff7b6f6d13fc9feda38c84d83 ""
-  "analisis30_4_26.aux" 1777659645.75751 26042 bebe2acc94a1792604f3f8b9695289c5 "pdflatex"
-  "analisis30_4_26.out" 1777659645.75951 16074 e2c9f6a7895045d632aea76b720329df "pdflatex"
-  "analisis30_4_26.tex" 1777659491.25139 133602 ab9cf0864fa9f6ffa889c731f283eb55 ""
-  "analisis30_4_26.toc" 1777659645.75951 9693 92d9a545a3651c6fa093bb5e7f414cf8 "pdflatex"
+  "analisis30_4_26.aux" 1777660317.24615 26042 bebe2acc94a1792604f3f8b9695289c5 "pdflatex"
+  "analisis30_4_26.out" 1777660317.24815 16074 e2c9f6a7895045d632aea76b720329df "pdflatex"
+  "analisis30_4_26.tex" 1777660126.16277 133595 cb051e224b8f791a2c6308e26bc70f95 ""
+  "analisis30_4_26.toc" 1777660317.24915 9693 92d9a545a3651c6fa093bb5e7f414cf8 "pdflatex"
   "analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_global_full.png" 1777575048 6526601 826982accd0685e17dd239eab222ffe0 ""
   "analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_hybrid_full.png" 1777575032 674390 f4775ade86f015114d8785bec1ac49e4 ""
   "analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_ting_full.png" 1777575034 578219 ff230613fe283931ce28802608dd0d34 ""
