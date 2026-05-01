@@ -101,7 +101,7 @@ def ejecutar_diagnostico_ld(H, cfg: ConfiguracionExperimento, rutas_ld=None):
         imprimir_grafico_guardado(rutas_ld['cdf'], "CDF de correlación LD")
     
     # 2. Resumen Estructural
-    imprimir_subseccion("Resumen Estructural del Dataset", icono="⚖️")
+    imprimir_subseccion("Resumen Estructural del Dataset", icono="📜")
     # Para datos sintéticos, usar el número de bloques estructurales configurado;
     # para datos reales (hinds2005), usar el conteo detectado estadísticamente.
     n_bloques_informe = (

@@ -142,7 +142,7 @@ Esta fase genera un reporte detallado en la terminal y un conjunto de visualizac
       🖼️  Distribución de correlaciones (LD): histograma_correlaciones_ld_full.png
       🖼️  CDF de correlación LD: cdf_correlacion_absoluta_ld_full.png
 
-  ⚖️ Resumen Estructural del Dataset
+  📜 Resumen Estructural del Dataset
   ───────────────────────────────────
       • Estructura detectada: 28 bloques de ligamiento
       • Correlación media absoluta (|r|): 0.0776
@@ -190,6 +190,27 @@ El motor evolutivo busca optimizar simultáneamente cuatro dimensiones críticas
 3. **Distancia Hamming**: Maximización de la diversidad representativa. Busca maximizar la distancia genética promedio para asegurar que los Tags cubran el espacio de variabilidad del dataset.
 4. **Disimilitud (Balance de Varianza)**: Optimización del equilibrio entre marcadores. Se centra en balancear la información proporcionada por cada SNP seleccionado para evitar redundancias internas.
 
+#### Evaluación de Fitness (`modo_evaluacion`)
+
+El motor permite alterar la naturaleza matemática de las funciones objetivo a través del parámetro de evaluación. La configuración más avanzada es `modo_evaluacion=proportional`.
+En este modo, las penalizaciones o recompensas de las métricas biológicas no se calculan de forma absoluta respecto al total del genoma, sino de forma **proporcional** a la compacidad (tamaño) de la solución que se está evaluando. Esto elimina los sesgos algorítmicos que históricamente favorecían a las soluciones sobredimensionadas, obligando a los optimizadores a valorar la calidad del SNP de forma estrictamente relacional a los recursos genéticos empleados.
+
+Las fórmulas resultantes para los objetivos afectados son:
+
+* **Distancia Hamming Proporcional ($f_3$):** 
+
+$$
+f_3 = -\left( \frac{\sum_{i=1}^{N_{pares}} H_i}{N_{pares} \cdot k} \right)
+$$
+
+* **Disimilitud Proporcional ($f_4$):**
+
+$$
+f_4 = \frac{\sigma^2(H)}{k^2}
+$$
+
+*Donde $k$ representa el número de SNPs seleccionados, $H_i$ la distancia de Hamming del par $i$, y $\sigma^2(H)$ la varianza de las distancias entre todos los pares de haplotipos.*
+
 ### Algoritmos e Inicializaciones
 
 El sistema implementa un entorno comparativo que evalúa la sinergia entre diferentes algoritmos y estrategias de población inicial:
@@ -207,18 +228,18 @@ El sistema implementa un entorno comparativo que evalúa la sinergia entre difer
 
 * **Estrategias de Inicialización**:
   
-  * `random_sparse`: Inicialización estocástica centrada en la **eficiencia y compacidad**. Activa cada SNP con una probabilidad baja (basada en $70/N_{snps}$), generando soluciones con pocos marcadores. Esto evita que el algoritmo comience en zonas de sobredimensión, favoreciendo la búsqueda de conjuntos mínimos de Tags desde la primera generación.
-  * `random_dense`: Muestreo aleatorio estándar (probabilidad 0.5 por bit). Proporciona una **cobertura masiva y redundante** del genoma. Es ideal para evaluar la capacidad de "poda" de los algoritmos, permitiendo que la evolución descarte los marcadores que no aportan información discriminatoria adicional.
-  * `greedy_pure`: Estrategia constructiva de **alto rendimiento biológico** alineada con Ting: en cada individuo greedy, se añaden SNPs hasta cubrir el 100% de los pares de haplotipos (coverage=1 por par), con desempate estocástico en SNPs de igual distinguibilidad.
-  * `greedy_hybrid`: Enfoque de **compromiso explotación-exploración**. Combina un 50% de soluciones greedy y un 50% de individuos aleatorios, manteniendo la parte aleatoria con probabilidad de bit configurable (`prob_aleatoria_gi`, por defecto 0.5).
+  * `random_sparse`: Inicialización estocástica centrada en la **eficiencia y compacidad**. Funciona calculando una probabilidad de activación dinámica basada en un objetivo matemático ($P_{bit} \approx 70 / N_{snps}$). Esto inyecta individuos en el algoritmo que, desde la generación cero, ya poseen un número muy reducido de SNPs, forzando la optimización inmediata en lugar de comenzar en regiones de sobredimensión.
+  * `random_dense`: Muestreo aleatorio estándar (probabilidad 0.5 por bit). Proporciona una **cobertura masiva y redundante** del genoma. Es ideal para evaluar la capacidad de "poda" de los algoritmos, obligándoles a descartar marcadores inútiles durante la evolución.
+  * `greedy_pure`: Estrategia constructiva **puramente voraz**. Ordena los SNPs por su "puntuación de distinguibilidad" (número de pares de haplotipos que logran diferenciar) y construye los individuos añadiendo marcadores de forma determinista hasta cubrir el 100% de la varianza biológica, utilizando permutaciones aleatorias ligeras únicamente para resolver empates entre SNPs idénticos.
+  * `greedy_hybrid`: Enfoque de **compromiso explotación-exploración**. El rellenado de la población inicial se divide en dos fases matemáticamente aisladas: una mitad de la población se construye aplicando la lógica determinista voraz (greedy), mientras que la otra mitad se rellena utilizando un ruido puramente estocástico (probabilidad configurable).
+  * `greedy_ting`: Algoritmo complejo de construcción estructurada e inyección. Funciona mediante un cálculo previo de **puntos ancla** basándose en la fórmula $N_{ancla} = \lceil P_{size} \times ratio\_greedy \rceil \times 10$. El relleno se divide en fases jerárquicas: se inyectan semillas densas y greedy puras en las posiciones ancla, seguido de un relleno constructivo basado en la cobertura probabilística de bloques, para finalizar completando el remanente de la población de forma puramente estocástica.
 
 ##### Detalle Técnico de las Estrategias de Muestreo
 
 Para optimizar la búsqueda en el espacio binario, el motor de inicialización implementado en `snp_tag/core/sampling.py` utiliza las siguientes mecánicas avanzadas:
 
-* **Priorización por Distinguibilidad**: Los SNPs no se eligen al azar en las estrategias voraces; se ordenan según su capacidad para discriminar entre clases alélicas. Este "score" asegura que los primeros marcadores seleccionados maximicen la resolución del dataset.
-* **Desempate Estocástico**: Ante SNPs con idéntico valor de distinguibilidad, el sistema introduce permutaciones aleatorias para evitar que todos los individuos *greedy* sean idénticos, fomentando la diversidad genética en el frente inicial.
-* **Densidad Adaptativa**: En `random_sparse`, la probabilidad de activación se ajusta dinámicamente según el número de variables ($P_{bit} \approx 70/N_{snps}$), garantizando que los individuos iniciales no saturen los objetivos de compacidad.
+* **Priorización por Distinguibilidad**: Los SNPs no se eligen al azar en las estrategias constructivas; se ordenan matemáticamente según su capacidad para discriminar entre clases alélicas.
+* **Desempate Estocástico**: Ante SNPs con idéntico valor funcional, el sistema introduce permutaciones aleatorias para asegurar que los individuos constructivos no sean genéticamente clónicos, protegiendo la varianza inicial de la población.
 
 ### Parámetros Configurables
 
@@ -229,7 +250,8 @@ El sistema permite un ajuste fino a través de perfiles predefinidos (`presets`)
   * `medium`: Configuración estándar para experimentos académicos equilibrados.
   * `high`: Configuración intermedia orientada a explorar más que `medium` con un coste computacional moderado.
   * `full`: Búsqueda exhaustiva diseñada para obtener el frente de Pareto más preciso.
-* **Parámetros Tunables**: Incluyen probabilidades de cruce (`pc`), mutación (`pm`), lista de algoritmos activos (`algoritmos_activos`), tamaño/probabilidad de vecindad de MOEA/D, parámetro `theta_moead_pbi`, modo de semillas (`non_deterministic` o `deterministic`) y transformación de objetivos (`neg` o `inverse`).
+  * `full_20`: Idéntico a `full` pero elevando el número de repeticiones a **20 ejecuciones por método**, diseñado para análisis de significancia estadística profunda.
+* **Parámetros Tunables**: Incluyen probabilidades de cruce (`pc`), mutación (`pm`), lista de algoritmos activos (`algoritmos_activos`), tamaño/probabilidad de vecindad de MOEA/D, parámetro `theta_moead_pbi`, modo de semillas (`non_deterministic` o `deterministic`), transformación de objetivos (`neg` o `inverse`)...
 
 Formato recomendado en `user_config.ini`:
 
@@ -328,6 +350,7 @@ python -m snp_tag.main --mode [MODO] --data-source [FUENTE]
   * `medium`: Experimento estándar académico (recomendado).
   * `high`: Perfil intermedio entre `medium` y `full`.
   * `full`: Búsqueda exhaustiva de alta precisión para el frente de Pareto.
+  * `full_20`: Búsqueda exhaustiva con 20 réplicas por configuración para robustez estadística.
 * `--data-source` (`-d`): Especifica el dataset objetivo.
   * `hinds2005`: Utiliza el dataset biológico real de Hinds et al. (1032 SNPs).
   * `synthetic`: Genera un dataset sintético basado en los parámetros de simulación.
@@ -413,39 +436,70 @@ Dada la naturaleza estocástica de los algoritmos, el sistema orquesta múltiple
 
 El sistema implementa un robusto motor de normalización que permite convertir los resultados brutos de los objetivos (con diferentes unidades y escalas) a un espacio normalizado $[0, 1]$. Esta fase es crítica para el cálculo de indicadores de rendimiento como el **Hipervolumen**, **SumMin** y **MinSum**.
 
-Se pueden configurar tres esquemas de escalado en `snp_tag/config.py` a través del parámetro `modo_normalizacion`:
+Se pueden configurar esquemas de escalado en `snp_tag/config.py` a través del parámetro `modo_normalizacion` (editable desde `user_config.ini`):
 
-El valor de `modo_normalizacion` se edita en `user_config.ini`.
+1. **`static_proportional_limits` (Recomendado / Escalado Complejo)**:
+   
+   * Calcula los límites teóricos (Ideal y Nadir) no de forma estática respecto al genoma absoluto, sino de forma matemáticamente **proporcional al tamaño del individuo** evaluado. 
+   * **Impacto**: Esta fase es crítica cuando se trabaja en `modo_evaluacion=proportional`. Asegura que la distancia de una solución al óptimo teórico sea evaluada bajo un prisma de justicia relacional, comparando a los individuos más compactos con límites acordes a su escasez de recursos, y a los redundantes con topes más exigentes.
 
-1. **`static_dataset_limits` (Recomendado/Predeterminado)**:
+2. **`static_dataset_limits`**:
    
-   * Utiliza límites teóricos y empíricos calculados a partir de las propiedades intrínsecas del dataset completo (utilizando los 1032 SNPs en el caso de **Hinds et al.**).
-   
-   * **Lógica Técnica**: Se define un punto **Ideal** ($f_{ideal}$) que representa el máximo potencial biológico del dataset y un punto **Nadir** ($f_{nadir}$) que representa el peor escenario. La normalización se aplica mediante la fórmula:
-     $$F_{norm} = \frac{f - f_{ideal}}{f_{nadir} - f_{ideal}}$$
-   
-   * **Ejemplificación con Dataset Hinds (1032 SNPs)**:
-     Supongamos que para el bloque de Hinds, el uso de los 1032 SNPs genera una Distancia de Hamming media de **250**. En este modo, los límites fijos para el objetivo de Distancia Hamming ($f_3$) serían:
-     
-     * $f_{ideal} = -250$ (Mínimo valor de $-Hamming$, es decir, máxima diversidad).
-     * $f_{nadir} = 0$ (Mínima diversidad).
-     
-     Si el **Algoritmo A** encuentra una solución con 50 SNPs y Hamming de 40:
-     $$F_{norm} = \frac{-40 - (-250)}{0 - (-250)} = \frac{210}{250} = \mathbf{0.84}$$
-     *(Interpretación: La solución está al 84% de distancia del óptimo teórico del dataset).*
-     
-     Si el **Algoritmo B** encuentra una solución con 200 SNPs y Hamming de 150:
-     $$F_{norm} = \frac{-150 - (-250)}{250} = \frac{100}{250} = \mathbf{0.40}$$
-     *(Interpretación: Se ha capturado el 60% del potencial de diversidad del dataset).*
-   
-   * **Impacto**: Proporciona una base de comparación absoluta. A diferencia de `global_all_pairs`, donde la escala [0, 1] se "estira" o "encoge" según lo que hayan encontrado los algoritmos en esa ejecución específica, aquí los valores tienen un significado unívoco respecto al dataset. Esto permite que una solución con valor 0.40 hoy signifique exactamente lo mismo que una con 0.40 en una prueba realizada meses después, independientemente de qué algoritmos se utilicen en el futuro.
+   * Utiliza límites teóricos calculados a partir de las propiedades estáticas del dataset completo (los 1032 SNPs).
+   * **Impacto**: Proporciona un marco de comparación absoluto que nunca varía, independientemente del experimento o la población.
 
-2. **`global_all_pairs`**:
+3. **`global_all_pairs`**:
    
-   * Determina los puntos **Ideal** (mejor) y **Nadir** (peor) dinámicamente, considerando la unión de todas las soluciones encontradas por todos los algoritmos e inicializaciones en la ejecución actual.
-   * **Impacto**: Maximiza la resolución comparativa dentro de un mismo experimento, escalando los resultados para que el mejor desempeño global de la ejecución sea 0 y el peor sea 1.
+   * Determina los puntos Ideal y Nadir dinámicamente uniendo todas las soluciones finales encontradas en la ejecución actual.
+   * **Impacto**: Escala el mejor desempeño global de una ejecución específica a 0 y el peor a 1, maximizando la resolución visual de ese experimento aislado.
 
-3. **`per_algorithm`**:
+4. **`per_algorithm`**:
    
-   * Calcula los límites de normalización de forma independiente para cada algoritmo.
-   * **Impacto**: Permite evaluar la eficiencia de exploración interna de cada metaheurística respecto a su propio rango de búsqueda. Sin embargo, dificulta la comparación directa de métricas de convergencia entre diferentes algoritmos al no compartir un marco de referencia común.
+   * Calcula los límites de forma totalmente independiente para cada algoritmo.
+   * **Impacto**: Evalúa la pura eficiencia de exploración interna de cada metaheurística, pero invalida matemáticamente la comparación cruzada de métricas entre distintos algoritmos.
+
+---
+
+## Sección 5: Validación Estadística Rigurosa
+
+El motor incluye un subsistema avanzado (apoyado en `scikit-posthocs`) para auditar científicamente los resultados y prevenir falsos positivos derivados del comportamiento estocástico intrínseco de los algoritmos evolutivos. En lugar de limitarse a tabular promedios, el pipeline procesa la matriz en base a decenas de réplicas e inicializaciones.
+
+### 5.1 Test de Friedman
+
+El sistema evalúa el **Test no paramétrico de Friedman** sobre las distribuciones de resultados para detectar la existencia de significancia estadística real ($p < 0.05$). Al analizar las métricas *run-a-run*, el test determina si un algoritmo que aparenta ser superior en la media global es genuinamente mejor, o si su victoria es solo un subproducto de la alta varianza (azar de las semillas).
+
+### 5.2 Análisis Post-hoc de Nemenyi
+
+Si el Test de Friedman rechaza la hipótesis nula, el sistema ejecuta automáticamente el test pareado de Nemenyi. Este análisis cruza todos los métodos entre sí evaluando las **Diferencias Críticas (CD)**.
+
+El resultado se renderiza en un *Heatmap estadístico*, donde las interacciones en color rojizo denotan empates técnicos ($p > 0.05$) y las zonas frías confirman aislamientos de rendimiento estadísticamente superiores.
+
+![Heatmap Nemenyi](readme_assets/heatmap_nemenyi.png)
+*Figura 6: Mapa de calor de significancia. Nemenyi desvela los grupos de algoritmos que, pese a tener medias dispares, son empíricamente equivalentes frente a las fluctuaciones probabilísticas del TSSP.*
+
+---
+
+## Sección 6: Diccionario de Métricas Técnicas y Supra-métricas
+
+Para diseccionar rigurosamente los frentes de Pareto resultantes, el sistema lo evalúa mediante una batería de escalares competitivos.
+
+### Métricas de Rendimiento Analizadas
+
+* **Hypervolume (HV):** [Deseable: Mayor] La "métrica reina" en MOEAs. Cuantifica el hipervolumen del espacio objetivo cubierto por las soluciones. Premia el balance absoluto entre convergencia (cercanía al óptimo) y diversidad.
+* **Range (RG):** [Deseable: Mayor] Mide la amplitud de la distribución poblacional. Un alto Range indica que el algoritmo no ha colapsado prematuramente y es capaz de ofrecer un espectro funcional amplio.
+* **MinSum (MS) / SumMin (SM):** [Deseable: Menor] Cuantificadores de distancia funcional hacia las fronteras topológicas ideales (Punto Ideal inalcanzable) y nefastas (Punto Nadir).
+* **AvgHammingDistance (AH):** [Deseable: Mayor] Medida del rescate de diversidad biológica pura, promediando cuán diferentes entre sí son las firmas genotípicas preservadas.
+* **MaxTolRate (MT) / AvgTolRate (AT):** [Deseable: Mayor] Índices de resiliencia del conjunto. Evalúan estadísticamente la capacidad de las soluciones para soportar pérdida de información o deleciones de lectura sin sacrificar la cobertura del LD.
+
+![Heatmap Comparativa](readme_assets/heatmap_comparativa.png)
+
+*Figura 7: Mapa de calor de perfiles algorítmicos. Las zonas de color oscuro indican mejores posiciones (rankings bajos) para cada métrica individual.*
+
+### La Supra-métrica Analítica: Average Rank
+
+Puesto que en los ecosistemas *Many-Objective* rara vez un algoritmo domina simultáneamente todas las dimensiones, el pipeline resuelve el desempate mediante un condensador ordinal: el **Average Rank**.
+
+El **Average Rank** procesa las posiciones relativas (1º, 2º, 3º...) que obtiene cada configuración en las 7 métricas individuales y genera una media global ponderada. Este agregador es indispensable para dictaminar conclusiones cuando las varianzas son altísimas y los test de Friedman dictaminan empates múltiples, permitiendo coronar a los algoritmos con el comportamiento histórico más estable.
+
+![Ranking Global](readme_assets/rangos_promedio.png)
+*Figura 8: Visualización del Ranking Promedio consolidado. Se observa la superioridad de las variantes basadas en MOEA/D y NSGA-III sobre el resto de configuraciones.*

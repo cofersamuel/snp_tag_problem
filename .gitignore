@@ -55,5 +55,8 @@ brain/
 .agents/
 .github/
 scripts/
+*.aux
+*.out
+*.toc
 
 # --- Otros ---
