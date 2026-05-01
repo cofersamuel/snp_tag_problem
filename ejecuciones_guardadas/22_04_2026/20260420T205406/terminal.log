@@ -1,0 +1,605 @@
+
+  ⚙ [1mCONFIGURACIÓN[0m
+  ───────────────────
+      • Modo=full | POP_SIZE=200 | N_GEN=500 | OFFSPRING=200 | PC=0.7 | PM=0.000969 | N_RUNS=5
+
+  📊️ [1mMetadatos y Dimensiones del Dataset[0m
+  ─────────────────────────────────────────
+       [92m✅ Hinds 2005 cargado y filtrado: 48 patrones alelicos × 772 SNPs polimórficos (de 1032 originales) desde 'snp_tag/data/datasets/hinds2005_1032.txt'[0m
+      • ORIGEN_DATOS=hinds2005 (Hinds et al. 2005 / Perlegen) | N_SNPS=772 | N_PATRONES=48 | PM=0.001295
+      • FICHERO=snp_tag/data/datasets/hinds2005_1032.txt
+      • REPORT_DPI=300 | NORMALIZATION_MODE=static_dataset_limits | SEED_MODE=non_deterministic | OBJ_TRANSFORM=neg
+
+[93m[1m╔══════════════════════════════════════════════════════════════════════════════╗
+[93m[1m║                  DIAGNÓSTICO DE DATOS Y DESEQUILIBRIO (LD)                   ║
+[93m[1m╚══════════════════════════════════════════════════════════════════════════════╝[0m
+
+  🧬 [1mVisualización de la Estructura de Haplotipos[0m
+  ──────────────────────────────────────────────────
+      🖼️  Mapa de calor de haplotipos: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/0_datos_previos/heatmap_haplotipos_full.png\ [36mheatmap_haplotipos_full.png[0m]8;;\
+      🖼️  Estructura LD (3 bloques): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/0_datos_previos/bloques_ld_haplotipos_full.png\ [36mbloques_ld_haplotipos_full.png[0m]8;;\
+
+  📈 [1mAnálisis de Variabilidad y Frecuencia Alélica[0m
+  ───────────────────────────────────────────────────
+      🖼️  Distribución de frecuencia alélica: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/0_datos_previos/histograma_alelico_full.png\ [36mhistograma_alelico_full.png[0m]8;;\
+      🖼️  Variabilidad por SNP: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/0_datos_previos/variabilidad_snps_full.png\ [36mvariabilidad_snps_full.png[0m]8;;\
+      🖼️  Alelos dominantes por haplotipo: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/0_datos_previos/conteo_alelos_full.png\ [36mconteo_alelos_full.png[0m]8;;\
+      🖼️  Distribución de distancias de Hamming: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/0_datos_previos/histograma_hamming_full.png\ [36mhistograma_hamming_full.png[0m]8;;\
+
+  🔗 [1mCaracterización Global de Correlación (LD)[0m
+  ──────────────────────────────────────────────
+      • [1mCorrelación media absoluta (global |r|)[0m: 0.1387
+      • [1mTotal de pares evaluados[0m: 297606
+      🖼️  Mapa de calor de correlación (LD): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/0_datos_previos/heatmap_correlacion_completa_full.png\ [36mheatmap_correlacion_completa_full.png[0m]8;;\
+      🖼️  Distribución de correlaciones (LD): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/0_datos_previos/histograma_correlaciones_ld_full.png\ [36mhistograma_correlaciones_ld_full.png[0m]8;;\
+      🖼️  CDF de correlación LD: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/0_datos_previos/cdf_correlacion_absoluta_ld_full.png\ [36mcdf_correlacion_absoluta_ld_full.png[0m]8;;\
+
+  ⚖️ [1mResumen Estructural del Dataset[0m
+  ───────────────────────────────────
+      • [1mEstructura detectada[0m: 3 bloques de ligamiento
+      • [1mCorrelación media absoluta (|r|)[0m: 0.1387
+      • [1mNaturaleza del dato[0m: Benchmark biológico (Hinds)
+
+  📐 [1mAnálisis de Similitud Genotípica (Pares de Haplotipos)[0m
+  ──────────────────────────────────────────────────────────
+      • [1mNúmero de pares de haplotipos[0m: 1128
+      • [1mPares mostrados[0m: 3 similares / 3 distintos
+      • [1mVista parcial[0m: primeros 32 SNPs
+      • [1mPercentiles (Hamming)[0m: P33=237.00, P66=273.00
+      • [Etiquetas: <=P33 -> muy similar | (P33,P66] -> intermedio | >P66 -> muy distinto]
+
+    🤝 [1mPares de mayor similitud genética[0m
+      •  [1mPar (26, 27)[0m | Hamming=[1m129[0m | muy similar
+        h026: [90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m1111[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m11111...
+        h027: 1111[90m0[0m111111[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m111[90m0[0m[90m0[0m1111[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m...
+      •  [1mPar (17, 41)[0m | Hamming=[1m134[0m | muy similar
+        h017: 1111[90m0[0m111111[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m111[90m0[0m[90m0[0m1111[90m0[0m1111...
+        h041: 1111[90m0[0m111111[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m111[90m0[0m[90m0[0m1111[90m0[0m[90m0[0m111...
+      •  [1mPar (36, 46)[0m | Hamming=[1m140[0m | muy similar
+        h036: [90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m1111111[90m0[0m[90m0[0m1111[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m...
+        h046: 1111[90m0[0m111111[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m111[90m0[0m[90m0[0m1111[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m...
+
+    ↔️ [1mPares de mayor divergencia genética[0m
+      •  [1mPar (29, 36)[0m | Hamming=[1m407[0m | muy distinto
+        h029: [90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m11[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m[90m0[0m[90m0[0m...
+        h036: [90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m1111111[90m0[0m[90m0[0m1111[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m...
+      •  [1mPar (28, 29)[0m | Hamming=[1m404[0m | muy distinto
+        h028: [90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m11[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m[90m0[0m[90m0[0m...
+        h029: [90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m11[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m[90m0[0m[90m0[0m...
+      •  [1mPar (24, 29)[0m | Hamming=[1m390[0m | muy distinto
+        h024: 1111[90m0[0m111111[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m111[90m0[0m[90m0[0m1[90m0[0m11[90m0[0m1111...
+        h029: [90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m11[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m[90m0[0m[90m0[0m...
+
+[93m[1m╔══════════════════════════════════════════════════════════════════════════════╗
+[93m[1m║                             MOTOR MULTIOBJETIVO                              ║
+[93m[1m╚══════════════════════════════════════════════════════════════════════════════╝[0m
+  ⚙️ [1mConfiguración del Motor Evolutivo[0m
+  ─────────────────────────────────────
+      • Modo=full | POP_SIZE=200 | N_GEN=500 | OFFSPRING=200 | PC=0.7 | PM=0.001295 | N_RUNS=5
+      • Desglose: 6 algoritmos x 4 inicializaciones x 5 runs = 120 ejecuciones
+      • Configuraciones únicas (algoritmo-init): 24
+      • Algoritmos activos: NSGA2, NSGA3, SPEA2, MOEAD_TCHE, MOEAD_PBI, MOEAD_WS
+      • Puntos de referencia (ref_dirs): 165 | Particiones: 8
+      • Tamaño de población (pop_size): 200
+
+  🧬 [1mFase Evolutiva[0m
+  ────────────────────
+    • Iniciando 120 experimentos en modo paralelo seguro
+      • Paralelizando con hasta 14 procesos en paralelo
+      • [Progreso:   1/120] | [NSGA2-random_dense] ejecución 3/5 (110.2 s)
+      • [Progreso:   2/120] | [NSGA2-greedy_pure] ejecución 2/5 (113.1 s)
+      • [Progreso:   3/120] | [NSGA2-random_dense] ejecución 2/5 (185.5 s)
+      • [Progreso:   4/120] | [NSGA2-greedy_pure] ejecución 3/5 (203.6 s)
+      • [Progreso:   5/120] | [NSGA2-random_sparse] ejecución 2/5 (204.9 s)
+      • [Progreso:   6/120] | [NSGA2-random_sparse] ejecución 5/5 (206.4 s)
+      • [Progreso:   7/120] | [NSGA2-random_dense] ejecución 5/5 (206.5 s)
+      • [Progreso:   8/120] | [NSGA2-greedy_pure] ejecución 4/5 (207.3 s)
+      • [Progreso:   9/120] | [NSGA2-greedy_pure] ejecución 1/5 (209.7 s)
+      • [Progreso:  10/120] | [NSGA2-random_sparse] ejecución 1/5 (210.0 s)
+      • [Progreso:  11/120] | [NSGA2-random_sparse] ejecución 3/5 (215.0 s)
+      • [Progreso:  12/120] | [NSGA2-random_dense] ejecución 1/5 (219.1 s)
+      • [Progreso:  13/120] | [NSGA2-random_dense] ejecución 4/5 (219.3 s)
+      • [Progreso:  14/120] | [NSGA2-random_sparse] ejecución 4/5 (219.4 s)
+      • [Progreso:  15/120] | [NSGA2-greedy_pure] ejecución 5/5 (117.5 s)
+      • [Progreso:  16/120] | [NSGA2-greedy_hybrid] ejecución 1/5 (161.0 s)
+      • [Progreso:  17/120] | [NSGA2-greedy_hybrid] ejecución 3/5 (109.3 s)
+      • [Progreso:  18/120] | [NSGA2-greedy_hybrid] ejecución 2/5 (133.7 s)
+      • [Progreso:  19/120] | [NSGA3-random_sparse] ejecución 4/5 (144.4 s)
+      • [Progreso:  20/120] | [NSGA3-random_dense] ejecución 1/5 (185.4 s)
+      • [Progreso:  21/120] | [NSGA2-greedy_hybrid] ejecución 4/5 (202.3 s)
+      • [Progreso:  22/120] | [NSGA2-greedy_hybrid] ejecución 5/5 (202.9 s)
+      • [Progreso:  23/120] | [NSGA3-random_sparse] ejecución 2/5 (202.9 s)
+      • [Progreso:  24/120] | [NSGA3-random_sparse] ejecución 1/5 (207.6 s)
+      • [Progreso:  25/120] | [NSGA3-random_sparse] ejecución 3/5 (207.9 s)
+      • [Progreso:  26/120] | [NSGA3-greedy_pure] ejecución 1/5 (114.0 s)
+      • [Progreso:  27/120] | [NSGA3-random_sparse] ejecución 5/5 (221.1 s)
+      • [Progreso:  28/120] | [NSGA3-random_dense] ejecución 4/5 (209.0 s)
+      • [Progreso:  29/120] | [NSGA3-random_dense] ejecución 3/5 (221.1 s)
+      • [Progreso:  30/120] | [NSGA3-random_dense] ejecución 2/5 (221.3 s)
+      • [Progreso:  31/120] | [NSGA3-random_dense] ejecución 5/5 (198.4 s)
+      • [Progreso:  32/120] | [NSGA3-greedy_pure] ejecución 2/5 (155.1 s)
+      • [Progreso:  33/120] | [NSGA3-greedy_pure] ejecución 3/5 (132.3 s)
+      • [Progreso:  34/120] | [NSGA3-greedy_hybrid] ejecución 5/5 (146.2 s)
+      • [Progreso:  35/120] | [NSGA3-greedy_hybrid] ejecución 4/5 (173.8 s)
+      • [Progreso:  36/120] | [NSGA3-greedy_hybrid] ejecución 1/5 (204.0 s)
+      • [Progreso:  37/120] | [NSGA3-greedy_hybrid] ejecución 2/5 (205.2 s)
+      • [Progreso:  38/120] | [NSGA3-greedy_pure] ejecución 4/5 (215.0 s)
+      • [Progreso:  39/120] | [SPEA2-random_dense] ejecución 2/5 (133.7 s)
+      • [Progreso:  40/120] | [NSGA3-greedy_pure] ejecución 5/5 (215.9 s)
+      • [Progreso:  41/120] | [NSGA3-greedy_hybrid] ejecución 3/5 (212.9 s)
+      • [Progreso:  42/120] | [SPEA2-random_sparse] ejecución 2/5 (254.9 s)
+      • [Progreso:  43/120] | [SPEA2-random_sparse] ejecución 5/5 (259.1 s)
+      • [Progreso:  44/120] | [SPEA2-random_dense] ejecución 4/5 (140.5 s)
+      • [Progreso:  45/120] | [SPEA2-greedy_pure] ejecución 3/5 (127.6 s)
+      • [Progreso:  46/120] | [SPEA2-random_sparse] ejecución 1/5 (311.9 s)
+      • [Progreso:  47/120] | [SPEA2-random_sparse] ejecución 3/5 (311.6 s)
+      • [Progreso:  48/120] | [SPEA2-random_sparse] ejecución 4/5 (311.8 s)
+      • [Progreso:  49/120] | [SPEA2-random_dense] ejecución 1/5 (313.9 s)
+      • [Progreso:  50/120] | [SPEA2-greedy_pure] ejecución 1/5 (244.6 s)
+      • [Progreso:  51/120] | [SPEA2-random_dense] ejecución 3/5 (288.0 s)
+      • [Progreso:  52/120] | [SPEA2-random_dense] ejecución 5/5 (255.0 s)
+      • [Progreso:  53/120] | [SPEA2-greedy_hybrid] ejecución 3/5 (144.2 s)
+      • [Progreso:  54/120] | [SPEA2-greedy_pure] ejecución 4/5 (265.3 s)
+      • [Progreso:  55/120] | [SPEA2-greedy_pure] ejecución 2/5 (271.3 s)
+      • [Progreso:  56/120] | [SPEA2-greedy_hybrid] ejecución 4/5 (143.1 s)
+      • [Progreso:  57/120] | [SPEA2-greedy_pure] ejecución 5/5 (265.7 s)
+      • [Progreso:  58/120] | [SPEA2-greedy_hybrid] ejecución 1/5 (291.1 s)
+      • [Progreso:  59/120] | [SPEA2-greedy_hybrid] ejecución 2/5 (293.9 s)
+      • [Progreso:  60/120] | [SPEA2-greedy_hybrid] ejecución 5/5 (281.6 s)
+      • [Progreso:  61/120] | [MOEAD_TCHE-random_dense] ejecución 2/5 (320.1 s)
+      • [Progreso:  62/120] | [MOEAD_TCHE-random_dense] ejecución 5/5 (321.9 s)
+      • [Progreso:  63/120] | [MOEAD_TCHE-random_sparse] ejecución 1/5 (479.2 s)
+      • [Progreso:  64/120] | [MOEAD_TCHE-random_sparse] ejecución 2/5 (479.1 s)
+      • [Progreso:  65/120] | [MOEAD_TCHE-random_sparse] ejecución 3/5 (496.6 s)
+      • [Progreso:  66/120] | [MOEAD_TCHE-random_sparse] ejecución 4/5 (486.6 s)
+      • [Progreso:  67/120] | [MOEAD_TCHE-random_dense] ejecución 1/5 (492.4 s)
+      • [Progreso:  68/120] | [MOEAD_TCHE-random_sparse] ejecución 5/5 (527.7 s)
+      • [Progreso:  69/120] | [MOEAD_TCHE-random_dense] ejecución 3/5 (536.1 s)
+      • [Progreso:  70/120] | [MOEAD_TCHE-random_dense] ejecución 4/5 (536.4 s)
+      • [Progreso:  71/120] | [MOEAD_TCHE-greedy_pure] ejecución 1/5 (537.4 s)
+      • [Progreso:  72/120] | [MOEAD_TCHE-greedy_pure] ejecución 2/5 (507.1 s)
+      • [Progreso:  73/120] | [MOEAD_TCHE-greedy_pure] ejecución 5/5 (337.2 s)
+      • [Progreso:  74/120] | [MOEAD_TCHE-greedy_pure] ejecución 3/5 (510.8 s)
+      • [Progreso:  75/120] | [MOEAD_TCHE-greedy_hybrid] ejecución 1/5 (331.1 s)
+      • [Progreso:  76/120] | [MOEAD_TCHE-greedy_pure] ejecución 4/5 (546.9 s)
+      • [Progreso:  77/120] | [MOEAD_TCHE-greedy_hybrid] ejecución 2/5 (543.2 s)
+      • [Progreso:  78/120] | [MOEAD_TCHE-greedy_hybrid] ejecución 3/5 (543.0 s)
+      • [Progreso:  79/120] | [MOEAD_TCHE-greedy_hybrid] ejecución 4/5 (502.2 s)
+      • [Progreso:  80/120] | [MOEAD_TCHE-greedy_hybrid] ejecución 5/5 (504.2 s)
+      • [Progreso:  81/120] | [MOEAD_PBI-random_dense] ejecución 2/5 (352.4 s)
+      • [Progreso:  82/120] | [MOEAD_PBI-random_sparse] ejecución 1/5 (531.0 s)
+      • [Progreso:  83/120] | [MOEAD_PBI-random_sparse] ejecución 2/5 (562.2 s)
+      • [Progreso:  84/120] | [MOEAD_PBI-random_sparse] ejecución 3/5 (563.0 s)
+      • [Progreso:  85/120] | [MOEAD_PBI-random_sparse] ejecución 4/5 (562.7 s)
+      • [Progreso:  86/120] | [MOEAD_PBI-random_sparse] ejecución 5/5 (562.3 s)
+      • [Progreso:  87/120] | [MOEAD_PBI-random_dense] ejecución 1/5 (527.5 s)
+      • [Progreso:  88/120] | [MOEAD_PBI-random_dense] ejecución 5/5 (475.0 s)
+      • [Progreso:  89/120] | [MOEAD_PBI-random_dense] ejecución 3/5 (527.2 s)
+      • [Progreso:  90/120] | [MOEAD_PBI-random_dense] ejecución 4/5 (535.0 s)
+      • [Progreso:  91/120] | [MOEAD_PBI-greedy_pure] ejecución 2/5 (409.9 s)
+      • [Progreso:  92/120] | [MOEAD_PBI-greedy_pure] ejecución 3/5 (470.0 s)
+      • [Progreso:  93/120] | [MOEAD_PBI-greedy_pure] ejecución 5/5 (397.4 s)
+      • [Progreso:  94/120] | [MOEAD_PBI-greedy_pure] ejecución 1/5 (554.8 s)
+      • [Progreso:  95/120] | [MOEAD_PBI-greedy_pure] ejecución 4/5 (495.4 s)
+      • [Progreso:  96/120] | [MOEAD_PBI-greedy_hybrid] ejecución 1/5 (522.3 s)
+      • [Progreso:  97/120] | [MOEAD_WS-random_sparse] ejecución 3/5 (356.4 s)
+      • [Progreso:  98/120] | [MOEAD_PBI-greedy_hybrid] ejecución 2/5 (565.5 s)
+      • [Progreso:  99/120] | [MOEAD_WS-random_sparse] ejecución 1/5 (505.2 s)
+      • [Progreso: 100/120] | [MOEAD_PBI-greedy_hybrid] ejecución 3/5 (565.3 s)
+      • [Progreso: 101/120] | [MOEAD_PBI-greedy_hybrid] ejecución 4/5 (565.6 s)
+      • [Progreso: 102/120] | [MOEAD_PBI-greedy_hybrid] ejecución 5/5 (565.7 s)
+      • [Progreso: 103/120] | [MOEAD_WS-random_sparse] ejecución 2/5 (514.4 s)
+      • [Progreso: 104/120] | [MOEAD_WS-random_dense] ejecución 2/5 (335.7 s)
+      • [Progreso: 105/120] | [MOEAD_WS-random_sparse] ejecución 4/5 (542.0 s)
+      • [Progreso: 106/120] | [MOEAD_WS-random_sparse] ejecución 5/5 (545.0 s)
+      • [Progreso: 107/120] | [MOEAD_WS-random_dense] ejecución 1/5 (486.5 s)
+      • [Progreso: 108/120] | [MOEAD_WS-greedy_pure] ejecución 1/5 (380.3 s)
+      • [Progreso: 109/120] | [MOEAD_WS-random_dense] ejecución 5/5 (432.6 s)
+      • [Progreso: 110/120] | [MOEAD_WS-random_dense] ejecución 4/5 (506.3 s)
+      • [Progreso: 111/120] | [MOEAD_WS-random_dense] ejecución 3/5 (536.7 s)
+      • [Progreso: 112/120] | [MOEAD_WS-greedy_hybrid] ejecución 2/5 (346.7 s)
+      • [Progreso: 113/120] | [MOEAD_WS-greedy_pure] ejecución 3/5 (402.8 s)
+      • [Progreso: 114/120] | [MOEAD_WS-greedy_hybrid] ejecución 4/5 (329.4 s)
+      • [Progreso: 115/120] | [MOEAD_WS-greedy_pure] ejecución 5/5 (396.4 s)
+      • [Progreso: 116/120] | [MOEAD_WS-greedy_pure] ejecución 2/5 (436.1 s)
+      • [Progreso: 117/120] | [MOEAD_WS-greedy_pure] ejecución 4/5 (414.0 s)
+      • [Progreso: 118/120] | [MOEAD_WS-greedy_hybrid] ejecución 1/5 (408.9 s)
+      • [Progreso: 119/120] | [MOEAD_WS-greedy_hybrid] ejecución 3/5 (353.7 s)
+      • [Progreso: 120/120] | [MOEAD_WS-greedy_hybrid] ejecución 5/5 (251.6 s)
+
+[93m[1m╔══════════════════════════════════════════════════════════════════════════════╗
+[93m[1m║                            SÍNTESIS DE RESULTADOS                            ║
+[93m[1m╚══════════════════════════════════════════════════════════════════════════════╝[0m
+  • [1mConfiguración de síntesis[0m: DPI=300
+
+  ⏱️ [1mAnálisis de Rendimiento y Tiempo[0m
+  ──────────────────────────────────────
+      🖼️  Boxplot tiempo de ejecución: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/0_tiempo/boxplot_tiempo_full.png\ [36mboxplot_tiempo_full.png[0m]8;;\
+      🖼️  Media ± std tiempo ejecución: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/0_tiempo/media_std_tiempo_full.png\ [36mmedia_std_tiempo_full.png[0m]8;;\
+      🖼️  Tiempo vs Tamaño de frente: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/0_tiempo/tiempo_vs_tamano_frente_full.png\ [36mtiempo_vs_tamano_frente_full.png[0m]8;;\
+      • Tiempo bloque 'Análisis de Rendimiento y Tiempo': 1.1s
+
+  🧮 [1mProcesamiento de Métricas (con progreso)[0m
+  ──────────────────────────────────────────────
+    • Iniciando métricas finales: 120 ejecuciones
+      • [Progreso:   1/120] | [NSGA2-random_sparse] ejecución 1/5 (0.2 s)
+      • [Progreso:   2/120] | [NSGA2-random_sparse] ejecución 2/5 (0.2 s)
+      • [Progreso:   3/120] | [NSGA2-random_sparse] ejecución 3/5 (0.2 s)
+      • [Progreso:   4/120] | [NSGA2-random_sparse] ejecución 4/5 (0.2 s)
+      • [Progreso:   5/120] | [NSGA2-random_sparse] ejecución 5/5 (0.2 s)
+      • [Progreso:   6/120] | [NSGA2-random_dense] ejecución 1/5 (0.2 s)
+      • [Progreso:   7/120] | [NSGA2-random_dense] ejecución 2/5 (0.2 s)
+      • [Progreso:   8/120] | [NSGA2-random_dense] ejecución 3/5 (0.2 s)
+      • [Progreso:   9/120] | [NSGA2-random_dense] ejecución 4/5 (0.2 s)
+      • [Progreso:  10/120] | [NSGA2-random_dense] ejecución 5/5 (0.2 s)
+      • [Progreso:  11/120] | [NSGA2-greedy_pure] ejecución 1/5 (0.1 s)
+      • [Progreso:  12/120] | [NSGA2-greedy_pure] ejecución 2/5 (0.1 s)
+      • [Progreso:  13/120] | [NSGA2-greedy_pure] ejecución 3/5 (0.1 s)
+      • [Progreso:  14/120] | [NSGA2-greedy_pure] ejecución 4/5 (0.1 s)
+      • [Progreso:  15/120] | [NSGA2-greedy_pure] ejecución 5/5 (0.1 s)
+      • [Progreso:  16/120] | [NSGA2-greedy_hybrid] ejecución 1/5 (0.2 s)
+      • [Progreso:  17/120] | [NSGA2-greedy_hybrid] ejecución 2/5 (0.2 s)
+      • [Progreso:  18/120] | [NSGA2-greedy_hybrid] ejecución 3/5 (0.2 s)
+      • [Progreso:  19/120] | [NSGA2-greedy_hybrid] ejecución 4/5 (0.2 s)
+      • [Progreso:  20/120] | [NSGA2-greedy_hybrid] ejecución 5/5 (0.2 s)
+      • [Progreso:  21/120] | [NSGA3-random_sparse] ejecución 1/5 (0.0 s)
+      • [Progreso:  22/120] | [NSGA3-random_sparse] ejecución 2/5 (0.0 s)
+      • [Progreso:  23/120] | [NSGA3-random_sparse] ejecución 3/5 (0.0 s)
+      • [Progreso:  24/120] | [NSGA3-random_sparse] ejecución 4/5 (0.0 s)
+      • [Progreso:  25/120] | [NSGA3-random_sparse] ejecución 5/5 (0.0 s)
+      • [Progreso:  26/120] | [NSGA3-random_dense] ejecución 1/5 (0.0 s)
+      • [Progreso:  27/120] | [NSGA3-random_dense] ejecución 2/5 (0.0 s)
+      • [Progreso:  28/120] | [NSGA3-random_dense] ejecución 3/5 (0.0 s)
+      • [Progreso:  29/120] | [NSGA3-random_dense] ejecución 4/5 (0.0 s)
+      • [Progreso:  30/120] | [NSGA3-random_dense] ejecución 5/5 (0.0 s)
+      • [Progreso:  31/120] | [NSGA3-greedy_pure] ejecución 1/5 (0.0 s)
+      • [Progreso:  32/120] | [NSGA3-greedy_pure] ejecución 2/5 (0.0 s)
+      • [Progreso:  33/120] | [NSGA3-greedy_pure] ejecución 3/5 (0.0 s)
+      • [Progreso:  34/120] | [NSGA3-greedy_pure] ejecución 4/5 (0.0 s)
+      • [Progreso:  35/120] | [NSGA3-greedy_pure] ejecución 5/5 (0.0 s)
+      • [Progreso:  36/120] | [NSGA3-greedy_hybrid] ejecución 1/5 (0.0 s)
+      • [Progreso:  37/120] | [NSGA3-greedy_hybrid] ejecución 2/5 (0.0 s)
+      • [Progreso:  38/120] | [NSGA3-greedy_hybrid] ejecución 3/5 (0.0 s)
+      • [Progreso:  39/120] | [NSGA3-greedy_hybrid] ejecución 4/5 (0.0 s)
+      • [Progreso:  40/120] | [NSGA3-greedy_hybrid] ejecución 5/5 (0.0 s)
+      • [Progreso:  41/120] | [SPEA2-random_sparse] ejecución 1/5 (0.2 s)
+      • [Progreso:  42/120] | [SPEA2-random_sparse] ejecución 2/5 (0.2 s)
+      • [Progreso:  43/120] | [SPEA2-random_sparse] ejecución 3/5 (0.2 s)
+      • [Progreso:  44/120] | [SPEA2-random_sparse] ejecución 4/5 (0.2 s)
+      • [Progreso:  45/120] | [SPEA2-random_sparse] ejecución 5/5 (0.2 s)
+      • [Progreso:  46/120] | [SPEA2-random_dense] ejecución 1/5 (0.1 s)
+      • [Progreso:  47/120] | [SPEA2-random_dense] ejecución 2/5 (0.1 s)
+      • [Progreso:  48/120] | [SPEA2-random_dense] ejecución 3/5 (0.1 s)
+      • [Progreso:  49/120] | [SPEA2-random_dense] ejecución 4/5 (0.2 s)
+      • [Progreso:  50/120] | [SPEA2-random_dense] ejecución 5/5 (0.1 s)
+      • [Progreso:  51/120] | [SPEA2-greedy_pure] ejecución 1/5 (0.1 s)
+      • [Progreso:  52/120] | [SPEA2-greedy_pure] ejecución 2/5 (0.1 s)
+      • [Progreso:  53/120] | [SPEA2-greedy_pure] ejecución 3/5 (0.1 s)
+      • [Progreso:  54/120] | [SPEA2-greedy_pure] ejecución 4/5 (0.1 s)
+      • [Progreso:  55/120] | [SPEA2-greedy_pure] ejecución 5/5 (0.1 s)
+      • [Progreso:  56/120] | [SPEA2-greedy_hybrid] ejecución 1/5 (0.2 s)
+      • [Progreso:  57/120] | [SPEA2-greedy_hybrid] ejecución 2/5 (0.2 s)
+      • [Progreso:  58/120] | [SPEA2-greedy_hybrid] ejecución 3/5 (0.2 s)
+      • [Progreso:  59/120] | [SPEA2-greedy_hybrid] ejecución 4/5 (0.2 s)
+      • [Progreso:  60/120] | [SPEA2-greedy_hybrid] ejecución 5/5 (0.2 s)
+      • [Progreso:  61/120] | [MOEAD_TCHE-random_sparse] ejecución 1/5 (0.1 s)
+      • [Progreso:  62/120] | [MOEAD_TCHE-random_sparse] ejecución 2/5 (0.1 s)
+      • [Progreso:  63/120] | [MOEAD_TCHE-random_sparse] ejecución 3/5 (0.1 s)
+      • [Progreso:  64/120] | [MOEAD_TCHE-random_sparse] ejecución 4/5 (0.1 s)
+      • [Progreso:  65/120] | [MOEAD_TCHE-random_sparse] ejecución 5/5 (0.1 s)
+      • [Progreso:  66/120] | [MOEAD_TCHE-random_dense] ejecución 1/5 (0.1 s)
+      • [Progreso:  67/120] | [MOEAD_TCHE-random_dense] ejecución 2/5 (0.0 s)
+      • [Progreso:  68/120] | [MOEAD_TCHE-random_dense] ejecución 3/5 (0.0 s)
+      • [Progreso:  69/120] | [MOEAD_TCHE-random_dense] ejecución 4/5 (0.0 s)
+      • [Progreso:  70/120] | [MOEAD_TCHE-random_dense] ejecución 5/5 (0.0 s)
+      • [Progreso:  71/120] | [MOEAD_TCHE-greedy_pure] ejecución 1/5 (0.0 s)
+      • [Progreso:  72/120] | [MOEAD_TCHE-greedy_pure] ejecución 2/5 (0.0 s)
+      • [Progreso:  73/120] | [MOEAD_TCHE-greedy_pure] ejecución 3/5 (0.0 s)
+      • [Progreso:  74/120] | [MOEAD_TCHE-greedy_pure] ejecución 4/5 (0.0 s)
+      • [Progreso:  75/120] | [MOEAD_TCHE-greedy_pure] ejecución 5/5 (0.0 s)
+      • [Progreso:  76/120] | [MOEAD_TCHE-greedy_hybrid] ejecución 1/5 (0.1 s)
+      • [Progreso:  77/120] | [MOEAD_TCHE-greedy_hybrid] ejecución 2/5 (0.1 s)
+      • [Progreso:  78/120] | [MOEAD_TCHE-greedy_hybrid] ejecución 3/5 (0.1 s)
+      • [Progreso:  79/120] | [MOEAD_TCHE-greedy_hybrid] ejecución 4/5 (0.1 s)
+      • [Progreso:  80/120] | [MOEAD_TCHE-greedy_hybrid] ejecución 5/5 (0.1 s)
+      • [Progreso:  81/120] | [MOEAD_PBI-random_sparse] ejecución 1/5 (0.0 s)
+      • [Progreso:  82/120] | [MOEAD_PBI-random_sparse] ejecución 2/5 (0.0 s)
+      • [Progreso:  83/120] | [MOEAD_PBI-random_sparse] ejecución 3/5 (0.0 s)
+      • [Progreso:  84/120] | [MOEAD_PBI-random_sparse] ejecución 4/5 (0.0 s)
+      • [Progreso:  85/120] | [MOEAD_PBI-random_sparse] ejecución 5/5 (0.0 s)
+      • [Progreso:  86/120] | [MOEAD_PBI-random_dense] ejecución 1/5 (0.0 s)
+      • [Progreso:  87/120] | [MOEAD_PBI-random_dense] ejecución 2/5 (0.0 s)
+      • [Progreso:  88/120] | [MOEAD_PBI-random_dense] ejecución 3/5 (0.0 s)
+      • [Progreso:  89/120] | [MOEAD_PBI-random_dense] ejecución 4/5 (0.0 s)
+      • [Progreso:  90/120] | [MOEAD_PBI-random_dense] ejecución 5/5 (0.0 s)
+      • [Progreso:  91/120] | [MOEAD_PBI-greedy_pure] ejecución 1/5 (0.0 s)
+      • [Progreso:  92/120] | [MOEAD_PBI-greedy_pure] ejecución 2/5 (0.0 s)
+      • [Progreso:  93/120] | [MOEAD_PBI-greedy_pure] ejecución 3/5 (0.0 s)
+      • [Progreso:  94/120] | [MOEAD_PBI-greedy_pure] ejecución 4/5 (0.0 s)
+      • [Progreso:  95/120] | [MOEAD_PBI-greedy_pure] ejecución 5/5 (0.0 s)
+      • [Progreso:  96/120] | [MOEAD_PBI-greedy_hybrid] ejecución 1/5 (0.1 s)
+      • [Progreso:  97/120] | [MOEAD_PBI-greedy_hybrid] ejecución 2/5 (0.1 s)
+      • [Progreso:  98/120] | [MOEAD_PBI-greedy_hybrid] ejecución 3/5 (0.0 s)
+      • [Progreso:  99/120] | [MOEAD_PBI-greedy_hybrid] ejecución 4/5 (0.1 s)
+      • [Progreso: 100/120] | [MOEAD_PBI-greedy_hybrid] ejecución 5/5 (0.1 s)
+      • [Progreso: 101/120] | [MOEAD_WS-random_sparse] ejecución 1/5 (0.0 s)
+      • [Progreso: 102/120] | [MOEAD_WS-random_sparse] ejecución 2/5 (0.0 s)
+      • [Progreso: 103/120] | [MOEAD_WS-random_sparse] ejecución 3/5 (0.0 s)
+      • [Progreso: 104/120] | [MOEAD_WS-random_sparse] ejecución 4/5 (0.0 s)
+      • [Progreso: 105/120] | [MOEAD_WS-random_sparse] ejecución 5/5 (0.0 s)
+      • [Progreso: 106/120] | [MOEAD_WS-random_dense] ejecución 1/5 (0.0 s)
+      • [Progreso: 107/120] | [MOEAD_WS-random_dense] ejecución 2/5 (0.0 s)
+      • [Progreso: 108/120] | [MOEAD_WS-random_dense] ejecución 3/5 (0.0 s)
+      • [Progreso: 109/120] | [MOEAD_WS-random_dense] ejecución 4/5 (0.0 s)
+      • [Progreso: 110/120] | [MOEAD_WS-random_dense] ejecución 5/5 (0.0 s)
+      • [Progreso: 111/120] | [MOEAD_WS-greedy_pure] ejecución 1/5 (0.0 s)
+      • [Progreso: 112/120] | [MOEAD_WS-greedy_pure] ejecución 2/5 (0.0 s)
+      • [Progreso: 113/120] | [MOEAD_WS-greedy_pure] ejecución 3/5 (0.0 s)
+      • [Progreso: 114/120] | [MOEAD_WS-greedy_pure] ejecución 4/5 (0.0 s)
+      • [Progreso: 115/120] | [MOEAD_WS-greedy_pure] ejecución 5/5 (0.0 s)
+      • [Progreso: 116/120] | [MOEAD_WS-greedy_hybrid] ejecución 1/5 (0.0 s)
+      • [Progreso: 117/120] | [MOEAD_WS-greedy_hybrid] ejecución 2/5 (0.0 s)
+      • [Progreso: 118/120] | [MOEAD_WS-greedy_hybrid] ejecución 3/5 (0.0 s)
+      • [Progreso: 119/120] | [MOEAD_WS-greedy_hybrid] ejecución 4/5 (0.0 s)
+      • [Progreso: 120/120] | [MOEAD_WS-greedy_hybrid] ejecución 5/5 (0.0 s)
+      • Métricas finales completadas: 120 ejecuciones en 8.5s
+
+    • Iniciando métricas generacionales: 120 ejecuciones con historial
+      • [Progreso:   1/120] | [NSGA2-greedy_pure] ejecución 4/5 (48.1 s)
+      • [Progreso:   2/120] | [NSGA2-greedy_pure] ejecución 2/5 (53.4 s)
+      • [Progreso:   3/120] | [NSGA2-greedy_pure] ejecución 1/5 (70.9 s)
+      • [Progreso:   4/120] | [NSGA2-greedy_pure] ejecución 3/5 (77.9 s)
+      • [Progreso:   5/120] | [NSGA2-greedy_pure] ejecución 5/5 (51.5 s)
+      • [Progreso:   6/120] | [NSGA2-random_sparse] ejecución 2/5 (158.9 s)
+      • [Progreso:   7/120] | [NSGA2-random_dense] ejecución 1/5 (176.2 s)
+      • [Progreso:   8/120] | [NSGA2-random_dense] ejecución 4/5 (181.7 s)
+      • [Progreso:   9/120] | [NSGA2-random_dense] ejecución 5/5 (183.3 s)
+      • [Progreso:  10/120] | [NSGA2-random_dense] ejecución 3/5 (186.9 s)
+      • [Progreso:  11/120] | [NSGA2-random_dense] ejecución 2/5 (192.8 s)
+      • [Progreso:  12/120] | [NSGA2-random_sparse] ejecución 3/5 (194.1 s)
+      • [Progreso:  13/120] | [NSGA2-random_sparse] ejecución 4/5 (198.6 s)
+      • [Progreso:  14/120] | [NSGA2-random_sparse] ejecución 5/5 (201.0 s)
+      • [Progreso:  15/120] | [NSGA2-random_sparse] ejecución 1/5 (203.9 s)
+      • [Progreso:  16/120] | [NSGA2-greedy_hybrid] ejecución 4/5 (145.2 s)
+      • [Progreso:  17/120] | [NSGA2-greedy_hybrid] ejecución 2/5 (181.7 s)
+      • [Progreso:  18/120] | [NSGA2-greedy_hybrid] ejecución 1/5 (212.3 s)
+      • [Progreso:  19/120] | [NSGA2-greedy_hybrid] ejecución 3/5 (229.8 s)
+      • [Progreso:  20/120] | [NSGA2-greedy_hybrid] ejecución 5/5 (149.7 s)
+      • [Progreso:  21/120] | [NSGA3-random_dense] ejecución 3/5 (109.6 s)
+      • [Progreso:  22/120] | [NSGA3-random_sparse] ejecución 1/5 (138.9 s)
+      • [Progreso:  23/120] | [NSGA3-random_dense] ejecución 1/5 (121.4 s)
+      • [Progreso:  24/120] | [NSGA3-greedy_pure] ejecución 1/5 (65.6 s)
+      • [Progreso:  25/120] | [NSGA3-random_dense] ejecución 4/5 (116.1 s)
+      • [Progreso:  26/120] | [NSGA3-random_sparse] ejecución 2/5 (141.7 s)
+      • [Progreso:  27/120] | [NSGA3-random_dense] ejecución 2/5 (128.1 s)
+      • [Progreso:  28/120] | [NSGA3-random_sparse] ejecución 4/5 (141.6 s)
+      • [Progreso:  29/120] | [NSGA3-random_sparse] ejecución 5/5 (135.9 s)
+      • [Progreso:  30/120] | [NSGA3-greedy_pure] ejecución 2/5 (67.0 s)
+      • [Progreso:  31/120] | [NSGA3-random_sparse] ejecución 3/5 (153.0 s)
+      • [Progreso:  32/120] | [NSGA3-random_dense] ejecución 5/5 (101.6 s)
+      • [Progreso:  33/120] | [NSGA3-greedy_pure] ejecución 4/5 (72.4 s)
+      • [Progreso:  34/120] | [NSGA3-greedy_pure] ejecución 3/5 (74.8 s)
+      • [Progreso:  35/120] | [NSGA3-greedy_pure] ejecución 5/5 (78.0 s)
+      • [Progreso:  36/120] | [SPEA2-random_dense] ejecución 1/5 (84.2 s)
+      • [Progreso:  37/120] | [NSGA3-greedy_hybrid] ejecución 3/5 (135.0 s)
+      • [Progreso:  38/120] | [SPEA2-random_sparse] ejecución 5/5 (132.5 s)
+      • [Progreso:  39/120] | [SPEA2-random_sparse] ejecución 3/5 (159.8 s)
+      • [Progreso:  40/120] | [NSGA3-greedy_hybrid] ejecución 1/5 (178.2 s)
+      • [Progreso:  41/120] | [NSGA3-greedy_hybrid] ejecución 2/5 (178.0 s)
+      • [Progreso:  42/120] | [SPEA2-random_sparse] ejecución 2/5 (166.5 s)
+      • [Progreso:  43/120] | [NSGA3-greedy_hybrid] ejecución 4/5 (177.1 s)
+      • [Progreso:  44/120] | [SPEA2-random_sparse] ejecución 1/5 (171.4 s)
+      • [Progreso:  45/120] | [NSGA3-greedy_hybrid] ejecución 5/5 (177.9 s)
+      • [Progreso:  46/120] | [SPEA2-random_sparse] ejecución 4/5 (175.1 s)
+      • [Progreso:  47/120] | [SPEA2-greedy_pure] ejecución 1/5 (56.5 s)
+      • [Progreso:  48/120] | [SPEA2-random_dense] ejecución 3/5 (135.0 s)
+      • [Progreso:  49/120] | [SPEA2-random_dense] ejecución 4/5 (147.4 s)
+      • [Progreso:  50/120] | [SPEA2-random_dense] ejecución 5/5 (109.8 s)
+      • [Progreso:  51/120] | [MOEAD_TCHE-random_sparse] ejecución 1/5 (38.7 s)
+      • [Progreso:  52/120] | [SPEA2-random_dense] ejecución 2/5 (168.6 s)
+      • [Progreso:  53/120] | [SPEA2-greedy_pure] ejecución 2/5 (102.8 s)
+      • [Progreso:  54/120] | [MOEAD_TCHE-random_sparse] ejecución 2/5 (59.1 s)
+      • [Progreso:  55/120] | [MOEAD_TCHE-random_sparse] ejecución 4/5 (36.5 s)
+      • [Progreso:  56/120] | [MOEAD_TCHE-random_sparse] ejecución 5/5 (38.2 s)
+      • [Progreso:  57/120] | [SPEA2-greedy_pure] ejecución 3/5 (98.3 s)
+      • [Progreso:  58/120] | [MOEAD_TCHE-random_sparse] ejecución 3/5 (62.0 s)
+      • [Progreso:  59/120] | [SPEA2-greedy_pure] ejecución 5/5 (105.3 s)
+      • [Progreso:  60/120] | [SPEA2-greedy_pure] ejecución 4/5 (113.4 s)
+      • [Progreso:  61/120] | [MOEAD_TCHE-random_dense] ejecución 4/5 (32.9 s)
+      • [Progreso:  62/120] | [MOEAD_TCHE-random_dense] ejecución 1/5 (61.9 s)
+      • [Progreso:  63/120] | [MOEAD_TCHE-greedy_pure] ejecución 1/5 (27.0 s)
+      • [Progreso:  64/120] | [MOEAD_TCHE-random_dense] ejecución 5/5 (36.0 s)
+      • [Progreso:  65/120] | [MOEAD_TCHE-greedy_pure] ejecución 5/5 (14.0 s)
+      • [Progreso:  66/120] | [MOEAD_TCHE-random_dense] ejecución 3/5 (51.8 s)
+      • [Progreso:  67/120] | [MOEAD_TCHE-greedy_pure] ejecución 2/5 (32.4 s)
+      • [Progreso:  68/120] | [MOEAD_TCHE-greedy_pure] ejecución 4/5 (24.1 s)
+      • [Progreso:  69/120] | [MOEAD_TCHE-random_dense] ejecución 2/5 (59.5 s)
+      • [Progreso:  70/120] | [MOEAD_TCHE-greedy_pure] ejecución 3/5 (35.8 s)
+      • [Progreso:  71/120] | [MOEAD_TCHE-greedy_hybrid] ejecución 3/5 (41.0 s)
+      • [Progreso:  72/120] | [MOEAD_TCHE-greedy_hybrid] ejecución 4/5 (40.6 s)
+      • [Progreso:  73/120] | [MOEAD_PBI-random_sparse] ejecución 1/5 (40.1 s)
+      • [Progreso:  74/120] | [MOEAD_PBI-random_sparse] ejecución 2/5 (41.1 s)
+      • [Progreso:  75/120] | [MOEAD_PBI-random_sparse] ejecución 4/5 (38.9 s)
+      • [Progreso:  76/120] | [MOEAD_TCHE-greedy_hybrid] ejecución 2/5 (64.8 s)
+      • [Progreso:  77/120] | [MOEAD_TCHE-greedy_hybrid] ejecución 1/5 (70.2 s)
+      • [Progreso:  78/120] | [MOEAD_PBI-random_sparse] ejecución 3/5 (52.8 s)
+      • [Progreso:  79/120] | [MOEAD_PBI-random_dense] ejecución 1/5 (26.2 s)
+      • [Progreso:  80/120] | [SPEA2-greedy_hybrid] ejecución 5/5 (183.4 s)
+      • [Progreso:  81/120] | [SPEA2-greedy_hybrid] ejecución 3/5 (193.4 s)
+      • [Progreso:  82/120] | [MOEAD_PBI-random_sparse] ejecución 5/5 (29.2 s)
+      • [Progreso:  83/120] | [MOEAD_TCHE-greedy_hybrid] ejecución 5/5 (64.3 s)
+      • [Progreso:  84/120] | [MOEAD_PBI-greedy_pure] ejecución 1/5 (14.6 s)
+      • [Progreso:  85/120] | [SPEA2-greedy_hybrid] ejecución 2/5 (200.2 s)
+      • [Progreso:  86/120] | [MOEAD_PBI-greedy_pure] ejecución 2/5 (18.0 s)
+      • [Progreso:  87/120] | [SPEA2-greedy_hybrid] ejecución 1/5 (207.3 s)
+      • [Progreso:  88/120] | [SPEA2-greedy_hybrid] ejecución 4/5 (202.0 s)
+      • [Progreso:  89/120] | [MOEAD_PBI-greedy_pure] ejecución 3/5 (13.2 s)
+      • [Progreso:  90/120] | [MOEAD_PBI-greedy_pure] ejecución 4/5 (16.1 s)
+      • [Progreso:  91/120] | [MOEAD_PBI-greedy_pure] ejecución 5/5 (19.8 s)
+      • [Progreso:  92/120] | [MOEAD_PBI-random_dense] ejecución 2/5 (41.1 s)
+      • [Progreso:  93/120] | [MOEAD_PBI-random_dense] ejecución 3/5 (42.2 s)
+      • [Progreso:  94/120] | [MOEAD_PBI-random_dense] ejecución 4/5 (43.9 s)
+      • [Progreso:  95/120] | [MOEAD_PBI-random_dense] ejecución 5/5 (42.6 s)
+      • [Progreso:  96/120] | [MOEAD_PBI-greedy_hybrid] ejecución 1/5 (38.3 s)
+      • [Progreso:  97/120] | [MOEAD_WS-random_sparse] ejecución 1/5 (33.2 s)
+      • [Progreso:  98/120] | [MOEAD_WS-random_sparse] ejecución 2/5 (33.3 s)
+      • [Progreso:  99/120] | [MOEAD_PBI-greedy_hybrid] ejecución 4/5 (44.1 s)
+      • [Progreso: 100/120] | [MOEAD_WS-random_sparse] ejecución 3/5 (38.2 s)
+      • [Progreso: 101/120] | [MOEAD_WS-random_sparse] ejecución 4/5 (37.0 s)
+      • [Progreso: 102/120] | [MOEAD_WS-random_sparse] ejecución 5/5 (34.1 s)
+      • [Progreso: 103/120] | [MOEAD_WS-random_dense] ejecución 3/5 (32.7 s)
+      • [Progreso: 104/120] | [MOEAD_WS-random_dense] ejecución 1/5 (38.9 s)
+      • [Progreso: 105/120] | [MOEAD_PBI-greedy_hybrid] ejecución 3/5 (56.2 s)
+      • [Progreso: 106/120] | [MOEAD_WS-random_dense] ejecución 2/5 (39.4 s)
+      • [Progreso: 107/120] | [MOEAD_PBI-greedy_hybrid] ejecución 2/5 (63.1 s)
+      • [Progreso: 108/120] | [MOEAD_WS-greedy_pure] ejecución 3/5 (15.4 s)
+      • [Progreso: 109/120] | [MOEAD_WS-random_dense] ejecución 4/5 (39.1 s)
+      • [Progreso: 110/120] | [MOEAD_WS-greedy_pure] ejecución 1/5 (25.9 s)
+      • [Progreso: 111/120] | [MOEAD_WS-random_dense] ejecución 5/5 (30.4 s)
+      • [Progreso: 112/120] | [MOEAD_PBI-greedy_hybrid] ejecución 5/5 (60.9 s)
+      • [Progreso: 113/120] | [MOEAD_WS-greedy_pure] ejecución 2/5 (26.2 s)
+      • [Progreso: 114/120] | [MOEAD_WS-greedy_pure] ejecución 4/5 (22.8 s)
+      • [Progreso: 115/120] | [MOEAD_WS-greedy_pure] ejecución 5/5 (26.0 s)
+      • [Progreso: 116/120] | [MOEAD_WS-greedy_hybrid] ejecución 4/5 (23.0 s)
+      • [Progreso: 117/120] | [MOEAD_WS-greedy_hybrid] ejecución 1/5 (30.7 s)
+      • [Progreso: 118/120] | [MOEAD_WS-greedy_hybrid] ejecución 2/5 (28.1 s)
+      • [Progreso: 119/120] | [MOEAD_WS-greedy_hybrid] ejecución 3/5 (28.1 s)
+      • [Progreso: 120/120] | [MOEAD_WS-greedy_hybrid] ejecución 5/5 (30.4 s)
+      • Métricas generacionales completadas: 120 ejecuciones en 784.2s
+
+  📊 [1mTrazabilidad y Exportación de Datos (CSV)[0m
+  ───────────────────────────────────────────────
+      🖼️  Resultados detallados por ejecución: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/1_ejecuciones/resultados_detallados_full.csv\ [36mresultados_detallados_full.csv[0m]8;;\
+      🖼️  Historial evolutivo generacional: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/1_ejecuciones/historico_generacional_full.csv\ [36mhistorico_generacional_full.csv[0m]8;;\
+      🖼️  Soluciones de frentes finales (CSV): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/1_ejecuciones/frentes_pareto_full.csv\ [36mfrentes_pareto_full.csv[0m]8;;\
+
+  📍 [1mPuntos Críticos del Espacio de Objetivos[0m
+  ──────────────────────────────────────────────
+      • [1mPunto Ideal Global (mejor)[0m: [   6.         -114.         -199.70567376    1.62735464]
+      • [1mPunto Nadir Global (peor)[0m: [ 5.28000000e+02  1.00000000e+00 -3.06205674e+00  1.07323961e+03]
+
+[93m[1m╔══════════════════════════════════════════════════════════════════════════════╗
+[93m[1m║                           REPORTES Y VISUALIZACIÓN                           ║
+[93m[1m╚══════════════════════════════════════════════════════════════════════════════╝[0m
+
+  🔍 [1mDistribución y Correlación de Frentes de Pareto[0m
+  ─────────────────────────────────────────────────────
+
+    🔗 Correlación de Objetivos
+      🖼️  Correlación objetivos Pareto (Valores Reales): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/otros/correlacion_objetivos_pareto_full.png\ [36mcorrelacion_objetivos_pareto_full.png[0m]8;;\
+
+    📈 Coordenadas Paralelas
+      🖼️  Coordenadas paralelas MOEAD_PBI (greedy_hybrid): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_MOEAD_PBI_greedy_hybrid_full.png\ [36mcoordenadas_paralelas_MOEAD_PBI_greedy_hybrid_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas MOEAD_PBI (greedy_pure): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_MOEAD_PBI_greedy_pure_full.png\ [36mcoordenadas_paralelas_MOEAD_PBI_greedy_pure_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas MOEAD_PBI (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_MOEAD_PBI_random_dense_full.png\ [36mcoordenadas_paralelas_MOEAD_PBI_random_dense_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas MOEAD_PBI (random_sparse): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_MOEAD_PBI_random_sparse_full.png\ [36mcoordenadas_paralelas_MOEAD_PBI_random_sparse_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas MOEAD_TCHE (greedy_hybrid): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_MOEAD_TCHE_greedy_hybrid_full.png\ [36mcoordenadas_paralelas_MOEAD_TCHE_greedy_hybrid_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas MOEAD_TCHE (greedy_pure): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_MOEAD_TCHE_greedy_pure_full.png\ [36mcoordenadas_paralelas_MOEAD_TCHE_greedy_pure_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas MOEAD_TCHE (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_MOEAD_TCHE_random_dense_full.png\ [36mcoordenadas_paralelas_MOEAD_TCHE_random_dense_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas MOEAD_TCHE (random_sparse): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_MOEAD_TCHE_random_sparse_full.png\ [36mcoordenadas_paralelas_MOEAD_TCHE_random_sparse_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas MOEAD_WS (greedy_hybrid): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_MOEAD_WS_greedy_hybrid_full.png\ [36mcoordenadas_paralelas_MOEAD_WS_greedy_hybrid_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas MOEAD_WS (greedy_pure): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_MOEAD_WS_greedy_pure_full.png\ [36mcoordenadas_paralelas_MOEAD_WS_greedy_pure_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas MOEAD_WS (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_MOEAD_WS_random_dense_full.png\ [36mcoordenadas_paralelas_MOEAD_WS_random_dense_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas MOEAD_WS (random_sparse): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_MOEAD_WS_random_sparse_full.png\ [36mcoordenadas_paralelas_MOEAD_WS_random_sparse_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas NSGA2 (greedy_hybrid): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_NSGA2_greedy_hybrid_full.png\ [36mcoordenadas_paralelas_NSGA2_greedy_hybrid_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas NSGA2 (greedy_pure): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_NSGA2_greedy_pure_full.png\ [36mcoordenadas_paralelas_NSGA2_greedy_pure_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas NSGA2 (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_NSGA2_random_dense_full.png\ [36mcoordenadas_paralelas_NSGA2_random_dense_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas NSGA2 (random_sparse): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_NSGA2_random_sparse_full.png\ [36mcoordenadas_paralelas_NSGA2_random_sparse_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas NSGA3 (greedy_hybrid): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_NSGA3_greedy_hybrid_full.png\ [36mcoordenadas_paralelas_NSGA3_greedy_hybrid_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas NSGA3 (greedy_pure): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_NSGA3_greedy_pure_full.png\ [36mcoordenadas_paralelas_NSGA3_greedy_pure_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas NSGA3 (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_NSGA3_random_dense_full.png\ [36mcoordenadas_paralelas_NSGA3_random_dense_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas NSGA3 (random_sparse): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_NSGA3_random_sparse_full.png\ [36mcoordenadas_paralelas_NSGA3_random_sparse_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas SPEA2 (greedy_hybrid): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_SPEA2_greedy_hybrid_full.png\ [36mcoordenadas_paralelas_SPEA2_greedy_hybrid_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas SPEA2 (greedy_pure): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_SPEA2_greedy_pure_full.png\ [36mcoordenadas_paralelas_SPEA2_greedy_pure_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas SPEA2 (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_SPEA2_random_dense_full.png\ [36mcoordenadas_paralelas_SPEA2_random_dense_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas SPEA2 (random_sparse): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_SPEA2_random_sparse_full.png\ [36mcoordenadas_paralelas_SPEA2_random_sparse_full.png[0m]8;;\
+
+    🎯 Frentes de Pareto
+      🖼️  Frente Pareto NSGA3 (greedy_hybrid): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_hybrid_full.png\ [36mfrentes_pareto_nsga3_greedy_hybrid_full.png[0m]8;;\
+      🖼️  Frente Pareto NSGA3 (greedy_pure): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_pure_full.png\ [36mfrentes_pareto_nsga3_greedy_pure_full.png[0m]8;;\
+      🖼️  Frente Pareto NSGA3 (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_dense_full.png\ [36mfrentes_pareto_nsga3_random_dense_full.png[0m]8;;\
+      🖼️  Frente Pareto NSGA3 (random_sparse): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_sparse_full.png\ [36mfrentes_pareto_nsga3_random_sparse_full.png[0m]8;;\
+      🖼️  Frente Agregado: Frentes de Pareto Agregados: NSGA3: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_agregados_nsga3_full.png\ [36mfrentes_pareto_agregados_nsga3_full.png[0m]8;;\
+      🖼️  Frente Pareto MOEAD_TCHE (greedy_hybrid): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_hybrid_full.png\ [36mfrentes_pareto_moead_tche_greedy_hybrid_full.png[0m]8;;\
+      🖼️  Frente Pareto MOEAD_TCHE (greedy_pure): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_pure_full.png\ [36mfrentes_pareto_moead_tche_greedy_pure_full.png[0m]8;;\
+      🖼️  Frente Pareto MOEAD_TCHE (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_dense_full.png\ [36mfrentes_pareto_moead_tche_random_dense_full.png[0m]8;;\
+      🖼️  Frente Pareto MOEAD_TCHE (random_sparse): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_sparse_full.png\ [36mfrentes_pareto_moead_tche_random_sparse_full.png[0m]8;;\
+      🖼️  Frente Agregado: Frentes de Pareto Agregados: MOEAD_TCHE: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_agregados_moead_tche_full.png\ [36mfrentes_pareto_agregados_moead_tche_full.png[0m]8;;\
+      🖼️  Frente Pareto MOEAD_PBI (greedy_hybrid): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_hybrid_full.png\ [36mfrentes_pareto_moead_pbi_greedy_hybrid_full.png[0m]8;;\
+      🖼️  Frente Pareto MOEAD_PBI (greedy_pure): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_pure_full.png\ [36mfrentes_pareto_moead_pbi_greedy_pure_full.png[0m]8;;\
+      🖼️  Frente Pareto MOEAD_PBI (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_dense_full.png\ [36mfrentes_pareto_moead_pbi_random_dense_full.png[0m]8;;\
+      🖼️  Frente Pareto MOEAD_PBI (random_sparse): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_sparse_full.png\ [36mfrentes_pareto_moead_pbi_random_sparse_full.png[0m]8;;\
+      🖼️  Frente Agregado: Frentes de Pareto Agregados: MOEAD_PBI: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_agregados_moead_pbi_full.png\ [36mfrentes_pareto_agregados_moead_pbi_full.png[0m]8;;\
+      🖼️  Frente Pareto MOEAD_WS (greedy_hybrid): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_hybrid_full.png\ [36mfrentes_pareto_moead_ws_greedy_hybrid_full.png[0m]8;;\
+      🖼️  Frente Pareto MOEAD_WS (greedy_pure): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_pure_full.png\ [36mfrentes_pareto_moead_ws_greedy_pure_full.png[0m]8;;\
+      🖼️  Frente Pareto MOEAD_WS (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_dense_full.png\ [36mfrentes_pareto_moead_ws_random_dense_full.png[0m]8;;\
+      🖼️  Frente Pareto MOEAD_WS (random_sparse): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_sparse_full.png\ [36mfrentes_pareto_moead_ws_random_sparse_full.png[0m]8;;\
+      🖼️  Frente Agregado: Frentes de Pareto Agregados: MOEAD_WS: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_agregados_moead_ws_full.png\ [36mfrentes_pareto_agregados_moead_ws_full.png[0m]8;;\
+      🖼️  Frente Pareto NSGA2 (greedy_hybrid): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_hybrid_full.png\ [36mfrentes_pareto_nsga2_greedy_hybrid_full.png[0m]8;;\
+      🖼️  Frente Pareto NSGA2 (greedy_pure): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_pure_full.png\ [36mfrentes_pareto_nsga2_greedy_pure_full.png[0m]8;;\
+      🖼️  Frente Pareto NSGA2 (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_dense_full.png\ [36mfrentes_pareto_nsga2_random_dense_full.png[0m]8;;\
+      🖼️  Frente Pareto NSGA2 (random_sparse): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_sparse_full.png\ [36mfrentes_pareto_nsga2_random_sparse_full.png[0m]8;;\
+      🖼️  Frente Agregado: Frentes de Pareto Agregados: NSGA2: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_agregados_nsga2_full.png\ [36mfrentes_pareto_agregados_nsga2_full.png[0m]8;;\
+      🖼️  Frente Pareto SPEA2 (greedy_hybrid): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_hybrid_full.png\ [36mfrentes_pareto_spea2_greedy_hybrid_full.png[0m]8;;\
+      🖼️  Frente Pareto SPEA2 (greedy_pure): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_pure_full.png\ [36mfrentes_pareto_spea2_greedy_pure_full.png[0m]8;;\
+      🖼️  Frente Pareto SPEA2 (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_dense_full.png\ [36mfrentes_pareto_spea2_random_dense_full.png[0m]8;;\
+      🖼️  Frente Pareto SPEA2 (random_sparse): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_sparse_full.png\ [36mfrentes_pareto_spea2_random_sparse_full.png[0m]8;;\
+      🖼️  Frente Agregado: Frentes de Pareto Agregados: SPEA2: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_agregados_spea2_full.png\ [36mfrentes_pareto_agregados_spea2_full.png[0m]8;;\
+      🖼️  Frente Agregado: Comparativa Global de Frentes de Pareto: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_global_full.png\ [36mfrentes_pareto_global_full.png[0m]8;;\
+      • Tiempo bloque 'Frentes de Pareto': 30.0s
+
+  🔄 [1mAnálisis de Convergencia Progresiva[0m
+  ─────────────────────────────────────────
+      🖼️  Convergencia por métrica (AvgHammingDistance) con subplots por algoritmo: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/2_metricas_convergencia/convergencia_avghammingdistance_full.png\ [36mconvergencia_avghammingdistance_full.png[0m]8;;\
+      🖼️  Convergencia por métrica (AvgToleranceRate) con subplots por algoritmo: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/2_metricas_convergencia/convergencia_avgtolerancerate_full.png\ [36mconvergencia_avgtolerancerate_full.png[0m]8;;\
+      🖼️  Convergencia por métrica (Hypervolume) con subplots por algoritmo: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/2_metricas_convergencia/convergencia_hypervolume_full.png\ [36mconvergencia_hypervolume_full.png[0m]8;;\
+      🖼️  Convergencia por métrica (MaxToleranceRate) con subplots por algoritmo: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/2_metricas_convergencia/convergencia_maxtolerancerate_full.png\ [36mconvergencia_maxtolerancerate_full.png[0m]8;;\
+      🖼️  Convergencia por métrica (MinSum) con subplots por algoritmo: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/2_metricas_convergencia/convergencia_minsum_full.png\ [36mconvergencia_minsum_full.png[0m]8;;\
+      🖼️  Convergencia por métrica (Range) con subplots por algoritmo: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/2_metricas_convergencia/convergencia_range_full.png\ [36mconvergencia_range_full.png[0m]8;;\
+      🖼️  Convergencia por métrica (SumMin) con subplots por algoritmo: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/2_metricas_convergencia/convergencia_summin_full.png\ [36mconvergencia_summin_full.png[0m]8;;\
+
+  📊 [1mSíntesis Estadística Comparativa[0m
+  ──────────────────────────────────────
+
+    📦 [1mResumen Global (Boxplots)[0m
+      🖼️  Panel de Boxplots comparativos: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/0_boxplots/boxplots_metricas_finales_full.png\ [36mboxplots_metricas_finales_full.png[0m]8;;\
+      🖼️  Distribución Range (Boxplot): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/0_boxplots/boxplot_metricas_Range_full.png\ [36mboxplot_metricas_Range_full.png[0m]8;;\
+      🖼️  Distribución SumMin (Boxplot): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/0_boxplots/boxplot_metricas_SumMin_full.png\ [36mboxplot_metricas_SumMin_full.png[0m]8;;\
+      🖼️  Distribución MinSum (Boxplot): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/0_boxplots/boxplot_metricas_MinSum_full.png\ [36mboxplot_metricas_MinSum_full.png[0m]8;;\
+      🖼️  Distribución MaxToleranceRate (Boxplot): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/0_boxplots/boxplot_metricas_MaxToleranceRate_full.png\ [36mboxplot_metricas_MaxToleranceRate_full.png[0m]8;;\
+      🖼️  Distribución AvgToleranceRate (Boxplot): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/0_boxplots/boxplot_metricas_AvgToleranceRate_full.png\ [36mboxplot_metricas_AvgToleranceRate_full.png[0m]8;;\
+      🖼️  Distribución AvgHammingDistance (Boxplot): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/0_boxplots/boxplot_metricas_AvgHammingDistance_full.png\ [36mboxplot_metricas_AvgHammingDistance_full.png[0m]8;;\
+      🖼️  Distribución Hypervolume (Boxplot): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/0_boxplots/boxplot_metricas_Hypervolume_full.png\ [36mboxplot_metricas_Hypervolume_full.png[0m]8;;\
+
+    🎻 [1mDistribuciones Detalladas (Violin Plots)[0m
+      🖼️  Panel de Distribución Violin: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/1_violines/violin_panel_metricas_finales_full.png\ [36mviolin_panel_metricas_finales_full.png[0m]8;;\
+      🖼️  Distribución Range (Violin): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/1_violines/violin_metricas_Range_full.png\ [36mviolin_metricas_Range_full.png[0m]8;;\
+      🖼️  Distribución SumMin (Violin): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/1_violines/violin_metricas_SumMin_full.png\ [36mviolin_metricas_SumMin_full.png[0m]8;;\
+      🖼️  Distribución MinSum (Violin): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/1_violines/violin_metricas_MinSum_full.png\ [36mviolin_metricas_MinSum_full.png[0m]8;;\
+      🖼️  Distribución MaxToleranceRate (Violin): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/1_violines/violin_metricas_MaxToleranceRate_full.png\ [36mviolin_metricas_MaxToleranceRate_full.png[0m]8;;\
+      🖼️  Distribución AvgToleranceRate (Violin): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/1_violines/violin_metricas_AvgToleranceRate_full.png\ [36mviolin_metricas_AvgToleranceRate_full.png[0m]8;;\
+      🖼️  Distribución AvgHammingDistance (Violin): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/1_violines/violin_metricas_AvgHammingDistance_full.png\ [36mviolin_metricas_AvgHammingDistance_full.png[0m]8;;\
+      🖼️  Distribución Hypervolume (Violin): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/1_violines/violin_metricas_Hypervolume_full.png\ [36mviolin_metricas_Hypervolume_full.png[0m]8;;\
+
+    📉 [1mAnálisis de Tendencia Central (Media ± Std)[0m
+      🖼️  Panel de Tendencia Central (Media ± Std): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/2_barras/media_std_panel_metricas_finales_full.png\ [36mmedia_std_panel_metricas_finales_full.png[0m]8;;\
+      🖼️  Media ± std Range: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/2_barras/media_std_metricas_Range_full.png\ [36mmedia_std_metricas_Range_full.png[0m]8;;\
+      🖼️  Media ± std SumMin: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/2_barras/media_std_metricas_SumMin_full.png\ [36mmedia_std_metricas_SumMin_full.png[0m]8;;\
+      🖼️  Media ± std MinSum: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/2_barras/media_std_metricas_MinSum_full.png\ [36mmedia_std_metricas_MinSum_full.png[0m]8;;\
+      🖼️  Media ± std MaxToleranceRate: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/2_barras/media_std_metricas_MaxToleranceRate_full.png\ [36mmedia_std_metricas_MaxToleranceRate_full.png[0m]8;;\
+      🖼️  Media ± std AvgToleranceRate: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/2_barras/media_std_metricas_AvgToleranceRate_full.png\ [36mmedia_std_metricas_AvgToleranceRate_full.png[0m]8;;\
+      🖼️  Media ± std AvgHammingDistance: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/2_barras/media_std_metricas_AvgHammingDistance_full.png\ [36mmedia_std_metricas_AvgHammingDistance_full.png[0m]8;;\
+      🖼️  Media ± std Hypervolume: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/3_sintesis/2_barras/media_std_metricas_Hypervolume_full.png\ [36mmedia_std_metricas_Hypervolume_full.png[0m]8;;\
+
+  📊 [1mResumen Estadístico de Métricas[0m
+  ─────────────────────────────────────
+      🖼️  Mapa de calor comparativo (Benchmark): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/4_rankings/heatmap_comparativa_full.png\ [36mheatmap_comparativa_full.png[0m]8;;\
+
+  🏆 [1mRanking Global por Suma de Posiciones[0m
+  ───────────────────────────────────────────
+      🖼️  Gráfico de Ranking Global: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_hybrid-greedy_pure-random_dense-random_sparse/20260420T205406/2_comparativa/4_rankings/ranking_global_full.png\ [36mranking_global_full.png[0m]8;;\
+
+========================================
+⏱️  TIEMPO TOTAL DE EJECUCIÓN: 1h 3m 55.76s
+========================================
+

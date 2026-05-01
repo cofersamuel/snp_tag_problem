@@ -1,0 +1,804 @@
+(venv) usuario@D00200023-DBE11:~/Escritorio/cofer_tfg/snp_tag_problem$ python3 -m snp_tag.main -m full_20 -d hinds2005
+
+  ⚙️   CONFIGURACIÓN
+  ───────────────────
+      • Modo=full_20 | POP_SIZE=200 | N_GEN=500 | OFFSPRING=200 | PC=0.7 | PM=0.000969 | N_RUNS=20
+
+  📊  Metadatos y Dimensiones del Dataset
+  ─────────────────────────────────────────
+       ✅  Hinds 2005 cargado y filtrado: 48 patrones alelicos × 772 SNPs polimórficos (de 1032 originales) desde 'snp_tag/data/datasets/hinds2005_1032.txt'
+      • ORIGEN_DATOS=hinds2005 (Hinds et al. 2005 / Perlegen) | N_SNPS=772 | N_PATRONES=48 | PM=0.001295
+      • FICHERO=snp_tag/data/datasets/hinds2005_1032.txt
+      • REPORT_DPI=300 | EVALUATION_MODE=proportional | NORMALIZATION_MODE=static_proportional_limits | SEED_MODE=non_deterministic | OBJ_TRANSFORM=inverse
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                  DIAGNÓSTICO DE DATOS Y DESEQUILIBRIO (LD)                   ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+  🧬  Visualización de la Estructura de Haplotipos
+  ──────────────────────────────────────────────────
+      🖼️  Mapa de calor de haplotipos:  heatmap_haplotipos_full_20.png
+      🖼️  Estructura LD (3 bloques):  bloques_ld_haplotipos_full_20.png
+
+  📈  Análisis de Variabilidad y Frecuencia Alélica
+  ───────────────────────────────────────────────────
+      🖼️  Distribución de frecuencia alélica:  histograma_alelico_full_20.png
+      🖼️  Variabilidad por SNP:  variabilidad_snps_full_20.png
+      🖼️  Alelos dominantes por haplotipo:  conteo_alelos_full_20.png
+      🖼️  Distribución de distancias de Hamming:  histograma_hamming_full_20.png
+
+  🔗  Caracterización Global de Correlación (LD)
+  ────────────────────────────────────────────────
+      • Correlación media absoluta (global |r|): 0.1387
+      • Total de pares evaluados: 297606
+      🖼️  Mapa de calor de correlación (LD):  heatmap_correlacion_completa_full_20.png
+      🖼️  Distribución de correlaciones (LD):  histograma_correlaciones_ld_full_20.png
+      🖼️  CDF de correlación LD:  cdf_correlacion_absoluta_ld_full_20.png
+
+  ⚖️   Resumen Estructural del Dataset
+  ─────────────────────────────────────
+      • Estructura detectada: 3 bloques de ligamiento
+      • Correlación media absoluta (|r|): 0.1387
+      • Naturaleza del dato: Benchmark biológico (Hinds)
+
+  📐  Análisis de Similitud Genotípica (Pares de Haplotipos)
+  ────────────────────────────────────────────────────────────
+      • Número de pares de haplotipos: 1128
+      • Pares mostrados: 3 similares / 3 distintos
+      • Vista parcial: primeros 32 SNPs
+      • Percentiles (Hamming): P33=237.00, P66=273.00
+      • [Etiquetas: <=P33 -> muy similar | (P33,P66] -> intermedio | >P66 -> muy distinto]
+
+  🤝  Pares de mayor similitud genética
+  ───────────────────────────────────────
+      •  Par (26, 27) | Hamming=129 | muy similar
+        h026: 00000000000100111100000000011111...
+        h027: 11110111111000010011100111100000...
+      •  Par (17, 41) | Hamming=134 | muy similar
+        h017: 11110111111000010011100111101111...
+        h041: 11110111111000010011100111100111...
+      •  Par (36, 46) | Hamming=140 | muy similar
+        h036: 00000000000100111111100111100000...
+        h046: 11110111111000010011100111100000...
+
+  ↔️   Pares de mayor divergencia genética
+  ─────────────────────────────────────────
+      •  Par (29, 36) | Hamming=407 | muy distinto
+        h029: 00001000000011000000000000010000...
+        h036: 00000000000100111111100111100000...
+      •  Par (28, 29) | Hamming=404 | muy distinto
+        h028: 00001000000011000000000000010000...
+        h029: 00001000000011000000000000010000...
+      •  Par (24, 29) | Hamming=390 | muy distinto
+        h024: 11110111111000010011100101101111...
+        h029: 00001000000011000000000000010000...
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                             MOTOR MULTIOBJETIVO                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+  ⚙️   Configuración del Motor Evolutivo
+  ───────────────────────────────────────
+      • Modo=full_20 | POP_SIZE=200 | N_GEN=500 | OFFSPRING=200 | PC=0.7 | PM=0.001295 | N_RUNS=20
+      • Desglose: 4 algoritmos x 2 inicializaciones x 20 runs = 160 ejecuciones
+      • Configuraciones únicas (algoritmo-init): 8
+      • Algoritmos activos: NSGA2, NSGA3, SPEA2, MOEAD_TCHE
+      • Puntos de referencia (ref_dirs): 200 | Particiones: 9
+      • Tamaño de población (pop_size): 200
+
+  🧬  Fase Evolutiva
+  ────────────────────
+    • Iniciando 160 experimentos en modo paralelo seguro
+      • Paralelizando con hasta 22 procesos en paralelo
+      • [Progreso:   1/160] | [NSGA2-random_dense] ejecución 20/20 (76.2 s)
+      • [Progreso:   2/160] | [NSGA2-random_dense] ejecución 11/20 (121.9 s)
+      • [Progreso:   3/160] | [NSGA2-random_dense] ejecución 19/20 (122.0 s)
+      • [Progreso:   4/160] | [NSGA2-random_dense] ejecución 5/20 (126.4 s)
+      • [Progreso:   5/160] | [NSGA2-random_dense] ejecución 4/20 (126.4 s)
+      • [Progreso:   6/160] | [NSGA2-random_dense] ejecución 6/20 (126.4 s)
+      • [Progreso:   7/160] | [NSGA2-random_dense] ejecución 9/20 (126.5 s)
+      • [Progreso:   8/160] | [NSGA2-random_dense] ejecución 7/20 (126.8 s)
+      • [Progreso:   9/160] | [NSGA2-random_dense] ejecución 3/20 (126.9 s)
+      • [Progreso:  10/160] | [NSGA2-random_dense] ejecución 2/20 (126.9 s)
+      • [Progreso:  11/160] | [NSGA2-random_dense] ejecución 1/20 (127.0 s)
+      • [Progreso:  12/160] | [NSGA2-greedy_ting] ejecución 1/20 (131.2 s)
+      • [Progreso:  13/160] | [NSGA2-greedy_ting] ejecución 2/20 (131.3 s)
+      • [Progreso:  14/160] | [NSGA2-random_dense] ejecución 10/20 (132.6 s)
+      • [Progreso:  15/160] | [NSGA2-random_dense] ejecución 12/20 (132.6 s)
+      • [Progreso:  16/160] | [NSGA2-random_dense] ejecución 15/20 (133.9 s)
+      • [Progreso:  17/160] | [NSGA2-random_dense] ejecución 18/20 (133.9 s)
+      • [Progreso:  18/160] | [NSGA2-random_dense] ejecución 8/20 (134.4 s)
+      • [Progreso:  19/160] | [NSGA2-random_dense] ejecución 13/20 (135.0 s)
+      • [Progreso:  20/160] | [NSGA2-random_dense] ejecución 16/20 (135.1 s)
+      • [Progreso:  21/160] | [NSGA2-random_dense] ejecución 17/20 (136.7 s)
+      • [Progreso:  22/160] | [NSGA2-random_dense] ejecución 14/20 (136.7 s)
+      • [Progreso:  23/160] | [NSGA2-greedy_ting] ejecución 3/20 (79.4 s)
+      • [Progreso:  24/160] | [NSGA2-greedy_ting] ejecución 14/20 (72.7 s)
+      • [Progreso:  25/160] | [NSGA3-random_dense] ejecución 4/20 (81.9 s)
+      • [Progreso:  26/160] | [NSGA3-random_dense] ejecución 3/20 (115.8 s)
+      • [Progreso:  27/160] | [NSGA2-greedy_ting] ejecución 6/20 (126.6 s)
+      • [Progreso:  28/160] | [NSGA2-greedy_ting] ejecución 8/20 (126.8 s)
+      • [Progreso:  29/160] | [NSGA2-greedy_ting] ejecución 9/20 (127.0 s)
+      • [Progreso:  30/160] | [NSGA2-greedy_ting] ejecución 5/20 (131.7 s)
+      • [Progreso:  31/160] | [NSGA2-greedy_ting] ejecución 11/20 (127.0 s)
+      • [Progreso:  32/160] | [NSGA2-greedy_ting] ejecución 12/20 (127.0 s)
+      • [Progreso:  33/160] | [NSGA2-greedy_ting] ejecución 13/20 (127.1 s)
+      • [Progreso:  34/160] | [NSGA2-greedy_ting] ejecución 4/20 (135.9 s)
+      • [Progreso:  35/160] | [NSGA2-greedy_ting] ejecución 16/20 (126.7 s)
+      • [Progreso:  36/160] | [NSGA2-greedy_ting] ejecución 10/20 (133.0 s)
+      • [Progreso:  37/160] | [NSGA2-greedy_ting] ejecución 20/20 (126.8 s)
+      • [Progreso:  38/160] | [NSGA2-greedy_ting] ejecución 7/20 (136.0 s)
+      • [Progreso:  39/160] | [NSGA2-greedy_ting] ejecución 15/20 (133.1 s)
+      • [Progreso:  40/160] | [NSGA2-greedy_ting] ejecución 19/20 (134.0 s)
+      • [Progreso:  41/160] | [NSGA2-greedy_ting] ejecución 18/20 (134.3 s)
+      • [Progreso:  42/160] | [NSGA2-greedy_ting] ejecución 17/20 (136.2 s)
+      • [Progreso:  43/160] | [NSGA3-random_dense] ejecución 1/20 (136.0 s)
+      • [Progreso:  44/160] | [NSGA3-random_dense] ejecución 2/20 (136.2 s)
+      • [Progreso:  45/160] | [NSGA3-random_dense] ejecución 6/20 (72.1 s)
+      • [Progreso:  46/160] | [NSGA3-random_dense] ejecución 7/20 (71.9 s)
+      • [Progreso:  47/160] | [NSGA3-random_dense] ejecución 5/20 (135.0 s)
+      • [Progreso:  48/160] | [NSGA3-greedy_ting] ejecución 7/20 (72.2 s)
+      • [Progreso:  49/160] | [NSGA3-greedy_ting] ejecución 8/20 (71.6 s)
+      • [Progreso:  50/160] | [NSGA3-random_dense] ejecución 9/20 (129.4 s)
+      • [Progreso:  51/160] | [NSGA3-random_dense] ejecución 10/20 (129.4 s)
+      • [Progreso:  52/160] | [NSGA3-random_dense] ejecución 11/20 (129.6 s)
+      • [Progreso:  53/160] | [NSGA3-random_dense] ejecución 13/20 (129.4 s)
+      • [Progreso:  54/160] | [NSGA3-random_dense] ejecución 14/20 (129.4 s)
+      • [Progreso:  55/160] | [NSGA3-random_dense] ejecución 15/20 (129.3 s)
+      • [Progreso:  56/160] | [NSGA3-random_dense] ejecución 8/20 (134.5 s)
+      • [Progreso:  57/160] | [NSGA3-random_dense] ejecución 12/20 (135.3 s)
+      • [Progreso:  58/160] | [NSGA3-random_dense] ejecución 17/20 (129.8 s)
+      • [Progreso:  59/160] | [NSGA3-random_dense] ejecución 19/20 (129.4 s)
+      • [Progreso:  60/160] | [NSGA3-greedy_ting] ejecución 1/20 (127.1 s)
+      • [Progreso:  61/160] | [NSGA3-random_dense] ejecución 16/20 (134.8 s)
+      • [Progreso:  62/160] | [NSGA3-random_dense] ejecución 18/20 (134.5 s)
+      • [Progreso:  63/160] | [NSGA3-random_dense] ejecución 20/20 (135.0 s)
+      • [Progreso:  64/160] | [NSGA3-greedy_ting] ejecución 4/20 (134.5 s)
+      • [Progreso:  65/160] | [NSGA3-greedy_ting] ejecución 2/20 (136.9 s)
+      • [Progreso:  66/160] | [NSGA3-greedy_ting] ejecución 3/20 (137.0 s)
+      • [Progreso:  67/160] | [NSGA3-greedy_ting] ejecución 5/20 (136.9 s)
+      • [Progreso:  68/160] | [NSGA3-greedy_ting] ejecución 6/20 (137.1 s)
+      • [Progreso:  69/160] | [NSGA3-greedy_ting] ejecución 10/20 (74.6 s)
+      • [Progreso:  70/160] | [NSGA3-greedy_ting] ejecución 9/20 (132.6 s)
+      • [Progreso:  71/160] | [NSGA3-greedy_ting] ejecución 11/20 (82.0 s)
+      • [Progreso:  72/160] | [SPEA2-random_dense] ejecución 11/20 (82.1 s)
+      • [Progreso:  73/160] | [NSGA3-greedy_ting] ejecución 12/20 (130.7 s)
+      • [Progreso:  74/160] | [NSGA3-greedy_ting] ejecución 13/20 (130.7 s)
+      • [Progreso:  75/160] | [NSGA3-greedy_ting] ejecución 14/20 (130.5 s)
+      • [Progreso:  76/160] | [NSGA3-greedy_ting] ejecución 17/20 (130.6 s)
+      • [Progreso:  77/160] | [NSGA3-greedy_ting] ejecución 16/20 (130.9 s)
+      • [Progreso:  78/160] | [NSGA3-greedy_ting] ejecución 15/20 (131.0 s)
+      • [Progreso:  79/160] | [SPEA2-random_dense] ejecución 2/20 (128.3 s)
+      • [Progreso:  80/160] | [NSGA3-greedy_ting] ejecución 18/20 (136.8 s)
+      • [Progreso:  81/160] | [NSGA3-greedy_ting] ejecución 19/20 (136.0 s)
+      • [Progreso:  82/160] | [NSGA3-greedy_ting] ejecución 20/20 (136.6 s)
+      • [Progreso:  83/160] | [SPEA2-random_dense] ejecución 13/20 (87.5 s)
+      • [Progreso:  84/160] | [SPEA2-random_dense] ejecución 1/20 (148.9 s)
+      • [Progreso:  85/160] | [SPEA2-random_dense] ejecución 3/20 (148.8 s)
+      • [Progreso:  86/160] | [SPEA2-random_dense] ejecución 4/20 (149.4 s)
+      • [Progreso:  87/160] | [SPEA2-random_dense] ejecución 5/20 (147.4 s)
+      • [Progreso:  88/160] | [SPEA2-random_dense] ejecución 6/20 (149.5 s)
+      • [Progreso:  89/160] | [SPEA2-random_dense] ejecución 7/20 (149.5 s)
+      • [Progreso:  90/160] | [SPEA2-random_dense] ejecución 8/20 (149.2 s)
+      • [Progreso:  91/160] | [SPEA2-random_dense] ejecución 9/20 (148.2 s)
+      • [Progreso:  92/160] | [SPEA2-random_dense] ejecución 10/20 (149.5 s)
+      • [Progreso:  93/160] | [SPEA2-random_dense] ejecución 12/20 (137.7 s)
+      • [Progreso:  94/160] | [SPEA2-greedy_ting] ejecución 5/20 (81.1 s)
+      • [Progreso:  95/160] | [SPEA2-greedy_ting] ejecución 4/20 (90.5 s)
+      • [Progreso:  96/160] | [SPEA2-random_dense] ejecución 14/20 (121.6 s)
+      • [Progreso:  97/160] | [SPEA2-random_dense] ejecución 18/20 (127.9 s)
+      • [Progreso:  98/160] | [SPEA2-random_dense] ejecución 15/20 (149.5 s)
+      • [Progreso:  99/160] | [SPEA2-random_dense] ejecución 17/20 (149.1 s)
+      • [Progreso: 100/160] | [SPEA2-greedy_ting] ejecución 1/20 (143.1 s)
+      • [Progreso: 101/160] | [SPEA2-random_dense] ejecución 16/20 (151.0 s)
+      • [Progreso: 102/160] | [SPEA2-random_dense] ejecución 19/20 (151.3 s)
+      • [Progreso: 103/160] | [SPEA2-random_dense] ejecución 20/20 (151.5 s)
+      • [Progreso: 104/160] | [SPEA2-greedy_ting] ejecución 2/20 (148.5 s)
+      • [Progreso: 105/160] | [SPEA2-greedy_ting] ejecución 3/20 (148.6 s)
+      • [Progreso: 106/160] | [SPEA2-greedy_ting] ejecución 9/20 (141.1 s)
+      • [Progreso: 107/160] | [SPEA2-greedy_ting] ejecución 6/20 (150.2 s)
+      • [Progreso: 108/160] | [SPEA2-greedy_ting] ejecución 7/20 (150.3 s)
+      • [Progreso: 109/160] | [SPEA2-greedy_ting] ejecución 8/20 (149.2 s)
+      • [Progreso: 110/160] | [SPEA2-greedy_ting] ejecución 10/20 (150.5 s)
+      • [Progreso: 111/160] | [SPEA2-greedy_ting] ejecución 11/20 (150.2 s)
+      • [Progreso: 112/160] | [SPEA2-greedy_ting] ejecución 12/20 (150.4 s)
+      • [Progreso: 113/160] | [SPEA2-greedy_ting] ejecución 15/20 (146.1 s)
+      • [Progreso: 114/160] | [SPEA2-greedy_ting] ejecución 13/20 (150.9 s)
+      • [Progreso: 115/160] | [SPEA2-greedy_ting] ejecución 14/20 (150.7 s)
+      • [Progreso: 116/160] | [SPEA2-greedy_ting] ejecución 16/20 (104.4 s)
+      • [Progreso: 117/160] | [SPEA2-greedy_ting] ejecución 18/20 (102.3 s)
+      • [Progreso: 118/160] | [SPEA2-greedy_ting] ejecución 17/20 (112.7 s)
+      • [Progreso: 119/160] | [SPEA2-greedy_ting] ejecución 19/20 (151.6 s)
+      • [Progreso: 120/160] | [SPEA2-greedy_ting] ejecución 20/20 (151.7 s)
+      • [Progreso: 121/160] | [MOEAD_TCHE-random_dense] ejecución 7/20 (222.1 s)
+      • [Progreso: 122/160] | [MOEAD_TCHE-random_dense] ejecución 18/20 (179.1 s)
+      • [Progreso: 123/160] | [MOEAD_TCHE-random_dense] ejecución 3/20 (279.5 s)
+      • [Progreso: 124/160] | [MOEAD_TCHE-random_dense] ejecución 5/20 (282.4 s)
+      • [Progreso: 125/160] | [MOEAD_TCHE-random_dense] ejecución 2/20 (285.4 s)
+      • [Progreso: 126/160] | [MOEAD_TCHE-random_dense] ejecución 1/20 (286.4 s)
+      • [Progreso: 127/160] | [MOEAD_TCHE-random_dense] ejecución 4/20 (285.7 s)
+      • [Progreso: 128/160] | [MOEAD_TCHE-random_dense] ejecución 6/20 (288.6 s)
+      • [Progreso: 129/160] | [MOEAD_TCHE-random_dense] ejecución 19/20 (237.1 s)
+      • [Progreso: 130/160] | [MOEAD_TCHE-random_dense] ejecución 9/20 (276.1 s)
+      • [Progreso: 131/160] | [MOEAD_TCHE-random_dense] ejecución 10/20 (276.4 s)
+      • [Progreso: 132/160] | [MOEAD_TCHE-random_dense] ejecución 8/20 (289.6 s)
+      • [Progreso: 133/160] | [MOEAD_TCHE-random_dense] ejecución 11/20 (283.8 s)
+      • [Progreso: 134/160] | [MOEAD_TCHE-random_dense] ejecución 12/20 (274.9 s)
+      • [Progreso: 135/160] | [MOEAD_TCHE-random_dense] ejecución 14/20 (291.6 s)
+      • [Progreso: 136/160] | [MOEAD_TCHE-random_dense] ejecución 13/20 (291.8 s)
+      • [Progreso: 137/160] | [MOEAD_TCHE-random_dense] ejecución 16/20 (296.1 s)
+      • [Progreso: 138/160] | [MOEAD_TCHE-random_dense] ejecución 17/20 (296.4 s)
+      • [Progreso: 139/160] | [MOEAD_TCHE-random_dense] ejecución 15/20 (298.1 s)
+      • [Progreso: 140/160] | [MOEAD_TCHE-random_dense] ejecución 20/20 (296.7 s)
+      • [Progreso: 141/160] | [MOEAD_TCHE-greedy_ting] ejecución 1/20 (293.5 s)
+      • [Progreso: 142/160] | [MOEAD_TCHE-greedy_ting] ejecución 2/20 (273.3 s)
+      • [Progreso: 143/160] | [MOEAD_TCHE-greedy_ting] ejecución 3/20 (211.0 s)
+      • [Progreso: 144/160] | [MOEAD_TCHE-greedy_ting] ejecución 6/20 (198.9 s)
+      • [Progreso: 145/160] | [MOEAD_TCHE-greedy_ting] ejecución 12/20 (182.6 s)
+      • [Progreso: 146/160] | [MOEAD_TCHE-greedy_ting] ejecución 16/20 (175.4 s)
+      • [Progreso: 147/160] | [MOEAD_TCHE-greedy_ting] ejecución 4/20 (264.7 s)
+      • [Progreso: 148/160] | [MOEAD_TCHE-greedy_ting] ejecución 15/20 (206.0 s)
+      • [Progreso: 149/160] | [MOEAD_TCHE-greedy_ting] ejecución 5/20 (244.3 s)
+      • [Progreso: 150/160] | [MOEAD_TCHE-greedy_ting] ejecución 11/20 (222.8 s)
+      • [Progreso: 151/160] | [MOEAD_TCHE-greedy_ting] ejecución 20/20 (191.3 s)
+      • [Progreso: 152/160] | [MOEAD_TCHE-greedy_ting] ejecución 7/20 (248.3 s)
+      • [Progreso: 153/160] | [MOEAD_TCHE-greedy_ting] ejecución 14/20 (224.3 s)
+      • [Progreso: 154/160] | [MOEAD_TCHE-greedy_ting] ejecución 18/20 (206.4 s)
+      • [Progreso: 155/160] | [MOEAD_TCHE-greedy_ting] ejecución 8/20 (254.9 s)
+      • [Progreso: 156/160] | [MOEAD_TCHE-greedy_ting] ejecución 9/20 (253.9 s)
+      • [Progreso: 157/160] | [MOEAD_TCHE-greedy_ting] ejecución 10/20 (246.7 s)
+      • [Progreso: 158/160] | [MOEAD_TCHE-greedy_ting] ejecución 17/20 (211.1 s)
+      • [Progreso: 159/160] | [MOEAD_TCHE-greedy_ting] ejecución 19/20 (207.2 s)
+      • [Progreso: 160/160] | [MOEAD_TCHE-greedy_ting] ejecución 13/20 (242.8 s)
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                            SÍNTESIS DE RESULTADOS                            ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+  • Configuración de síntesis: DPI=300
+
+  ⏱️   Análisis de Rendimiento y Tiempo
+  ──────────────────────────────────────
+      🖼️  Boxplot tiempo de ejecución:  boxplot_tiempo_full_20.png
+      🖼️  Media ± std tiempo ejecución:  media_std_tiempo_full_20.png
+      🖼️  Tiempo vs Tamaño de frente:  tiempo_vs_tamano_frente_full_20.png
+      • Tiempo bloque 'Análisis de Rendimiento y Tiempo': 0.6s
+
+  🧮  Procesamiento de Métricas (con progreso)
+  ──────────────────────────────────────────────
+    • Iniciando métricas finales: 160 ejecuciones
+      • [Progreso:   1/160] | [NSGA2-random_dense] ejecución 1/20 (0.0 s)
+      • [Progreso:   2/160] | [NSGA2-random_dense] ejecución 2/20 (0.0 s)
+      • [Progreso:   3/160] | [NSGA2-random_dense] ejecución 3/20 (0.0 s)
+      • [Progreso:   4/160] | [NSGA2-random_dense] ejecución 4/20 (0.0 s)
+      • [Progreso:   5/160] | [NSGA2-random_dense] ejecución 5/20 (0.0 s)
+      • [Progreso:   6/160] | [NSGA2-random_dense] ejecución 6/20 (0.0 s)
+      • [Progreso:   7/160] | [NSGA2-random_dense] ejecución 7/20 (0.0 s)
+      • [Progreso:   8/160] | [NSGA2-random_dense] ejecución 8/20 (0.0 s)
+      • [Progreso:   9/160] | [NSGA2-random_dense] ejecución 9/20 (0.0 s)
+      • [Progreso:  10/160] | [NSGA2-random_dense] ejecución 10/20 (0.0 s)
+      • [Progreso:  11/160] | [NSGA2-random_dense] ejecución 11/20 (0.0 s)
+      • [Progreso:  12/160] | [NSGA2-random_dense] ejecución 12/20 (0.0 s)
+      • [Progreso:  13/160] | [NSGA2-random_dense] ejecución 13/20 (0.0 s)
+      • [Progreso:  14/160] | [NSGA2-random_dense] ejecución 14/20 (0.0 s)
+      • [Progreso:  15/160] | [NSGA2-random_dense] ejecución 15/20 (0.0 s)
+      • [Progreso:  16/160] | [NSGA2-random_dense] ejecución 16/20 (0.0 s)
+      • [Progreso:  17/160] | [NSGA2-random_dense] ejecución 17/20 (0.0 s)
+      • [Progreso:  18/160] | [NSGA2-random_dense] ejecución 18/20 (0.0 s)
+      • [Progreso:  19/160] | [NSGA2-random_dense] ejecución 19/20 (0.0 s)
+      • [Progreso:  20/160] | [NSGA2-random_dense] ejecución 20/20 (0.0 s)
+      • [Progreso:  21/160] | [NSGA2-greedy_ting] ejecución 1/20 (0.0 s)
+      • [Progreso:  22/160] | [NSGA2-greedy_ting] ejecución 2/20 (0.0 s)
+      • [Progreso:  23/160] | [NSGA2-greedy_ting] ejecución 3/20 (0.0 s)
+      • [Progreso:  24/160] | [NSGA2-greedy_ting] ejecución 4/20 (0.0 s)
+      • [Progreso:  25/160] | [NSGA2-greedy_ting] ejecución 5/20 (0.0 s)
+      • [Progreso:  26/160] | [NSGA2-greedy_ting] ejecución 6/20 (0.0 s)
+      • [Progreso:  27/160] | [NSGA2-greedy_ting] ejecución 7/20 (0.0 s)
+      • [Progreso:  28/160] | [NSGA2-greedy_ting] ejecución 8/20 (0.0 s)
+      • [Progreso:  29/160] | [NSGA2-greedy_ting] ejecución 9/20 (0.0 s)
+      • [Progreso:  30/160] | [NSGA2-greedy_ting] ejecución 10/20 (0.0 s)
+      • [Progreso:  31/160] | [NSGA2-greedy_ting] ejecución 11/20 (0.0 s)
+      • [Progreso:  32/160] | [NSGA2-greedy_ting] ejecución 12/20 (0.0 s)
+      • [Progreso:  33/160] | [NSGA2-greedy_ting] ejecución 13/20 (0.0 s)
+      • [Progreso:  34/160] | [NSGA2-greedy_ting] ejecución 14/20 (0.0 s)
+      • [Progreso:  35/160] | [NSGA2-greedy_ting] ejecución 15/20 (0.0 s)
+      • [Progreso:  36/160] | [NSGA2-greedy_ting] ejecución 16/20 (0.0 s)
+      • [Progreso:  37/160] | [NSGA2-greedy_ting] ejecución 17/20 (0.0 s)
+      • [Progreso:  38/160] | [NSGA2-greedy_ting] ejecución 18/20 (0.0 s)
+      • [Progreso:  39/160] | [NSGA2-greedy_ting] ejecución 19/20 (0.0 s)
+      • [Progreso:  40/160] | [NSGA2-greedy_ting] ejecución 20/20 (0.0 s)
+      • [Progreso:  41/160] | [NSGA3-random_dense] ejecución 1/20 (0.0 s)
+      • [Progreso:  42/160] | [NSGA3-random_dense] ejecución 2/20 (0.0 s)
+      • [Progreso:  43/160] | [NSGA3-random_dense] ejecución 3/20 (0.0 s)
+      • [Progreso:  44/160] | [NSGA3-random_dense] ejecución 4/20 (0.0 s)
+      • [Progreso:  45/160] | [NSGA3-random_dense] ejecución 5/20 (0.0 s)
+      • [Progreso:  46/160] | [NSGA3-random_dense] ejecución 6/20 (0.0 s)
+      • [Progreso:  47/160] | [NSGA3-random_dense] ejecución 7/20 (0.0 s)
+      • [Progreso:  48/160] | [NSGA3-random_dense] ejecución 8/20 (0.0 s)
+      • [Progreso:  49/160] | [NSGA3-random_dense] ejecución 9/20 (0.0 s)
+      • [Progreso:  50/160] | [NSGA3-random_dense] ejecución 10/20 (0.0 s)
+      • [Progreso:  51/160] | [NSGA3-random_dense] ejecución 11/20 (0.0 s)
+      • [Progreso:  52/160] | [NSGA3-random_dense] ejecución 12/20 (0.0 s)
+      • [Progreso:  53/160] | [NSGA3-random_dense] ejecución 13/20 (0.0 s)
+      • [Progreso:  54/160] | [NSGA3-random_dense] ejecución 14/20 (0.0 s)
+      • [Progreso:  55/160] | [NSGA3-random_dense] ejecución 15/20 (0.0 s)
+      • [Progreso:  56/160] | [NSGA3-random_dense] ejecución 16/20 (0.0 s)
+      • [Progreso:  57/160] | [NSGA3-random_dense] ejecución 17/20 (0.0 s)
+      • [Progreso:  58/160] | [NSGA3-random_dense] ejecución 18/20 (0.0 s)
+      • [Progreso:  59/160] | [NSGA3-random_dense] ejecución 19/20 (0.0 s)
+      • [Progreso:  60/160] | [NSGA3-random_dense] ejecución 20/20 (0.0 s)
+      • [Progreso:  61/160] | [NSGA3-greedy_ting] ejecución 1/20 (0.0 s)
+      • [Progreso:  62/160] | [NSGA3-greedy_ting] ejecución 2/20 (0.0 s)
+      • [Progreso:  63/160] | [NSGA3-greedy_ting] ejecución 3/20 (0.0 s)
+      • [Progreso:  64/160] | [NSGA3-greedy_ting] ejecución 4/20 (0.0 s)
+      • [Progreso:  65/160] | [NSGA3-greedy_ting] ejecución 5/20 (0.0 s)
+      • [Progreso:  66/160] | [NSGA3-greedy_ting] ejecución 6/20 (0.0 s)
+      • [Progreso:  67/160] | [NSGA3-greedy_ting] ejecución 7/20 (0.0 s)
+      • [Progreso:  68/160] | [NSGA3-greedy_ting] ejecución 8/20 (0.0 s)
+      • [Progreso:  69/160] | [NSGA3-greedy_ting] ejecución 9/20 (0.0 s)
+      • [Progreso:  70/160] | [NSGA3-greedy_ting] ejecución 10/20 (0.0 s)
+      • [Progreso:  71/160] | [NSGA3-greedy_ting] ejecución 11/20 (0.0 s)
+      • [Progreso:  72/160] | [NSGA3-greedy_ting] ejecución 12/20 (0.0 s)
+      • [Progreso:  73/160] | [NSGA3-greedy_ting] ejecución 13/20 (0.0 s)
+      • [Progreso:  74/160] | [NSGA3-greedy_ting] ejecución 14/20 (0.0 s)
+      • [Progreso:  75/160] | [NSGA3-greedy_ting] ejecución 15/20 (0.0 s)
+      • [Progreso:  76/160] | [NSGA3-greedy_ting] ejecución 16/20 (0.0 s)
+      • [Progreso:  77/160] | [NSGA3-greedy_ting] ejecución 17/20 (0.0 s)
+      • [Progreso:  78/160] | [NSGA3-greedy_ting] ejecución 18/20 (0.0 s)
+      • [Progreso:  79/160] | [NSGA3-greedy_ting] ejecución 19/20 (0.0 s)
+      • [Progreso:  80/160] | [NSGA3-greedy_ting] ejecución 20/20 (0.0 s)
+      • [Progreso:  81/160] | [SPEA2-random_dense] ejecución 1/20 (0.0 s)
+      • [Progreso:  82/160] | [SPEA2-random_dense] ejecución 2/20 (0.0 s)
+      • [Progreso:  83/160] | [SPEA2-random_dense] ejecución 3/20 (0.0 s)
+      • [Progreso:  84/160] | [SPEA2-random_dense] ejecución 4/20 (0.0 s)
+      • [Progreso:  85/160] | [SPEA2-random_dense] ejecución 5/20 (0.0 s)
+      • [Progreso:  86/160] | [SPEA2-random_dense] ejecución 6/20 (0.0 s)
+      • [Progreso:  87/160] | [SPEA2-random_dense] ejecución 7/20 (0.0 s)
+      • [Progreso:  88/160] | [SPEA2-random_dense] ejecución 8/20 (0.0 s)
+      • [Progreso:  89/160] | [SPEA2-random_dense] ejecución 9/20 (0.0 s)
+      • [Progreso:  90/160] | [SPEA2-random_dense] ejecución 10/20 (0.0 s)
+      • [Progreso:  91/160] | [SPEA2-random_dense] ejecución 11/20 (0.0 s)
+      • [Progreso:  92/160] | [SPEA2-random_dense] ejecución 12/20 (0.0 s)
+      • [Progreso:  93/160] | [SPEA2-random_dense] ejecución 13/20 (0.0 s)
+      • [Progreso:  94/160] | [SPEA2-random_dense] ejecución 14/20 (0.0 s)
+      • [Progreso:  95/160] | [SPEA2-random_dense] ejecución 15/20 (0.0 s)
+      • [Progreso:  96/160] | [SPEA2-random_dense] ejecución 16/20 (0.0 s)
+      • [Progreso:  97/160] | [SPEA2-random_dense] ejecución 17/20 (0.0 s)
+      • [Progreso:  98/160] | [SPEA2-random_dense] ejecución 18/20 (0.0 s)
+      • [Progreso:  99/160] | [SPEA2-random_dense] ejecución 19/20 (0.0 s)
+      • [Progreso: 100/160] | [SPEA2-random_dense] ejecución 20/20 (0.0 s)
+      • [Progreso: 101/160] | [SPEA2-greedy_ting] ejecución 1/20 (0.0 s)
+      • [Progreso: 102/160] | [SPEA2-greedy_ting] ejecución 2/20 (0.0 s)
+      • [Progreso: 103/160] | [SPEA2-greedy_ting] ejecución 3/20 (0.0 s)
+      • [Progreso: 104/160] | [SPEA2-greedy_ting] ejecución 4/20 (0.0 s)
+      • [Progreso: 105/160] | [SPEA2-greedy_ting] ejecución 5/20 (0.0 s)
+      • [Progreso: 106/160] | [SPEA2-greedy_ting] ejecución 6/20 (0.0 s)
+      • [Progreso: 107/160] | [SPEA2-greedy_ting] ejecución 7/20 (0.0 s)
+      • [Progreso: 108/160] | [SPEA2-greedy_ting] ejecución 8/20 (0.0 s)
+      • [Progreso: 109/160] | [SPEA2-greedy_ting] ejecución 9/20 (0.0 s)
+      • [Progreso: 110/160] | [SPEA2-greedy_ting] ejecución 10/20 (0.0 s)
+      • [Progreso: 111/160] | [SPEA2-greedy_ting] ejecución 11/20 (0.0 s)
+      • [Progreso: 112/160] | [SPEA2-greedy_ting] ejecución 12/20 (0.0 s)
+      • [Progreso: 113/160] | [SPEA2-greedy_ting] ejecución 13/20 (0.0 s)
+      • [Progreso: 114/160] | [SPEA2-greedy_ting] ejecución 14/20 (0.0 s)
+      • [Progreso: 115/160] | [SPEA2-greedy_ting] ejecución 15/20 (0.0 s)
+      • [Progreso: 116/160] | [SPEA2-greedy_ting] ejecución 16/20 (0.0 s)
+      • [Progreso: 117/160] | [SPEA2-greedy_ting] ejecución 17/20 (0.0 s)
+      • [Progreso: 118/160] | [SPEA2-greedy_ting] ejecución 18/20 (0.0 s)
+      • [Progreso: 119/160] | [SPEA2-greedy_ting] ejecución 19/20 (0.0 s)
+      • [Progreso: 120/160] | [SPEA2-greedy_ting] ejecución 20/20 (0.0 s)
+      • [Progreso: 121/160] | [MOEAD_TCHE-random_dense] ejecución 1/20 (0.0 s)
+      • [Progreso: 122/160] | [MOEAD_TCHE-random_dense] ejecución 2/20 (0.0 s)
+      • [Progreso: 123/160] | [MOEAD_TCHE-random_dense] ejecución 3/20 (0.0 s)
+      • [Progreso: 124/160] | [MOEAD_TCHE-random_dense] ejecución 4/20 (0.0 s)
+      • [Progreso: 125/160] | [MOEAD_TCHE-random_dense] ejecución 5/20 (0.0 s)
+      • [Progreso: 126/160] | [MOEAD_TCHE-random_dense] ejecución 6/20 (0.0 s)
+      • [Progreso: 127/160] | [MOEAD_TCHE-random_dense] ejecución 7/20 (0.0 s)
+      • [Progreso: 128/160] | [MOEAD_TCHE-random_dense] ejecución 8/20 (0.0 s)
+      • [Progreso: 129/160] | [MOEAD_TCHE-random_dense] ejecución 9/20 (0.0 s)
+      • [Progreso: 130/160] | [MOEAD_TCHE-random_dense] ejecución 10/20 (0.0 s)
+      • [Progreso: 131/160] | [MOEAD_TCHE-random_dense] ejecución 11/20 (0.0 s)
+      • [Progreso: 132/160] | [MOEAD_TCHE-random_dense] ejecución 12/20 (0.0 s)
+      • [Progreso: 133/160] | [MOEAD_TCHE-random_dense] ejecución 13/20 (0.0 s)
+      • [Progreso: 134/160] | [MOEAD_TCHE-random_dense] ejecución 14/20 (0.0 s)
+      • [Progreso: 135/160] | [MOEAD_TCHE-random_dense] ejecución 15/20 (0.0 s)
+      • [Progreso: 136/160] | [MOEAD_TCHE-random_dense] ejecución 16/20 (0.0 s)
+      • [Progreso: 137/160] | [MOEAD_TCHE-random_dense] ejecución 17/20 (0.0 s)
+      • [Progreso: 138/160] | [MOEAD_TCHE-random_dense] ejecución 18/20 (0.0 s)
+      • [Progreso: 139/160] | [MOEAD_TCHE-random_dense] ejecución 19/20 (0.0 s)
+      • [Progreso: 140/160] | [MOEAD_TCHE-random_dense] ejecución 20/20 (0.0 s)
+      • [Progreso: 141/160] | [MOEAD_TCHE-greedy_ting] ejecución 1/20 (0.0 s)
+      • [Progreso: 142/160] | [MOEAD_TCHE-greedy_ting] ejecución 2/20 (0.0 s)
+      • [Progreso: 143/160] | [MOEAD_TCHE-greedy_ting] ejecución 3/20 (0.0 s)
+      • [Progreso: 144/160] | [MOEAD_TCHE-greedy_ting] ejecución 4/20 (0.0 s)
+      • [Progreso: 145/160] | [MOEAD_TCHE-greedy_ting] ejecución 5/20 (0.0 s)
+      • [Progreso: 146/160] | [MOEAD_TCHE-greedy_ting] ejecución 6/20 (0.0 s)
+      • [Progreso: 147/160] | [MOEAD_TCHE-greedy_ting] ejecución 7/20 (0.0 s)
+      • [Progreso: 148/160] | [MOEAD_TCHE-greedy_ting] ejecución 8/20 (0.0 s)
+      • [Progreso: 149/160] | [MOEAD_TCHE-greedy_ting] ejecución 9/20 (0.0 s)
+      • [Progreso: 150/160] | [MOEAD_TCHE-greedy_ting] ejecución 10/20 (0.0 s)
+      • [Progreso: 151/160] | [MOEAD_TCHE-greedy_ting] ejecución 11/20 (0.0 s)
+      • [Progreso: 152/160] | [MOEAD_TCHE-greedy_ting] ejecución 12/20 (0.0 s)
+      • [Progreso: 153/160] | [MOEAD_TCHE-greedy_ting] ejecución 13/20 (0.0 s)
+      • [Progreso: 154/160] | [MOEAD_TCHE-greedy_ting] ejecución 14/20 (0.0 s)
+      • [Progreso: 155/160] | [MOEAD_TCHE-greedy_ting] ejecución 15/20 (0.0 s)
+      • [Progreso: 156/160] | [MOEAD_TCHE-greedy_ting] ejecución 16/20 (0.0 s)
+      • [Progreso: 157/160] | [MOEAD_TCHE-greedy_ting] ejecución 17/20 (0.0 s)
+      • [Progreso: 158/160] | [MOEAD_TCHE-greedy_ting] ejecución 18/20 (0.0 s)
+      • [Progreso: 159/160] | [MOEAD_TCHE-greedy_ting] ejecución 19/20 (0.0 s)
+      • [Progreso: 160/160] | [MOEAD_TCHE-greedy_ting] ejecución 20/20 (0.0 s)
+      • Métricas finales completadas: 160 ejecuciones en 0.0s
+
+    • Iniciando métricas generacionales: 160 ejecuciones con historial
+      • [Progreso:   1/160] | [NSGA2-random_dense] ejecución 1/20 (0.1 s)
+      • [Progreso:   2/160] | [NSGA2-random_dense] ejecución 2/20 (0.1 s)
+      • [Progreso:   3/160] | [NSGA2-random_dense] ejecución 3/20 (0.1 s)
+      • [Progreso:   4/160] | [NSGA2-random_dense] ejecución 4/20 (0.1 s)
+      • [Progreso:   5/160] | [NSGA2-random_dense] ejecución 5/20 (0.1 s)
+      • [Progreso:   6/160] | [NSGA2-random_dense] ejecución 6/20 (0.1 s)
+      • [Progreso:   7/160] | [NSGA2-random_dense] ejecución 8/20 (0.1 s)
+      • [Progreso:   8/160] | [NSGA2-random_dense] ejecución 7/20 (0.1 s)
+      • [Progreso:   9/160] | [NSGA2-random_dense] ejecución 11/20 (0.2 s)
+      • [Progreso:  10/160] | [NSGA2-random_dense] ejecución 18/20 (0.1 s)
+      • [Progreso:  11/160] | [NSGA2-random_dense] ejecución 19/20 (0.1 s)
+      • [Progreso:  12/160] | [NSGA2-random_dense] ejecución 16/20 (0.2 s)
+      • [Progreso:  13/160] | [NSGA2-random_dense] ejecución 17/20 (0.1 s)
+      • [Progreso:  14/160] | [NSGA2-random_dense] ejecución 9/20 (0.2 s)
+      • [Progreso:  15/160] | [NSGA2-random_dense] ejecución 10/20 (0.2 s)
+      • [Progreso:  16/160] | [NSGA2-greedy_ting] ejecución 1/20 (0.1 s)
+      • [Progreso:  17/160] | [NSGA2-random_dense] ejecución 12/20 (0.2 s)
+      • [Progreso:  18/160] | [NSGA2-random_dense] ejecución 13/20 (0.2 s)
+      • [Progreso:  19/160] | [NSGA2-random_dense] ejecución 20/20 (0.2 s)
+      • [Progreso:  20/160] | [NSGA2-random_dense] ejecución 14/20 (0.2 s)
+      • [Progreso:  21/160] | [NSGA2-random_dense] ejecución 15/20 (0.2 s)
+      • [Progreso:  22/160] | [NSGA2-greedy_ting] ejecución 5/20 (0.2 s)
+      • [Progreso:  23/160] | [NSGA2-greedy_ting] ejecución 2/20 (0.2 s)
+      • [Progreso:  24/160] | [NSGA2-greedy_ting] ejecución 6/20 (0.2 s)
+      • [Progreso:  25/160] | [NSGA2-greedy_ting] ejecución 3/20 (0.2 s)
+      • [Progreso:  26/160] | [NSGA2-greedy_ting] ejecución 8/20 (0.2 s)
+      • [Progreso:  27/160] | [NSGA2-greedy_ting] ejecución 9/20 (0.2 s)
+      • [Progreso:  28/160] | [NSGA2-greedy_ting] ejecución 7/20 (0.2 s)
+      • [Progreso:  29/160] | [NSGA2-greedy_ting] ejecución 12/20 (0.1 s)
+      • [Progreso:  30/160] | [NSGA2-greedy_ting] ejecución 4/20 (0.2 s)
+      • [Progreso:  31/160] | [NSGA2-greedy_ting] ejecución 14/20 (0.1 s)
+      • [Progreso:  32/160] | [NSGA2-greedy_ting] ejecución 11/20 (0.2 s)
+      • [Progreso:  33/160] | [NSGA2-greedy_ting] ejecución 10/20 (0.2 s)
+      • [Progreso:  34/160] | [NSGA2-greedy_ting] ejecución 13/20 (0.2 s)
+      • [Progreso:  35/160] | [NSGA2-greedy_ting] ejecución 15/20 (0.1 s)
+      • [Progreso:  36/160] | [NSGA2-greedy_ting] ejecución 17/20 (0.1 s)
+      • [Progreso:  37/160] | [NSGA2-greedy_ting] ejecución 18/20 (0.1 s)
+      • [Progreso:  38/160] | [NSGA2-greedy_ting] ejecución 16/20 (0.2 s)
+      • [Progreso:  39/160] | [NSGA2-greedy_ting] ejecución 20/20 (0.2 s)
+      • [Progreso:  40/160] | [NSGA3-random_dense] ejecución 6/20 (0.2 s)
+      • [Progreso:  41/160] | [NSGA3-random_dense] ejecución 5/20 (0.2 s)
+      • [Progreso:  42/160] | [NSGA3-random_dense] ejecución 11/20 (0.1 s)
+      • [Progreso:  43/160] | [NSGA2-greedy_ting] ejecución 19/20 (0.2 s)
+      • [Progreso:  44/160] | [NSGA3-random_dense] ejecución 1/20 (0.2 s)
+      • [Progreso:  45/160] | [NSGA3-random_dense] ejecución 8/20 (0.2 s)
+      • [Progreso:  46/160] | [NSGA3-random_dense] ejecución 9/20 (0.2 s)
+      • [Progreso:  47/160] | [NSGA3-random_dense] ejecución 13/20 (0.1 s)
+      • [Progreso:  48/160] | [NSGA3-random_dense] ejecución 2/20 (0.2 s)
+      • [Progreso:  49/160] | [NSGA3-random_dense] ejecución 7/20 (0.2 s)
+      • [Progreso:  50/160] | [NSGA3-random_dense] ejecución 3/20 (0.2 s)
+      • [Progreso:  51/160] | [NSGA3-random_dense] ejecución 4/20 (0.2 s)
+      • [Progreso:  52/160] | [NSGA3-random_dense] ejecución 12/20 (0.2 s)
+      • [Progreso:  53/160] | [NSGA3-random_dense] ejecución 18/20 (0.1 s)
+      • [Progreso:  54/160] | [NSGA3-random_dense] ejecución 10/20 (0.2 s)
+      • [Progreso:  55/160] | [NSGA3-random_dense] ejecución 14/20 (0.2 s)
+      • [Progreso:  56/160] | [NSGA3-random_dense] ejecución 15/20 (0.2 s)
+      • [Progreso:  57/160] | [NSGA3-random_dense] ejecución 16/20 (0.2 s)
+      • [Progreso:  58/160] | [NSGA3-random_dense] ejecución 19/20 (0.1 s)
+      • [Progreso:  59/160] | [NSGA3-random_dense] ejecución 17/20 (0.2 s)
+      • [Progreso:  60/160] | [NSGA3-greedy_ting] ejecución 1/20 (0.1 s)
+      • [Progreso:  61/160] | [NSGA3-random_dense] ejecución 20/20 (0.2 s)
+      • [Progreso:  62/160] | [NSGA3-greedy_ting] ejecución 4/20 (0.1 s)
+      • [Progreso:  63/160] | [NSGA3-greedy_ting] ejecución 3/20 (0.2 s)
+      • [Progreso:  64/160] | [NSGA3-greedy_ting] ejecución 2/20 (0.2 s)
+      • [Progreso:  65/160] | [NSGA3-greedy_ting] ejecución 5/20 (0.2 s)
+      • [Progreso:  66/160] | [NSGA3-greedy_ting] ejecución 7/20 (0.2 s)
+      • [Progreso:  67/160] | [NSGA3-greedy_ting] ejecución 11/20 (0.2 s)
+      • [Progreso:  68/160] | [NSGA3-greedy_ting] ejecución 19/20 (0.1 s)
+      • [Progreso:  69/160] | [NSGA3-greedy_ting] ejecución 13/20 (0.2 s)
+      • [Progreso:  70/160] | [NSGA3-greedy_ting] ejecución 14/20 (0.2 s)
+      • [Progreso:  71/160] | [NSGA3-greedy_ting] ejecución 6/20 (0.2 s)
+      • [Progreso:  72/160] | [NSGA3-greedy_ting] ejecución 15/20 (0.2 s)
+      • [Progreso:  73/160] | [NSGA3-greedy_ting] ejecución 8/20 (0.2 s)
+      • [Progreso:  74/160] | [NSGA3-greedy_ting] ejecución 9/20 (0.2 s)
+      • [Progreso:  75/160] | [NSGA3-greedy_ting] ejecución 17/20 (0.2 s)
+      • [Progreso:  76/160] | [NSGA3-greedy_ting] ejecución 10/20 (0.2 s)
+      • [Progreso:  77/160] | [NSGA3-greedy_ting] ejecución 18/20 (0.2 s)
+      • [Progreso:  78/160] | [NSGA3-greedy_ting] ejecución 20/20 (0.2 s)
+      • [Progreso:  79/160] | [NSGA3-greedy_ting] ejecución 12/20 (0.2 s)
+      • [Progreso:  80/160] | [SPEA2-random_dense] ejecución 2/20 (0.1 s)
+      • [Progreso:  81/160] | [NSGA3-greedy_ting] ejecución 16/20 (0.2 s)
+      • [Progreso:  82/160] | [SPEA2-random_dense] ejecución 5/20 (0.1 s)
+      • [Progreso:  83/160] | [SPEA2-random_dense] ejecución 6/20 (0.1 s)
+      • [Progreso:  84/160] | [SPEA2-random_dense] ejecución 1/20 (0.2 s)
+      • [Progreso:  85/160] | [SPEA2-random_dense] ejecución 9/20 (0.1 s)
+      • [Progreso:  86/160] | [SPEA2-random_dense] ejecución 4/20 (0.2 s)
+      • [Progreso:  87/160] | [SPEA2-random_dense] ejecución 8/20 (0.2 s)
+      • [Progreso:  88/160] | [SPEA2-random_dense] ejecución 3/20 (0.2 s)
+      • [Progreso:  89/160] | [SPEA2-random_dense] ejecución 10/20 (0.2 s)
+      • [Progreso:  90/160] | [SPEA2-random_dense] ejecución 7/20 (0.2 s)
+      • [Progreso:  91/160] | [SPEA2-random_dense] ejecución 11/20 (0.2 s)
+      • [Progreso:  92/160] | [SPEA2-random_dense] ejecución 12/20 (0.2 s)
+      • [Progreso:  93/160] | [SPEA2-random_dense] ejecución 13/20 (0.2 s)
+      • [Progreso:  94/160] | [SPEA2-random_dense] ejecución 15/20 (0.2 s)
+      • [Progreso:  95/160] | [SPEA2-random_dense] ejecución 19/20 (0.2 s)
+      • [Progreso:  96/160] | [SPEA2-random_dense] ejecución 17/20 (0.2 s)
+      • [Progreso:  97/160] | [SPEA2-random_dense] ejecución 20/20 (0.2 s)
+      • [Progreso:  98/160] | [SPEA2-greedy_ting] ejecución 1/20 (0.2 s)
+      • [Progreso:  99/160] | [SPEA2-greedy_ting] ejecución 4/20 (0.1 s)
+      • [Progreso: 100/160] | [SPEA2-random_dense] ejecución 14/20 (0.2 s)
+      • [Progreso: 101/160] | [SPEA2-random_dense] ejecución 16/20 (0.2 s)
+      • [Progreso: 102/160] | [SPEA2-random_dense] ejecución 18/20 (0.2 s)
+      • [Progreso: 103/160] | [SPEA2-greedy_ting] ejecución 2/20 (0.2 s)
+      • [Progreso: 104/160] | [SPEA2-greedy_ting] ejecución 5/20 (0.2 s)
+      • [Progreso: 105/160] | [SPEA2-greedy_ting] ejecución 8/20 (0.1 s)
+      • [Progreso: 106/160] | [SPEA2-greedy_ting] ejecución 3/20 (0.2 s)
+      • [Progreso: 107/160] | [SPEA2-greedy_ting] ejecución 11/20 (0.1 s)
+      • [Progreso: 108/160] | [SPEA2-greedy_ting] ejecución 9/20 (0.2 s)
+      • [Progreso: 109/160] | [SPEA2-greedy_ting] ejecución 7/20 (0.2 s)
+      • [Progreso: 110/160] | [SPEA2-greedy_ting] ejecución 6/20 (0.2 s)
+      • [Progreso: 111/160] | [SPEA2-greedy_ting] ejecución 10/20 (0.2 s)
+      • [Progreso: 112/160] | [SPEA2-greedy_ting] ejecución 14/20 (0.1 s)
+      • [Progreso: 113/160] | [SPEA2-greedy_ting] ejecución 13/20 (0.2 s)
+      • [Progreso: 114/160] | [SPEA2-greedy_ting] ejecución 15/20 (0.2 s)
+      • [Progreso: 115/160] | [MOEAD_TCHE-random_dense] ejecución 7/20 (0.1 s)
+      • [Progreso: 116/160] | [SPEA2-greedy_ting] ejecución 16/20 (0.2 s)
+      • [Progreso: 117/160] | [MOEAD_TCHE-random_dense] ejecución 6/20 (0.1 s)
+      • [Progreso: 118/160] | [MOEAD_TCHE-random_dense] ejecución 1/20 (0.1 s)
+      • [Progreso: 119/160] | [SPEA2-greedy_ting] ejecución 17/20 (0.2 s)
+      • [Progreso: 120/160] | [SPEA2-greedy_ting] ejecución 18/20 (0.2 s)
+      • [Progreso: 121/160] | [SPEA2-greedy_ting] ejecución 12/20 (0.2 s)
+      • [Progreso: 122/160] | [SPEA2-greedy_ting] ejecución 19/20 (0.2 s)
+      • [Progreso: 123/160] | [SPEA2-greedy_ting] ejecución 20/20 (0.2 s)
+      • [Progreso: 124/160] | [MOEAD_TCHE-random_dense] ejecución 2/20 (0.2 s)
+      • [Progreso: 125/160] | [MOEAD_TCHE-random_dense] ejecución 3/20 (0.2 s)
+      • [Progreso: 126/160] | [MOEAD_TCHE-random_dense] ejecución 4/20 (0.2 s)
+      • [Progreso: 127/160] | [MOEAD_TCHE-random_dense] ejecución 5/20 (0.2 s)
+      • [Progreso: 128/160] | [MOEAD_TCHE-random_dense] ejecución 10/20 (0.1 s)
+      • [Progreso: 129/160] | [MOEAD_TCHE-random_dense] ejecución 8/20 (0.2 s)
+      • [Progreso: 130/160] | [MOEAD_TCHE-random_dense] ejecución 14/20 (0.1 s)
+      • [Progreso: 131/160] | [MOEAD_TCHE-random_dense] ejecución 13/20 (0.1 s)
+      • [Progreso: 132/160] | [MOEAD_TCHE-random_dense] ejecución 16/20 (0.1 s)
+      • [Progreso: 133/160] | [MOEAD_TCHE-random_dense] ejecución 12/20 (0.2 s)
+      • [Progreso: 134/160] | [MOEAD_TCHE-random_dense] ejecución 15/20 (0.1 s)
+      • [Progreso: 135/160] | [MOEAD_TCHE-random_dense] ejecución 9/20 (0.2 s)
+      • [Progreso: 136/160] | [MOEAD_TCHE-greedy_ting] ejecución 3/20 (0.1 s)
+      • [Progreso: 137/160] | [MOEAD_TCHE-random_dense] ejecución 11/20 (0.2 s)
+      • [Progreso: 138/160] | [MOEAD_TCHE-random_dense] ejecución 19/20 (0.1 s)
+      • [Progreso: 139/160] | [MOEAD_TCHE-random_dense] ejecución 17/20 (0.1 s)
+      • [Progreso: 140/160] | [MOEAD_TCHE-random_dense] ejecución 20/20 (0.1 s)
+      • [Progreso: 141/160] | [MOEAD_TCHE-greedy_ting] ejecución 4/20 (0.1 s)
+      • [Progreso: 142/160] | [MOEAD_TCHE-greedy_ting] ejecución 5/20 (0.1 s)
+      • [Progreso: 143/160] | [MOEAD_TCHE-greedy_ting] ejecución 1/20 (0.1 s)
+      • [Progreso: 144/160] | [MOEAD_TCHE-greedy_ting] ejecución 2/20 (0.2 s)
+      • [Progreso: 145/160] | [MOEAD_TCHE-random_dense] ejecución 18/20 (0.2 s)
+      • [Progreso: 146/160] | [MOEAD_TCHE-greedy_ting] ejecución 10/20 (0.1 s)
+      • [Progreso: 147/160] | [MOEAD_TCHE-greedy_ting] ejecución 14/20 (0.1 s)
+      • [Progreso: 148/160] | [MOEAD_TCHE-greedy_ting] ejecución 13/20 (0.1 s)
+      • [Progreso: 149/160] | [MOEAD_TCHE-greedy_ting] ejecución 12/20 (0.1 s)
+      • [Progreso: 150/160] | [MOEAD_TCHE-greedy_ting] ejecución 9/20 (0.1 s)
+      • [Progreso: 151/160] | [MOEAD_TCHE-greedy_ting] ejecución 18/20 (0.1 s)
+      • [Progreso: 152/160] | [MOEAD_TCHE-greedy_ting] ejecución 16/20 (0.1 s)
+      • [Progreso: 153/160] | [MOEAD_TCHE-greedy_ting] ejecución 17/20 (0.1 s)
+      • [Progreso: 154/160] | [MOEAD_TCHE-greedy_ting] ejecución 8/20 (0.2 s)
+      • [Progreso: 155/160] | [MOEAD_TCHE-greedy_ting] ejecución 6/20 (0.2 s)
+      • [Progreso: 156/160] | [MOEAD_TCHE-greedy_ting] ejecución 7/20 (0.2 s)
+      • [Progreso: 157/160] | [MOEAD_TCHE-greedy_ting] ejecución 11/20 (0.1 s)
+      • [Progreso: 158/160] | [MOEAD_TCHE-greedy_ting] ejecución 20/20 (0.1 s)
+      • [Progreso: 159/160] | [MOEAD_TCHE-greedy_ting] ejecución 15/20 (0.1 s)
+      • [Progreso: 160/160] | [MOEAD_TCHE-greedy_ting] ejecución 19/20 (0.1 s)
+      • Métricas generacionales completadas: 160 ejecuciones en 1.5s
+
+  📊  Trazabilidad y Exportación de Datos (CSV)
+  ───────────────────────────────────────────────
+      🖼️  Resultados detallados por ejecución:  resultados_detallados_full_20.csv
+      🖼️  Historial evolutivo generacional:  historico_generacional_full_20.csv
+      🖼️  Soluciones de frentes finales (CSV):  frentes_pareto_full_20.csv
+
+  📍  Puntos Críticos del Espacio de Objetivos
+  ──────────────────────────────────────────────
+      • Punto Ideal Empírico (mejor): [7.00000000e+00 9.80392157e-03 1.96003475e+00 8.74560672e-04]
+      • Punto Nadir Empírico (peor): [4.74000000e+02 1.00000000e+00 8.39875905e+00 3.45540661e-02]
+      • Punto Ideal Teórico (Ref): [1.         0.00775194 1.         0.        ]
+      • Punto Nadir Teórico (Ref): [7.72e+02 1.00e+00 1.00e+01 2.50e-01]
+      • Punto Ref. Hipervolumen (1.1): [8.49100000e+02 1.09922481e+00 1.09000000e+01 2.75000001e-01]
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                           REPORTES Y VISUALIZACIÓN                           ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+  🔍  Distribución y Correlación de Frentes de Pareto
+  ─────────────────────────────────────────────────────
+
+  🔗  Correlación de Objetivos
+  ──────────────────────────────
+      🖼️  Correlación objetivos Pareto (Valores Reales):  correlacion_objetivos_pareto_full_20.png
+
+  📈  Coordenadas Paralelas
+  ───────────────────────────
+      🖼️  Coordenadas paralelas MOEAD_TCHE (greedy_ting):  coordenadas_paralelas_MOEAD_TCHE_greedy_ting_full_20.png
+      🖼️  Coordenadas paralelas MOEAD_TCHE (random_dense):  coordenadas_paralelas_MOEAD_TCHE_random_dense_full_20.png
+      🖼️  Coordenadas paralelas NSGA2 (greedy_ting):  coordenadas_paralelas_NSGA2_greedy_ting_full_20.png
+      🖼️  Coordenadas paralelas NSGA2 (random_dense):  coordenadas_paralelas_NSGA2_random_dense_full_20.png
+      🖼️  Coordenadas paralelas NSGA3 (greedy_ting):  coordenadas_paralelas_NSGA3_greedy_ting_full_20.png
+      🖼️  Coordenadas paralelas NSGA3 (random_dense):  coordenadas_paralelas_NSGA3_random_dense_full_20.png
+      🖼️  Coordenadas paralelas SPEA2 (greedy_ting):  coordenadas_paralelas_SPEA2_greedy_ting_full_20.png
+      🖼️  Coordenadas paralelas SPEA2 (random_dense):  coordenadas_paralelas_SPEA2_random_dense_full_20.png
+
+  🎯  Frentes de Pareto
+  ───────────────────────
+      🖼️  Frente Pareto NSGA3 (greedy_ting):  frentes_pareto_nsga3_greedy_ting_full_20.png
+      🖼️  Frente Pareto NSGA3 (random_dense):  frentes_pareto_nsga3_random_dense_full_20.png
+      🖼️  Frente Agregado: Frentes de Pareto Agregados: NSGA3:  frentes_pareto_agregados_nsga3_full_20.png
+      🖼️  Frente Pareto MOEAD_TCHE (greedy_ting):  frentes_pareto_moead_tche_greedy_ting_full_20.png
+      🖼️  Frente Pareto MOEAD_TCHE (random_dense):  frentes_pareto_moead_tche_random_dense_full_20.png
+      🖼️  Frente Agregado: Frentes de Pareto Agregados: MOEAD_TCHE:  frentes_pareto_agregados_moead_tche_full_20.png
+      🖼️  Frente Pareto NSGA2 (greedy_ting):  frentes_pareto_nsga2_greedy_ting_full_20.png
+      🖼️  Frente Pareto NSGA2 (random_dense):  frentes_pareto_nsga2_random_dense_full_20.png
+      🖼️  Frente Agregado: Frentes de Pareto Agregados: NSGA2:  frentes_pareto_agregados_nsga2_full_20.png
+      🖼️  Frente Pareto SPEA2 (greedy_ting):  frentes_pareto_spea2_greedy_ting_full_20.png
+      🖼️  Frente Pareto SPEA2 (random_dense):  frentes_pareto_spea2_random_dense_full_20.png
+      🖼️  Frente Agregado: Frentes de Pareto Agregados: SPEA2:  frentes_pareto_agregados_spea2_full_20.png
+      🖼️  Frente Agregado: Comparativa Global de Frentes de Pareto:  frentes_pareto_global_full_20.png
+      • Tiempo bloque 'Frentes de Pareto': 15.0s
+
+  🔄  Análisis de Convergencia Progresiva
+  ─────────────────────────────────────────
+      🖼️  Convergencia por métrica (AvgHammingDistance) con subplots por algoritmo:  convergencia_avghammingdistance_full_20.png
+      🖼️  Convergencia por métrica (AvgToleranceRate) con subplots por algoritmo:  convergencia_avgtolerancerate_full_20.png
+      🖼️  Convergencia por métrica (Hypervolume) con subplots por algoritmo:  convergencia_hypervolume_full_20.png
+      🖼️  Convergencia por métrica (MaxToleranceRate) con subplots por algoritmo:  convergencia_maxtolerancerate_full_20.png
+      🖼️  Convergencia por métrica (MinSum) con subplots por algoritmo:  convergencia_minsum_full_20.png
+      🖼️  Convergencia por métrica (Range) con subplots por algoritmo:  convergencia_range_full_20.png
+      🖼️  Convergencia por métrica (SumMin) con subplots por algoritmo:  convergencia_summin_full_20.png
+
+  📊  Síntesis Estadística Comparativa
+  ──────────────────────────────────────
+
+  📦  Resumen Global (Boxplots)
+  ───────────────────────────────
+      🖼️  Panel de Boxplots comparativos:  boxplots_metricas_finales_full_20.png
+      🖼️  Distribución Range (Boxplot):  boxplot_metricas_Range_full_20.png
+      🖼️  Distribución SumMin (Boxplot):  boxplot_metricas_SumMin_full_20.png
+      🖼️  Distribución MinSum (Boxplot):  boxplot_metricas_MinSum_full_20.png
+      🖼️  Distribución MaxToleranceRate (Boxplot):  boxplot_metricas_MaxToleranceRate_full_20.png
+      🖼️  Distribución AvgToleranceRate (Boxplot):  boxplot_metricas_AvgToleranceRate_full_20.png
+      🖼️  Distribución AvgHammingDistance (Boxplot):  boxplot_metricas_AvgHammingDistance_full_20.png
+      🖼️  Distribución Hypervolume (Boxplot):  boxplot_metricas_Hypervolume_full_20.png
+
+  🎻  Distribuciones Detalladas (Violin Plots)
+  ──────────────────────────────────────────────
+      🖼️  Panel de Distribución Violin:  violin_panel_metricas_finales_full_20.png
+      🖼️  Distribución Range (Violin):  violin_metricas_Range_full_20.png
+      🖼️  Distribución SumMin (Violin):  violin_metricas_SumMin_full_20.png
+      🖼️  Distribución MinSum (Violin):  violin_metricas_MinSum_full_20.png
+      🖼️  Distribución MaxToleranceRate (Violin):  violin_metricas_MaxToleranceRate_full_20.png
+      🖼️  Distribución AvgToleranceRate (Violin):  violin_metricas_AvgToleranceRate_full_20.png
+      🖼️  Distribución AvgHammingDistance (Violin):  violin_metricas_AvgHammingDistance_full_20.png
+      🖼️  Distribución Hypervolume (Violin):  violin_metricas_Hypervolume_full_20.png
+
+  📉  Análisis de Tendencia Central (Media ± Std)
+  ─────────────────────────────────────────────────
+      🖼️  Panel de Tendencia Central (Media ± Std):  media_std_panel_metricas_finales_full_20.png
+      🖼️  Media ± std Range:  media_std_metricas_Range_full_20.png
+      🖼️  Media ± std SumMin:  media_std_metricas_SumMin_full_20.png
+      🖼️  Media ± std MinSum:  media_std_metricas_MinSum_full_20.png
+      🖼️  Media ± std MaxToleranceRate:  media_std_metricas_MaxToleranceRate_full_20.png
+      🖼️  Media ± std AvgToleranceRate:  media_std_metricas_AvgToleranceRate_full_20.png
+      🖼️  Media ± std AvgHammingDistance:  media_std_metricas_AvgHammingDistance_full_20.png
+      🖼️  Media ± std Hypervolume:  media_std_metricas_Hypervolume_full_20.png
+
+  🏆  Top 10 por Métrica
+  ────────────────────────
+    • Range (↑)
+         1. NSGA2 (greedy_ting): 2.2024 ± 0.0620
+         2. SPEA2 (greedy_ting): 1.8085 ± 0.0621
+         3. NSGA3 (greedy_ting): 1.5925 ± 0.1190
+         4. MOEAD_TCHE (greedy_ting): 1.4399 ± 0.3870
+         5. NSGA2 (random_dense): 0.5561 ± 0.0303
+         6. SPEA2 (random_dense): 0.4636 ± 0.0665
+         7. NSGA3 (random_dense): 0.3059 ± 0.0210
+         8. MOEAD_TCHE (random_dense): 0.2363 ± 0.0365
+    • SumMin (↓)
+         1. NSGA2 (greedy_ting): 0.1250 ± 0.0009
+         2. MOEAD_TCHE (greedy_ting): 0.1541 ± 0.0178
+         3. NSGA3 (greedy_ting): 0.1564 ± 0.0096
+         4. SPEA2 (greedy_ting): 0.1632 ± 0.0125
+         5. SPEA2 (random_dense): 0.2910 ± 0.0257
+         6. NSGA2 (random_dense): 0.3328 ± 0.0244
+         7. NSGA3 (random_dense): 0.3738 ± 0.0177
+         8. MOEAD_TCHE (random_dense): 0.4739 ± 0.0254
+    • MinSum (↓)
+         1. MOEAD_TCHE (greedy_ting): 0.2859 ± 0.0095
+         2. NSGA3 (greedy_ting): 0.2931 ± 0.0078
+         3. SPEA2 (greedy_ting): 0.3493 ± 0.0112
+         4. SPEA2 (random_dense): 0.3514 ± 0.0171
+         5. NSGA2 (greedy_ting): 0.3534 ± 0.0153
+         6. NSGA3 (random_dense): 0.3981 ± 0.0152
+         7. NSGA2 (random_dense): 0.4088 ± 0.0459
+         8. MOEAD_TCHE (random_dense): 0.5057 ± 0.0238
+    • MaxToleranceRate (↑)
+         1. MOEAD_TCHE (greedy_ting): 0.2715 ± 0.0066
+         2. NSGA3 (random_dense): 0.2679 ± 0.0037
+         3. NSGA2 (random_dense): 0.2488 ± 0.0069
+         4. SPEA2 (random_dense): 0.2463 ± 0.0082
+         5. NSGA3 (greedy_ting): 0.2289 ± 0.0129
+         6. MOEAD_TCHE (random_dense): 0.2211 ± 0.0057
+         7. NSGA2 (greedy_ting): 0.2148 ± 0.0036
+         8. SPEA2 (greedy_ting): 0.2102 ± 0.0070
+    • AvgToleranceRate (↑)
+         1. NSGA3 (random_dense): 0.2408 ± 0.0037
+         2. NSGA2 (random_dense): 0.2077 ± 0.0064
+         3. MOEAD_TCHE (random_dense): 0.2023 ± 0.0064
+         4. MOEAD_TCHE (greedy_ting): 0.2010 ± 0.0074
+         5. SPEA2 (random_dense): 0.1895 ± 0.0157
+         6. SPEA2 (greedy_ting): 0.1106 ± 0.0183
+         7. NSGA3 (greedy_ting): 0.1092 ± 0.0090
+         8. NSGA2 (greedy_ting): 0.0819 ± 0.0049
+    • AvgHammingDistance (↑)
+         1. MOEAD_TCHE (greedy_ting): 0.4426 ± 0.0100
+         2. NSGA3 (random_dense): 0.3938 ± 0.0049
+         3. NSGA3 (greedy_ting): 0.3888 ± 0.0140
+         4. MOEAD_TCHE (random_dense): 0.3772 ± 0.0073
+         5. SPEA2 (random_dense): 0.3744 ± 0.0073
+         6. NSGA2 (random_dense): 0.3672 ± 0.0072
+         7. NSGA2 (greedy_ting): 0.3367 ± 0.0064
+         8. SPEA2 (greedy_ting): 0.3316 ± 0.0102
+    • Hypervolume (↑)
+         1. MOEAD_TCHE (greedy_ting): 1.2426 ± 0.0171
+         2. NSGA3 (greedy_ting): 1.2422 ± 0.0087
+         3. NSGA2 (greedy_ting): 1.2339 ± 0.0096
+         4. SPEA2 (greedy_ting): 1.2053 ± 0.0121
+         5. SPEA2 (random_dense): 1.1001 ± 0.0284
+         6. NSGA2 (random_dense): 1.0486 ± 0.0292
+         7. NSGA3 (random_dense): 1.0082 ± 0.0197
+         8. MOEAD_TCHE (random_dense): 0.8994 ± 0.0272
+
+
+  📊  Resumen Estadístico de Métricas
+  ─────────────────────────────────────
+      🖼️  Mapa de calor comparativo (Benchmark):  heatmap_comparativa_full_20.png
+
+  📈  Análisis Estadístico Riguroso (Friedman + Nemenyi)
+  ────────────────────────────────────────────────────────
+
+  📊  TEST DE FRIEDMAN (Método (Algoritmo + Inicialización))
+  ────────────────────────────────────────────────────────────
+      Estadístico: 13.3810
+      P-valor: 6.3353e-02
+      Significativo (p < 0.05): No
+
+      • ⚠️  Test de Friedman no significativo para Método (Algoritmo + Inicialización). Omitiendo post-hoc.
+
+  📊  TEST DE FRIEDMAN (Algoritmo)
+  ──────────────────────────────────
+      Estadístico: 1.4571
+      P-valor: 6.9220e-01
+      Significativo (p < 0.05): No
+
+      • ⚠️  Test de Friedman no significativo para Algoritmo. Omitiendo post-hoc.
+
+❌  Error fatal durante la ejecución: At least 3 samples must be given for Friedman test, got 2.
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/usuario/Escritorio/cofer_tfg/snp_tag_problem/snp_tag/main.py", line 734, in <module>
+    ruta_base = ejecutar_pipeline(args)
+                ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/usuario/Escritorio/cofer_tfg/snp_tag_problem/snp_tag/main.py", line 693, in ejecutar_pipeline
+    ejecutar_reportes_visualizacion(cfg, df_final, df_gen, df_fronts_total)
+  File "/home/usuario/Escritorio/cofer_tfg/snp_tag_problem/snp_tag/main.py", line 500, in ejecutar_reportes_visualizacion
+    graficar_analisis_estadistico(df_final, cfg.carpetas['rankings'], cfg.modo_ejecucion)
+  File "/home/usuario/Escritorio/cofer_tfg/snp_tag_problem/snp_tag/visualization/reporting.py", line 286, in graficar_analisis_estadistico
+    stat, p_value = ss.friedmanchisquare(*rank_matrix.T)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/usuario/Escritorio/cofer_tfg/snp_tag_problem/venv/lib/python3.12/site-packages/scipy/stats/_axis_nan_policy.py", line 592, in axis_nan_policy_wrapper
+    res = hypotest_fun_out(*samples, **kwds)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/usuario/Escritorio/cofer_tfg/snp_tag_problem/venv/lib/python3.12/site-packages/scipy/stats/_stats_py.py", line 8569, in friedmanchisquare
+    raise ValueError('At least 3 samples must be given '
+ValueError: At least 3 samples must be given for Friedman test, got 2.
+(venv) usuario@D00200023-DBE11:~/Escritorio/cofer_tfg/snp_tag_problem$ 
+

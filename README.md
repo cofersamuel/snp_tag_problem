@@ -9,18 +9,25 @@ Este repositorio contiene la implementación de un pipeline modular basado en al
    * Enfoque evolutivo multiobjetivo.
 2. **[Marco Experimental](#sección-2-marco-experimental)**
    * Datasets (Hinds et al. y Sintéticos).
+   * Suite de diagnóstico y caracterización de datos.
    * Objetivos de optimización.
    * Algoritmos e Inicializaciones.
    * Parámetros configurables.
 3. **[Ejecución y Estructura del Proyecto](#sección-3-ejecución-y-estructura-del-proyecto)**
    * Dependencias e Instalación.
-   * Uso de la CLI.
-   * Arquitectura del paquete `snp_tag`.
+   * Interfaz de Línea de Comandos (CLI).
+   * Estructura y arquitectura del código.
 4. **[Profundizamiento de Algoritmos y Motor Evolutivo](#sección-4-profundizamiento-de-algoritmos-y-motor-evolutivo)**
-   * Implementación y Operadores (UX, Bitflip).
+   * Implementación y Operadores de Variación.
    * Direcciones de Referencia (Das-Dennis).
    * Motor de Paralelización y Gestión de Recursos.
    * Gestión de Escalas y Normalización.
+5. **[Validación Estadística Rigurosa](#sección-5-validación-estadística-rigurosa)**
+   * Test de Friedman.
+   * Análisis Post-hoc de Nemenyi.
+6. **[Diccionario de Métricas Técnicas y Supra-métricas](#sección-6-diccionario-de-métricas-técnicas-y-supra-métricas)**
+   * Métricas de Rendimiento Analizadas.
+   * La Supra-métrica Analítica: Average Rank.
 
 ---
 
@@ -377,7 +384,17 @@ python -m snp_tag.main --mode [MODO] --data-source [FUENTE]
 
 El paquete `snp_tag` está organizado de forma modular para facilitar su mantenimiento y extensión:
 
-* **`core/`**: Definiciones fundamentales del problema de optimización (variables, direcciones de referencia).
+* **`core/`**: Definiciones fundamentales del problema de optimización (clase `TSSPProblem`), envolturas de algoritmos y estrategias de muestreo inicial.
+* **`data/`**: Gestión de datasets (`loader.py`) y suite de diagnóstico de datos genómicos (`diagnostics.py`). Contiene los benchmarks biológicos.
+* **`engine/`**: Núcleo de ejecución del motor evolutivo (`runner.py`) y cálculo de métricas de rendimiento y convergencia (`metrics.py`).
+* **`visualization/`**: Módulos para la generación de frentes de Pareto, curvas de convergencia y el sistema de reporte automatizado (`reporting.py`).
+* **`utils/`**: Funciones auxiliares para la gestión del sistema de archivos, el entorno de ejecución y la interfaz de terminal.
+* **`main.py`**: Punto de entrada de la aplicación que orquestra el flujo completo desde la carga de datos hasta la síntesis de resultados.
+* **`config.py`**: Parámetros globales de configuración, gestión de constantes y estados del entorno de simulación.
+
+Fuera del paquete principal, el repositorio gestiona la persistencia de resultados históricos:
+
+* **`ejecuciones_guardadas/`**: Almacén de experimentos de referencia y sus correspondientes informes técnicos. Se organiza por fechas y contiene tanto los datos brutos de las simulaciones (`experimentos/`) como el código fuente de los análisis académicos desarrollados en LaTeX (`analisis/`).
 
 ---
 
