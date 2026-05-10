@@ -24,11 +24,10 @@ def transformar_objetivos_a_minimizacion(
     modo = str(modo_transformacion or 'neg').strip().lower()
     if modo == 'inverse':
         # En inverse, usar dominio positivo estable para evitar explosiones numéricas
-        f2 = 1.0 / np.maximum(min_cobertura, 1.0)
+        f2 = 1.0 / np.maximum(min_cobertura, epsilon)
         f3 = 1.0 / np.maximum(hamming_med, epsilon)
     else:
-        tolerancia = min_cobertura - 1.0
-        f2 = -tolerancia
+        f2 = -min_cobertura
         f3 = -hamming_med
 
     F = np.column_stack([
@@ -53,6 +52,7 @@ def evaluar_poblacion_vectorizado(
     modo_transformacion: str = 'neg',
     devolver_min_cobertura: bool = False,
     modo_evaluacion: str = 'absoluta',
+    cap_tolerancia: float = 3.0,
 ) -> np.ndarray:
     """
     Evaluación vectorizada de la población sobre los cuatro objetivos del problema.
@@ -74,12 +74,17 @@ def evaluar_poblacion_vectorizado(
     # f2: Cobertura mínima entre pares (base robusta para transformación)
     min_cobertura = D.min(axis=1)
     
+    # Aplicar el tope de tolerancia biológica
+    cobertura_efectiva = np.minimum(min_cobertura, cap_tolerancia)
+    
     if modo_evaluacion == 'proportional':
         # NORMALIZACIÓN PROPORCIONAL (Ting et al.)
+        tolerancia_eval = cobertura_efectiva / k
         hamming_med = D.mean(axis=1) / k
         varianza = D.var(axis=1) / (k ** 2)
     else:
         # MÉTRICA ABSOLUTA
+        tolerancia_eval = cobertura_efectiva
         # f3: Distancia media
         hamming_med = D.mean(axis=1)
         # f4: Varianza (Balance)
@@ -90,7 +95,7 @@ def evaluar_poblacion_vectorizado(
     # Retorno en formato de minimización (PyMoo standard)
     F = transformar_objetivos_a_minimizacion(
         k,
-        min_cobertura,
+        tolerancia_eval,
         hamming_med,
         varianza,
         modo_transformacion=modo_transformacion,
@@ -111,12 +116,14 @@ class ProblemaTagSNP(Problem):
         normalizar_busqueda: bool = False,
         modo_transformacion_objetivos: str = 'neg',
         modo_evaluacion: str = 'absoluta',
+        cap_tolerancia: float = 3.0,
     ):
         self.H = H
         self.pair_idx = pair_idx
         self.normalizar_busqueda = bool(normalizar_busqueda)
         self.modo_transformacion_objetivos = str(modo_transformacion_objetivos or 'neg').strip().lower()
         self.modo_evaluacion = str(modo_evaluacion or 'absoluta').strip().lower()
+        self.cap_tolerancia = float(cap_tolerancia)
         
         # Precomputación de la matriz de discrepancia (diferencias bit a bit)
         self.matriz_discrepancia = (H[pair_idx[:, 0], :] != H[pair_idx[:, 1], :]).astype(np.int16)
@@ -132,7 +139,7 @@ class ProblemaTagSNP(Problem):
                 self._escala_f2 = 1.0
                 self._escala_f3 = 10.0 # Nadir empírico seguro para inverse
             else: # 'neg'
-                self._escala_f2 = max(1.0, float(D_completa.min() - 1.0))
+                self._escala_f2 = 1.0 # La proporción máxima es 1.0
                 self._escala_f3 = 1.0 # La proporción máxima es 1.0, |-1.0| = 1.0
         else:
             if self.modo_transformacion_objetivos == 'inverse':
@@ -141,7 +148,7 @@ class ProblemaTagSNP(Problem):
                 self._escala_f2 = 1.0
                 self._escala_f3 = 1.0
             else:
-                self._escala_f2 = max(1.0, float(D_completa.min() - 1.0))
+                self._escala_f2 = max(1.0, float(self.cap_tolerancia))
                 self._escala_f3 = max(1.0, float(D_completa.mean()))
             self._escala_f4 = max(1.0, float(D_completa.var()))
         
@@ -155,6 +162,7 @@ class ProblemaTagSNP(Problem):
             modo_transformacion=self.modo_transformacion_objetivos,
             devolver_min_cobertura=True,
             modo_evaluacion=self.modo_evaluacion,
+            cap_tolerancia=self.cap_tolerancia,
         )
         
         if self.normalizar_busqueda:

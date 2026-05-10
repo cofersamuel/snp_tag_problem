@@ -83,12 +83,11 @@ def graficar_frentes_pareto(df_datos: pd.DataFrame, nombre_algoritmo: str,
     init_col = 'init' if 'init' in df_algo.columns else 'init_type'
     unidades_init = [nombre_init] if nombre_init else sorted(df_algo[init_col].unique())
 
-    # Paleta de colores consistente
     colores_init = {
         'random_sparse': '#ff7f0e',
         'random_dense': '#9467bd',
         'greedy_hybrid': '#1f77b4',
-        'greedy_pure': '#2ca02c',
+        'greedy_multi': '#2ca02c',
     }
 
     etiquetas_ejes = {
@@ -227,13 +226,13 @@ def graficar_coordenadas_paralelas_pareto(df_total: pd.DataFrame, seed: int, car
         'random_sparse': '--',
         'random_dense': ':',
         'greedy_hybrid': '-',
-        'greedy_pure': '-.',
+        'greedy_multi': '-.',
     }
     color_map = {
         'random_sparse': '#ff7f0e',
         'random_dense': '#9467bd',
         'greedy_hybrid': '#1f77b4',
-        'greedy_pure': '#2ca02c',
+        'greedy_multi': '#2ca02c',
     }
 
     algorithms = sorted(df_norm[algo_col].dropna().astype(str).unique().tolist())

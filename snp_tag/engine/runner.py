@@ -35,12 +35,13 @@ class ResultadoEjecucion:
 
 class CallbackLigero(Callback):
     """Callback optimizado para capturar el historial de objetivos sin saturar la memoria."""
-    def __init__(self, H, pair_idx, modo_transformacion_objetivos='neg', modo_evaluacion='absoluta'):
+    def __init__(self, H, pair_idx, modo_transformacion_objetivos='neg', modo_evaluacion='absoluta', cap_tolerancia=3.0):
         super().__init__()
         self._H = H
         self._pair_idx = pair_idx
         self._modo_transformacion_objetivos = str(modo_transformacion_objetivos or 'neg')
         self._modo_evaluacion = str(modo_evaluacion or 'absoluta')
+        self._cap_tolerancia = float(cap_tolerancia)
         self.historial_F = []
 
     def notify(self, algoritmo):
@@ -60,6 +61,7 @@ class CallbackLigero(Callback):
             prob.matriz_discrepancia,
             modo_transformacion=self._modo_transformacion_objetivos,
             modo_evaluacion=self._modo_evaluacion,
+            cap_tolerancia=self._cap_tolerancia,
         )
         self.historial_F.append(F_gen[:, :4].copy())
 
@@ -80,11 +82,12 @@ def _ejecutar_replica_individual(args: Dict[str, Any]) -> ResultadoEjecucion:
         normalizar_busqueda=nombre_algo.startswith('MOEAD_'),
         modo_transformacion_objetivos=cfg.modo_transformacion_objetivos,
         modo_evaluacion=cfg.modo_evaluacion,
+        cap_tolerancia=cfg.cap_tolerancia,
     )
     algo = fabricar_algoritmo(problema, H, nombre_algo, nombre_init, cfg, semilla, dirs_ref)
     finalizacion = get_termination('n_gen', cfg.n_generaciones)
     
-    cb = CallbackLigero(H, pair_idx, modo_transformacion_objetivos=cfg.modo_transformacion_objetivos, modo_evaluacion=cfg.modo_evaluacion)
+    cb = CallbackLigero(H, pair_idx, modo_transformacion_objetivos=cfg.modo_transformacion_objetivos, modo_evaluacion=cfg.modo_evaluacion, cap_tolerancia=cfg.cap_tolerancia)
     t0 = time.time()
     res = minimize(problema, algo, finalizacion, seed=semilla, verbose=False, 
                    save_history=False, callback=cb)
@@ -97,6 +100,7 @@ def _ejecutar_replica_individual(args: Dict[str, Any]) -> ResultadoEjecucion:
             problema.matriz_discrepancia,
             modo_transformacion=cfg.modo_transformacion_objetivos,
             modo_evaluacion=cfg.modo_evaluacion,
+            cap_tolerancia=cfg.cap_tolerancia,
         )
     else:
         Ff = np.empty((0, 4), dtype=float)

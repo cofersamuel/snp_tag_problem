@@ -138,6 +138,7 @@ def obtener_referencias_estaticas_dataset(
 
     is_prop = (modo_normalizacion == 'static_proportional_limits')
     if is_prop:
+        max_tol = 1.0
         max_ham = 1.0
         max_var = 0.25
 
@@ -158,7 +159,7 @@ def obtener_referencias_estaticas_dataset(
         nadir = np.array([L, 1.0, nadir_f3, max_var])
     else:
         ideal = np.array([1.0, -max_tol, -max_ham, 0.0])
-        nadir = np.array([L, 1.0, 0.0, max_var])
+        nadir = np.array([L, 0.0, 0.0, max_var])
     return ideal, (nadir - ideal + 1e-9)
 
 def calcular_metricas_convergencia(F_norm):

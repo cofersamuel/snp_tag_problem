@@ -35,6 +35,8 @@ CLAVES_TUNABLES_REQUERIDAS = (
     'report_plot_dpi',
     'prob_aleatoria_gi',
     'ratio_greedy_ting',
+    'max_cobertura_objetivo',
+    'cap_tolerancia',
 )
 
 
@@ -259,7 +261,7 @@ class ConfiguracionExperimento:
     # Parámetros con valores por defecto (deben ir al final)
     INIT_PERMITIDAS: List[str] = field(default_factory=lambda: [
         'random_sparse', 'random_dense',
-        'greedy_hybrid', 'greedy_pure',
+        'greedy_hybrid', 'greedy_multi',
         'greedy_ting'
     ])
 
@@ -282,19 +284,23 @@ class ConfiguracionExperimento:
     # Proporcion de poblacion creada con greedy Ting
     ratio_greedy_ting: float = PARAMS_TUNABLES_DEFECTO['ratio_greedy_ting']
     
+    # Cobertura máxima para inicialización progresiva multiobjetivo
+    max_cobertura_objetivo: int = PARAMS_TUNABLES_DEFECTO.get('max_cobertura_objetivo', 5)
+    
     algoritmos_activos: List[str] = field(default_factory=list)
     opciones_init: List[str] = field(default_factory=list)
     modo_normalizacion: str = PARAMS_TUNABLES_DEFECTO.get('modo_normalizacion', 'static_dataset_limits')
     modo_evaluacion: str = PARAMS_TUNABLES_DEFECTO.get('modo_evaluacion', 'absoluta')
     modo_semillas: str = PARAMS_TUNABLES_DEFECTO.get('modo_semillas', 'non_deterministic')
     modo_transformacion_objetivos: str = PARAMS_TUNABLES_DEFECTO.get('modo_transformacion_objetivos', 'neg')
+    cap_tolerancia: float = float(PARAMS_TUNABLES_DEFECTO.get('cap_tolerancia', 3.0))
 
 
 def es_opcion_init_valida(nombre_init: str) -> bool:
     """
     Verifica si una estrategia de inicialización es compatible con el sistema.
     """
-    if nombre_init in ['random_sparse', 'random_dense', 'greedy_hybrid', 'greedy_pure', 'greedy_ting']:
+    if nombre_init in ['random_sparse', 'random_dense', 'greedy_hybrid', 'greedy_multi', 'greedy_ting']:
         return True
     return False
 
@@ -444,6 +450,7 @@ def construir_configuracion(modo: str = 'medium', data_source: str = 'hinds2005'
         report_plot_dpi=int(params['report_plot_dpi']),
         prob_aleatoria_gi=float(params['prob_aleatoria_gi']),
         ratio_greedy_ting=ratio_greedy_ting,
+        max_cobertura_objetivo=int(params.get('max_cobertura_objetivo', 5)),
         algoritmos_activos=algoritmos_activos,
         opciones_init=opciones_init,
         modo_normalizacion=resolver_modo_normalizacion(params.get('modo_normalizacion')),

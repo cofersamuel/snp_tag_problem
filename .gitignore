@@ -53,6 +53,7 @@ brain/
 .agents/
 .github/
 scripts/
+didactic contents/
 
 # LaTeX auxiliary files
 *.aux

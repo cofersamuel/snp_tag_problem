@@ -212,22 +212,81 @@ class MuestreoGreedyHibrido(Sampling):
             X[i] = fila
         return X
 
-class MuestreoGreedyPuro(Sampling):
-    """Inicialización basada íntegramente en la heurística voraz."""
-    def __init__(self, H, pair_idx, semilla=42):
+def construir_solucion_multicobertura(H, pair_idx, target_k, rng):
+    """
+    Construye una solución voraz dinámica exigiendo que cada par de haplotipos
+    se distinga 'target_k' veces (si es biológicamente posible).
+    """
+    n_snps = H.shape[1]
+    n_pares = pair_idx.shape[0]
+    
+    seleccionados = np.zeros(n_snps, dtype=bool)
+    cubiertos = np.zeros(n_pares, dtype=int)
+    
+    a = H[pair_idx[:, 0], :]
+    b = H[pair_idx[:, 1], :]
+    discrepancia = (a != b).astype(int)
+    
+    # Límite biológico para prevenir bucles infinitos
+    cobertura_maxima_biologica = discrepancia.sum(axis=1)
+    # Salvaguarda: el objetivo para cada par no puede superar lo que el dataset permite
+    objetivo_real = np.minimum(target_k, cobertura_maxima_biologica)
+    
+    while True:
+        # Encontrar pares que aún no han alcanzado su cobertura objetivo real
+        necesitan_cobertura = cubiertos < objetivo_real
+        if not np.any(necesitan_cobertura):
+            break # Todos los pares han alcanzado su objetivo_real
+            
+        # Puntuación: número de pares insatisfechos que cada SNP puede distinguir
+        # Sólo sumamos las filas de discrepancia donde necesitan_cobertura es True
+        puntuacion_dinamica = discrepancia[necesitan_cobertura].sum(axis=0)
+        
+        # Excluir SNPs que ya han sido seleccionados
+        puntuacion_dinamica[seleccionados] = -1
+        
+        max_score = np.max(puntuacion_dinamica)
+        if max_score <= 0:
+            break # Ningún SNP adicional puede aportar cobertura útil
+            
+        candidatos = np.where(puntuacion_dinamica == max_score)[0]
+        
+        # Desempate estocástico
+        mejor_snp = rng.choice(candidatos)
+        
+        seleccionados[mejor_snp] = True
+        cubiertos += discrepancia[:, mejor_snp]
+        
+    # Garantizar que al menos un SNP es seleccionado en caso de objetivos degenerados
+    if not seleccionados.any() and n_snps > 0:
+        seleccionados[rng.integers(0, n_snps)] = True
+        
+    return seleccionados
+
+class MuestreoGreedyMultiCobertura(Sampling):
+    """
+    Inicialización basada en una heurística voraz de cobertura múltiple progresiva.
+    Fuerza al algoritmo a seleccionar SNPs redundantes distribuyendo un objetivo
+    de cobertura desde 1 hasta max_cobertura_objetivo entre los individuos.
+    """
+    def __init__(self, H, pair_idx, max_cobertura_objetivo=5, semilla=42):
         super().__init__()
         self.H = H
         self.pair_idx = pair_idx
+        self.max_cobertura_objetivo = int(max_cobertura_objetivo)
         self.rng = np.random.default_rng(semilla)
-        puntuacion = calcular_distinguibilidad_snps(H, pair_idx)
-        self.indices_ordenados = np.argsort(-puntuacion)
-        self.grupos = _agrupar_por_distinguibilidad(self.indices_ordenados, puntuacion)
 
     def _do(self, problem, n_samples, **kwargs):
         X = np.zeros((n_samples, problem.n_var), dtype=bool)
+        
+        # Distribución lineal de los objetivos de cobertura en la población.
+        # Va desde 1 hasta max_cobertura_objetivo (ej. 1, 1, 2, 2, 3, 3...)
+        k_targets = np.linspace(1, self.max_cobertura_objetivo, n_samples).astype(int)
+        
         for i in range(n_samples):
-            orden = _ordenar_con_desempate_aleatorio(self.grupos, self.rng)
-            X[i] = construir_solucion_greedy(self.H, self.pair_idx, orden)
+            target_k = k_targets[i]
+            X[i] = construir_solucion_multicobertura(self.H, self.pair_idx, target_k, self.rng)
+            
         return X
 
 class MuestreoGreedyTing(Sampling):
