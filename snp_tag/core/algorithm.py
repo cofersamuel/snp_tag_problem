@@ -24,7 +24,7 @@ import numpy as np
 
 from snp_tag.core.sampling import (
     MuestreoAleatorioDisperso, MuestreoGreedyHibrido, MuestreoGreedyMultiCobertura,
-    MuestreoGreedyTing
+    MuestreoGreedyTing, MuestreoGreedyElite
 )
 from snp_tag.config import ConfiguracionExperimento
 
@@ -143,6 +143,13 @@ def fabricar_algoritmo(problema, H, nombre_algo, nombre_init, cfg: Configuracion
             H,
             problema.pair_idx,
             ratio_greedy=cfg.ratio_greedy_ting,
+            semilla=semilla,
+        )
+    elif base_init == 'greedy_elite':
+        sampling = MuestreoGreedyElite(
+            H,
+            problema.pair_idx,
+            max_k=cfg.max_k_elite,
             semilla=semilla,
         )
     else:

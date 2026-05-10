@@ -338,3 +338,367 @@ class MuestreoGreedyTing(Sampling):
             X[pos:] = self.rng.random((n_samples - pos, problem.n_var)) < 0.5
 
         return X
+
+# ============================================================
+# Helpers para MuestreoGreedyElite
+# ============================================================
+
+def _ancla_max_hamming_medio(discrepancia, distinguibilidad, n_snps, n_pares, rng):
+    """
+    Construye una solución que maximiza la distancia media de Hamming.
+    Selecciona SNPs en orden descendente de contribución media, continuando
+    más allá de la cobertura mínima hasta que la mejora marginal sea despreciable.
+    """
+    seleccionados = np.zeros(n_snps, dtype=bool)
+    D_acum = np.zeros(n_pares, dtype=float)
+
+    ruido = rng.normal(0.0, 1e-6, size=n_snps)
+    orden = np.argsort(-(distinguibilidad + ruido))
+
+    cobertura_alcanzada = False
+    for s in orden:
+        contrib = float(discrepancia[:, s].sum())
+        if contrib <= 0:
+            continue
+
+        seleccionados[s] = True
+        D_acum += discrepancia[:, s].astype(float)
+
+        if not cobertura_alcanzada:
+            if D_acum.min() >= 1:
+                cobertura_alcanzada = True
+            continue
+
+        # Tras cobertura: parar cuando la mejora marginal < 0.5%
+        media_actual = D_acum.mean()
+        if media_actual > 0 and (contrib / n_pares) / media_actual < 0.005:
+            break
+
+    if not seleccionados.any():
+        seleccionados[int(orden[0])] = True
+    return seleccionados
+
+
+def _ancla_min_varianza(discrepancia, H, pair_idx, n_snps, n_pares, rng):
+    """
+    Construye una solución con mínima varianza en distancias de Hamming.
+    Parte de una cobertura mínima y añade SNPs que equilibran las distancias
+    entre pares.
+    """
+    distinguibilidad = discrepancia.sum(axis=0).astype(float)
+    indices_base = np.argsort(-distinguibilidad)
+    seleccionados = construir_solucion_greedy(H, pair_idx, indices_base).copy()
+    D_acum = discrepancia[:, seleccionados].sum(axis=1).astype(float)
+
+    k_inicial = int(seleccionados.sum())
+    max_extras = min(k_inicial * 2, n_snps - k_inicial)
+
+    for _ in range(max_extras):
+        candidatos = np.where(~seleccionados)[0]
+        if len(candidatos) == 0:
+            break
+
+        var_actual = float(D_acum.var())
+        if var_actual < 1e-9:
+            break
+
+        # Varianza resultante tras añadir cada candidato
+        D_cand = discrepancia[:, candidatos].astype(float)
+        D_nuevas = D_acum[:, None] + D_cand
+        varianzas = D_nuevas.var(axis=0)
+
+        mejor_idx = int(np.argmin(varianzas))
+        if varianzas[mejor_idx] >= var_actual * 0.99:
+            break
+
+        seleccionados[candidatos[mejor_idx]] = True
+        D_acum = D_nuevas[:, mejor_idx].copy()
+
+    return seleccionados
+
+
+def _construir_solucion_bloques(discrepancia, bloques, n_snps, n_pares,
+                                 indices_bloques, rng):
+    """
+    Construye una solución seleccionando representantes de un subconjunto de
+    bloques LD mediante mini-greedy restringido a los SNPs de cada bloque.
+    """
+    seleccionados = np.zeros(n_snps, dtype=bool)
+    cubiertos = np.zeros(n_pares, dtype=bool)
+
+    for b_idx in indices_bloques:
+        snps_bloque = bloques[b_idx]
+        if len(snps_bloque) == 0:
+            continue
+
+        # Puntuación: pares aún no cubiertos que cada SNP del bloque distingue
+        pendientes = ~cubiertos
+        scores = discrepancia[pendientes][:, snps_bloque].sum(axis=0) if pendientes.any() \
+            else discrepancia[:, snps_bloque].sum(axis=0)
+
+        orden_local = np.argsort(-scores.astype(float))
+        for idx_local in orden_local:
+            s_global = snps_bloque[idx_local]
+            contrib = discrepancia[:, s_global].astype(bool)
+            if np.any((~cubiertos) & contrib):
+                seleccionados[s_global] = True
+                cubiertos |= contrib
+            if cubiertos.all():
+                break
+
+    if not seleccionados.any() and n_snps > 0:
+        seleccionados[rng.integers(0, n_snps)] = True
+    return seleccionados
+
+
+def _construir_complemento(discrepancia, solucion_base, n_snps, n_pares, rng):
+    """
+    Construye el complemento de una solución existente: apunta a los pares
+    peor cubiertos por la base para ocupar una región diferente del frente.
+    """
+    D_base = discrepancia[:, solucion_base].sum(axis=1).astype(float)
+
+    if D_base.sum() == 0:
+        sol = np.zeros(n_snps, dtype=bool)
+        sol[rng.integers(0, n_snps)] = True
+        return sol
+
+    mediana = float(np.median(D_base))
+    mal_cubiertos = D_base <= mediana
+
+    # Puntuar por contribución a los pares mal cubiertos, excluyendo SNPs de la base
+    scores = discrepancia[mal_cubiertos].sum(axis=0).astype(float)
+    scores[solucion_base] = -1
+
+    ruido = rng.normal(0.0, 1e-6, size=n_snps)
+    orden = np.argsort(-(scores + ruido))
+
+    seleccionados = np.zeros(n_snps, dtype=bool)
+    cubiertos_obj = np.zeros(n_pares, dtype=bool)
+
+    for s in orden:
+        if scores[s] <= 0:
+            break
+        seleccionados[s] = True
+        cubiertos_obj |= discrepancia[:, s].astype(bool)
+        if cubiertos_obj[mal_cubiertos].all():
+            break
+
+    if not seleccionados.any():
+        candidatos = np.where(~solucion_base)[0]
+        if len(candidatos) > 0:
+            seleccionados[rng.choice(candidatos)] = True
+        else:
+            seleccionados[rng.integers(0, n_snps)] = True
+    return seleccionados
+
+
+def _muestreo_guiado_disperso(distinguibilidad, n_snps, k_objetivo, rng):
+    """
+    Muestreo ponderado por distinguibilidad con cardinalidad objetivo.
+    """
+    total = distinguibilidad.sum()
+    if total <= 0:
+        p = np.full(n_snps, 1.0 / n_snps)
+    else:
+        p = distinguibilidad / total
+
+    p = p * k_objetivo
+    p = np.clip(p, 0.01, 0.8)
+
+    sol = rng.random(n_snps) < p
+    if not sol.any():
+        sol[rng.integers(0, n_snps)] = True
+    return sol
+
+
+class MuestreoGreedyElite(Sampling):
+    """
+    Inicialización de cinco niveles para optimización multiobjetivo de Tag SNPs.
+
+    Siembra la población cubriendo sistemáticamente las cuatro dimensiones del
+    frente de Pareto con soluciones estructuralmente diversas:
+
+    Tier 1: Anclas de Pareto           (~5-10%)  - Extremos de cada objetivo
+    Tier 2: Barrido k-Cover            (~25%)    - Multicobertura progresiva
+    Tier 3: Ensamblaje por bloques LD  (~25%)    - Diversidad estructural genómica
+    Tier 4: Inyección de complementos  (~20%)    - Soluciones que parchean debilidades
+    Tier 5: Exploración guiada dispersa(~20-25%) - Muestreo ponderado por importancia
+
+    Post-procesado: deduplicación fenotípica (siempre activo).
+    """
+
+    def __init__(self, H, pair_idx, max_k=5, semilla=42):
+        super().__init__()
+        self.H = H
+        self.pair_idx = pair_idx
+        self.max_k = int(max_k)
+        self.rng = np.random.default_rng(semilla)
+
+        # Precomputación
+        self.discrepancia = (H[pair_idx[:, 0]] != H[pair_idx[:, 1]]).astype(np.int16)
+        self.distinguibilidad = self.discrepancia.sum(axis=0).astype(float)
+        self.n_snps = H.shape[1]
+        self.n_pares = pair_idx.shape[0]
+
+        # Detección de bloques LD (basada en datos, funciona con cualquier dataset)
+        from snp_tag.data.diagnostics import detectar_bloques_ld
+        segmentos = detectar_bloques_ld(H)
+        self.bloques = [np.arange(s, e) for s, e in segmentos]
+
+    def _construir_anclas(self):
+        """Tier 1: construye una solución extrema por cada objetivo."""
+        anclas = []
+
+        # Ancla 1: Min-k (mínima cardinalidad con cobertura)
+        indices = np.argsort(-self.distinguibilidad)
+        anclas.append(construir_solucion_greedy(self.H, self.pair_idx, indices))
+
+        # Ancla 2: Max-tolerancia (k-cover al máximo)
+        anclas.append(construir_solucion_multicobertura(
+            self.H, self.pair_idx, self.max_k, self.rng
+        ))
+
+        # Ancla 3: Max distancia media de Hamming
+        anclas.append(_ancla_max_hamming_medio(
+            self.discrepancia, self.distinguibilidad,
+            self.n_snps, self.n_pares, self.rng
+        ))
+
+        # Ancla 4: Min varianza
+        anclas.append(_ancla_min_varianza(
+            self.discrepancia, self.H, self.pair_idx,
+            self.n_snps, self.n_pares, self.rng
+        ))
+
+        return anclas
+
+    def _sweep_k_cover(self, n):
+        """Tier 2: barrido de cobertura progresiva con spacing geométrico."""
+        soluciones = []
+        k_vals = np.unique(np.geomspace(1, self.max_k, max(n, 2)).astype(int))
+        # Distribuir n individuos entre los valores de k
+        repeticiones = max(1, n // len(k_vals))
+        for k in k_vals:
+            for _ in range(repeticiones):
+                if len(soluciones) >= n:
+                    break
+                soluciones.append(construir_solucion_multicobertura(
+                    self.H, self.pair_idx, int(k), self.rng
+                ))
+        # Rellenar si faltan
+        while len(soluciones) < n:
+            k = int(self.rng.integers(1, self.max_k + 1))
+            soluciones.append(construir_solucion_multicobertura(
+                self.H, self.pair_idx, k, self.rng
+            ))
+        return soluciones[:n]
+
+    def _bloques_assembly(self, n):
+        """Tier 3: ensamblaje de soluciones por subconjuntos de bloques LD."""
+        soluciones = []
+        n_bloques = len(self.bloques)
+        if n_bloques == 0:
+            return soluciones
+
+        for _ in range(n):
+            # Subconjunto aleatorio de bloques (entre 40% y 100% de los bloques)
+            n_sel = self.rng.integers(max(1, n_bloques * 2 // 5), n_bloques + 1)
+            indices = self.rng.choice(n_bloques, size=n_sel, replace=False)
+            indices.sort()
+            soluciones.append(_construir_solucion_bloques(
+                self.discrepancia, self.bloques, self.n_snps,
+                self.n_pares, indices, self.rng
+            ))
+        return soluciones
+
+    def _complementos(self, soluciones_existentes, n):
+        """Tier 4: construye complementos de soluciones existentes."""
+        resultados = []
+        n_base = len(soluciones_existentes)
+        if n_base == 0:
+            return resultados
+
+        for i in range(n):
+            base = soluciones_existentes[i % n_base]
+            resultados.append(_construir_complemento(
+                self.discrepancia, base, self.n_snps, self.n_pares, self.rng
+            ))
+        return resultados
+
+    def _guided_sparse(self):
+        """Tier 5: un individuo con muestreo disperso ponderado."""
+        # Cardinalidad objetivo: entre el min-k observado y algo moderado
+        k_obj = self.rng.integers(
+            max(1, int(self.distinguibilidad.size * 0.01)),
+            max(2, int(self.distinguibilidad.size * 0.15))
+        )
+        return _muestreo_guiado_disperso(
+            self.distinguibilidad, self.n_snps, k_obj, self.rng
+        )
+
+    def _deduplicar(self, X):
+        """Post-procesado: deduplicación fenotípica (siempre activo)."""
+        huellas = set()
+        for i in range(len(X)):
+            fp = X[i].tobytes()
+            if fp in huellas:
+                # Mutar: invertir 1-3 bits aleatorios
+                n_flips = self.rng.integers(1, 4)
+                bits = self.rng.choice(self.n_snps, n_flips, replace=False)
+                X[i, bits] = ~X[i, bits]
+                if not X[i].any():
+                    X[i, self.rng.integers(0, self.n_snps)] = True
+            huellas.add(X[i].tobytes())
+        return X
+
+    def _do(self, problem, n_samples, **kwargs):
+        n_samples = int(n_samples)
+        X = np.zeros((n_samples, problem.n_var), dtype=bool)
+        pos = 0
+
+        # === Tier 1: Anclas de Pareto (~5-10%) ===
+        anclas = self._construir_anclas()
+        n_anclas = min(len(anclas), max(2, n_samples // 10))
+        for i in range(n_anclas):
+            if pos >= n_samples:
+                break
+            X[pos] = anclas[i]
+            pos += 1
+
+        restantes = n_samples - pos
+        if restantes <= 0:
+            return self._deduplicar(X)
+
+        # === Tier 2: Barrido k-Cover (~25%) ===
+        n_t2 = max(1, int(round(restantes * 0.30)))
+        for sol in self._sweep_k_cover(n_t2):
+            if pos >= n_samples:
+                break
+            X[pos] = sol
+            pos += 1
+
+        # === Tier 3: Ensamblaje por bloques LD (~25%) ===
+        n_t3 = max(1, int(round(restantes * 0.30)))
+        for sol in self._bloques_assembly(n_t3):
+            if pos >= n_samples:
+                break
+            X[pos] = sol
+            pos += 1
+
+        # === Tier 4: Inyección de complementos (~20%) ===
+        n_t4 = max(1, int(round(restantes * 0.20)))
+        existentes = X[:pos].copy()
+        for sol in self._complementos(existentes, n_t4):
+            if pos >= n_samples:
+                break
+            X[pos] = sol
+            pos += 1
+
+        # === Tier 5: Exploración guiada dispersa (resto) ===
+        while pos < n_samples:
+            X[pos] = self._guided_sparse()
+            pos += 1
+
+        # === Post-procesado: deduplicación fenotípica ===
+        return self._deduplicar(X)

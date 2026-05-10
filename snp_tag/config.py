@@ -36,6 +36,7 @@ CLAVES_TUNABLES_REQUERIDAS = (
     'prob_aleatoria_gi',
     'ratio_greedy_ting',
     'max_cobertura_objetivo',
+    'max_k_elite',
     'cap_tolerancia',
 )
 
@@ -173,10 +174,10 @@ PARAMETROS_CONFIGURACION = {
     # - n_runs: repeticiones por configuración algoritmo-init.
     'perfiles_modo': {
         'fast': {'tam_pob': 10, 'n_gen': 2, 'descendencia': 10, 'n_runs': 2},
-        'medium': {'tam_pob': 100, 'n_gen': 50, 'descendencia': 100, 'n_runs': 2},
+        'medium': {'tam_pob': 84, 'n_gen': 50, 'descendencia': 84, 'n_runs': 2},
         'high': {'tam_pob': 120, 'n_gen': 100, 'descendencia': 120, 'n_runs': 3},
-        'full': {'tam_pob': 200, 'n_gen': 500, 'descendencia': 200, 'n_runs': 5},
-        'full_20': {'tam_pob': 200, 'n_gen': 500, 'descendencia': 200, 'n_runs': 20},
+        'full': {'tam_pob': 220, 'n_gen': 500, 'descendencia': 220, 'n_runs': 5},
+        'full_20': {'tam_pob': 220, 'n_gen': 500, 'descendencia': 220, 'n_runs': 20},
     },
 
     # Fuentes de datos permitidas al construir configuración.
@@ -262,7 +263,7 @@ class ConfiguracionExperimento:
     INIT_PERMITIDAS: List[str] = field(default_factory=lambda: [
         'random_sparse', 'random_dense',
         'greedy_hybrid', 'greedy_multi',
-        'greedy_ting'
+        'greedy_ting', 'greedy_elite'
     ])
 
     ALGORITMOS_PERMITIDOS: List[str] = field(default_factory=lambda: list(ALGORITMOS_DISPONIBLES))
@@ -287,6 +288,9 @@ class ConfiguracionExperimento:
     # Cobertura máxima para inicialización progresiva multiobjetivo
     max_cobertura_objetivo: int = PARAMS_TUNABLES_DEFECTO.get('max_cobertura_objetivo', 5)
     
+    # Cobertura máxima para inicialización greedy_elite (Tier 2)
+    max_k_elite: int = PARAMS_TUNABLES_DEFECTO.get('max_k_elite', 5)
+    
     algoritmos_activos: List[str] = field(default_factory=list)
     opciones_init: List[str] = field(default_factory=list)
     modo_normalizacion: str = PARAMS_TUNABLES_DEFECTO.get('modo_normalizacion', 'static_dataset_limits')
@@ -300,7 +304,7 @@ def es_opcion_init_valida(nombre_init: str) -> bool:
     """
     Verifica si una estrategia de inicialización es compatible con el sistema.
     """
-    if nombre_init in ['random_sparse', 'random_dense', 'greedy_hybrid', 'greedy_multi', 'greedy_ting']:
+    if nombre_init in ['random_sparse', 'random_dense', 'greedy_hybrid', 'greedy_multi', 'greedy_ting', 'greedy_elite']:
         return True
     return False
 
@@ -451,6 +455,7 @@ def construir_configuracion(modo: str = 'medium', data_source: str = 'hinds2005'
         prob_aleatoria_gi=float(params['prob_aleatoria_gi']),
         ratio_greedy_ting=ratio_greedy_ting,
         max_cobertura_objetivo=int(params.get('max_cobertura_objetivo', 5)),
+        max_k_elite=int(params.get('max_k_elite', 5)),
         algoritmos_activos=algoritmos_activos,
         opciones_init=opciones_init,
         modo_normalizacion=resolver_modo_normalizacion(params.get('modo_normalizacion')),
