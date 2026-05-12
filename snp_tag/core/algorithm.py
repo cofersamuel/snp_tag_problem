@@ -9,6 +9,9 @@ from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.algorithms.moo.nsga3 import NSGA3
 from pymoo.algorithms.moo.spea2 import SPEA2, SPEA2Survival
 from pymoo.algorithms.moo.moead import MOEAD
+from pymoo.algorithms.moo.age2 import AGEMOEA2
+from pymoo.algorithms.moo.sms import SMSEMOA
+from pymoo.algorithms.moo.rvea import RVEA
 from pymoo.decomposition.tchebicheff import Tchebicheff
 from pymoo.decomposition.pbi import PBI
 from pymoo.decomposition.weighted_sum import WeightedSum
@@ -23,8 +26,8 @@ from pymoo.util.misc import vectorized_cdist
 import numpy as np
 
 from snp_tag.core.sampling import (
-    MuestreoAleatorioDisperso, MuestreoGreedyHibrido, MuestreoGreedyMultiCobertura,
-    MuestreoGreedyTing, MuestreoGreedyElite
+    MuestreoAleatorioDisperso, MuestreoGreedyMultiCobertura,
+    MuestreoGreedyTing, MuestreoGreedyHolistico
 )
 from snp_tag.config import ConfiguracionExperimento
 
@@ -123,14 +126,7 @@ def fabricar_algoritmo(problema, H, nombre_algo, nombre_init, cfg: Configuracion
         sampling = MuestreoAleatorioDisperso(prob=prob_esperada, semilla=semilla)
     elif base_init == 'random_dense':
         sampling = BinaryRandomSampling()
-    elif base_init == 'greedy_hybrid':
-        sampling = MuestreoGreedyHibrido(
-            H,
-            problema.pair_idx,
-            ratio_greedy=0.5,
-            prob_aleatoria=cfg.prob_aleatoria_gi,
-            semilla=semilla,
-        )
+
     elif base_init == 'greedy_multi':
         sampling = MuestreoGreedyMultiCobertura(
             H, 
@@ -145,11 +141,11 @@ def fabricar_algoritmo(problema, H, nombre_algo, nombre_init, cfg: Configuracion
             ratio_greedy=cfg.ratio_greedy_ting,
             semilla=semilla,
         )
-    elif base_init == 'greedy_elite':
-        sampling = MuestreoGreedyElite(
+    elif base_init == 'greedy_holistic':
+        sampling = MuestreoGreedyHolistico(
             H,
             problema.pair_idx,
-            max_k=cfg.max_k_elite,
+            max_k=cfg.max_k_holistic,
             semilla=semilla,
         )
     else:
@@ -172,6 +168,24 @@ def fabricar_algoritmo(problema, H, nombre_algo, nombre_init, cfg: Configuracion
             eliminate_duplicates=True,
         )
 
+    if nombre_algo == 'AGEMOEA2':
+        return AGEMOEA2(
+            pop_size=cfg.tam_poblacion,
+            sampling=sampling,
+            crossover=cruce,
+            mutation=mutacion,
+            eliminate_duplicates=True
+        )
+
+    if nombre_algo == 'SMSEMOA':
+        return SMSEMOA(
+            pop_size=cfg.tam_poblacion,
+            sampling=sampling,
+            crossover=cruce,
+            mutation=mutacion,
+            eliminate_duplicates=True
+        )
+
     if dirs_ref is None:
         dirs_ref, _ = construir_direcciones_referencia(cfg.tam_poblacion, n_obj=4)
 
@@ -179,6 +193,16 @@ def fabricar_algoritmo(problema, H, nombre_algo, nombre_init, cfg: Configuracion
         return NSGA3(pop_size=cfg.tam_poblacion, ref_dirs=dirs_ref, sampling=sampling, 
                      crossover=cruce, mutation=mutacion, eliminate_duplicates=True, 
                      n_offsprings=cfg.n_descendencia)
+
+    if nombre_algo == 'RVEA':
+        return RVEA(
+            pop_size=cfg.tam_poblacion, 
+            ref_dirs=dirs_ref, 
+            sampling=sampling, 
+            crossover=cruce, 
+            mutation=mutacion, 
+            eliminate_duplicates=True
+        )
 
     if nombre_algo in {'MOEAD_TCHE', 'MOEAD_PBI', 'MOEAD_WS'}:
         if nombre_algo == 'MOEAD_TCHE':

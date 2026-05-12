@@ -26,7 +26,7 @@ def calcular_ld_completo(X):
     return media_ld, corrs, corr_full
 
 def detectar_bloques_ld(H: np.ndarray, ventana_suavizado: int = 11, 
-                       umbral: float = 0.10, min_snps_bloque: int = 10):
+                       umbral: float = 0.20, min_snps_bloque: int = 10):
     """
     Algoritmo de detección de bloques LD basado en hotspots de recombinación.
     """

@@ -185,32 +185,6 @@ class MuestreoAleatorioDisperso(Sampling):
                 X[i, self.rng.integers(0, problem.n_var)] = True
         return X
 
-class MuestreoGreedyHibrido(Sampling):
-    """Combina construcción greedy con relleno aleatorio disperso."""
-    def __init__(self, H, pair_idx, ratio_greedy=0.5, prob_aleatoria=0.5, semilla=42):
-        super().__init__()
-        self.H = H
-        self.pair_idx = pair_idx
-        self.ratio_greedy = float(ratio_greedy)
-        self.prob_aleatoria = float(prob_aleatoria)
-        self.rng = np.random.default_rng(semilla)
-        puntuacion = calcular_distinguibilidad_snps(H, pair_idx)
-        self.indices_ordenados = np.argsort(-puntuacion)
-        self.grupos = _agrupar_por_distinguibilidad(self.indices_ordenados, puntuacion)
-
-    def _do(self, problem, n_samples, **kwargs):
-        X = np.zeros((n_samples, problem.n_var), dtype=bool)
-        n_greedy = int(round(n_samples * self.ratio_greedy))
-        n_greedy = min(max(n_greedy, 0), n_samples)
-        n_aleatorio = n_samples - n_greedy
-        for i in range(n_greedy):
-            orden = _ordenar_con_desempate_aleatorio(self.grupos, self.rng)
-            X[i] = construir_solucion_greedy(self.H, self.pair_idx, orden)
-        for i in range(n_greedy, n_samples):
-            fila = self.rng.random(problem.n_var) < self.prob_aleatoria
-            if not fila.any(): fila[self.rng.integers(0, problem.n_var)] = True
-            X[i] = fila
-        return X
 
 def construir_solucion_multicobertura(H, pair_idx, target_k, rng):
     """
@@ -340,7 +314,7 @@ class MuestreoGreedyTing(Sampling):
         return X
 
 # ============================================================
-# Helpers para MuestreoGreedyElite
+# Helpers para MuestreoGreedyHolistico
 # ============================================================
 
 def _ancla_max_hamming_medio(discrepancia, distinguibilidad, n_snps, n_pares, rng):
@@ -512,7 +486,7 @@ def _muestreo_guiado_disperso(distinguibilidad, n_snps, k_objetivo, rng):
     return sol
 
 
-class MuestreoGreedyElite(Sampling):
+class MuestreoGreedyHolistico(Sampling):
     """
     Inicialización de cinco niveles para optimización multiobjetivo de Tag SNPs.
 
@@ -541,9 +515,18 @@ class MuestreoGreedyElite(Sampling):
         self.n_snps = H.shape[1]
         self.n_pares = pair_idx.shape[0]
 
-        # Detección de bloques LD (basada en datos, funciona con cualquier dataset)
+        # Detección de bloques LD para Tier 3 (basada en datos,
+        # funciona con cualquier dataset).
         from snp_tag.data.diagnostics import detectar_bloques_ld
         segmentos = detectar_bloques_ld(H)
+        # Fallback: si la estructura LD es demasiado uniforme y produce
+        # muy pocos bloques, dividir posicionalmente para garantizar diversidad.
+        if len(segmentos) < 5:
+            n_bloques_min = min(10, max(5, self.n_snps // 50))
+            segmentos_pos = [(i * self.n_snps // n_bloques_min,
+                              (i + 1) * self.n_snps // n_bloques_min)
+                             for i in range(n_bloques_min)]
+            segmentos = segmentos_pos
         self.bloques = [np.arange(s, e) for s, e in segmentos]
 
     def _construir_anclas(self):

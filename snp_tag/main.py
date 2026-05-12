@@ -24,7 +24,7 @@ from snp_tag.config import ConfiguracionExperimento, construir_configuracion, MO
 from snp_tag.utils.terminal import (
     imprimir_encabezado, imprimir_subseccion, imprimir_paso, 
     imprimir_estado, imprimir_grafico_guardado, Tee, obtener_bit_string_estilizado,
-    imprimir_metadato
+    imprimir_metadato, obtener_enlace_terminal
 )
 from snp_tag.utils.filesystem import crear_arbol_directorios_dataset
 from snp_tag.utils.runtime import calcular_max_workers_paralelo
@@ -56,7 +56,8 @@ from snp_tag.visualization.reporting import (
     graficar_boxplot_metricas,
     graficar_rendimiento_tiempo, graficar_comparativa_objetivos,
     graficar_violin_metricas, graficar_media_std_metricas,
-    graficar_analisis_estadistico
+    graficar_analisis_estadistico,
+    graficar_analisis_kruskal_dunn, graficar_diagrama_diferencia_critica
 )
 
 
@@ -462,42 +463,118 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
         for ruta, descripcion in resultados_est.get('mean_std', []):
             imprimir_grafico_guardado(ruta, descripcion)
 
-    imprimir_subseccion("Top 10 por Métrica", icono="🏆")
     if not df_final.empty:
-        metricas_top10 = [
-            ('Range', False, '↑'),
-            ('SumMin', True, '↓'),
-            ('MinSum', True, '↓'),
-            ('MaxToleranceRate', False, '↑'),
-            ('AvgToleranceRate', False, '↑'),
-            ('AvgHammingDistance', False, '↑'),
-            ('Hypervolume', False, '↑')
+        # --- 1. Preparación de Datos y Rankings ---
+        higher_is_better = ['Hypervolume', 'Range', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance']
+        metricas_base = ['MinSum', 'Range', 'SumMin', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'Hypervolume']
+        disponibles = [m for m in metricas_base if m in df_final.columns]
+
+        # a) Medias y Desviaciones por Configuración (Algoritmo + Init)
+        df_mean_config = df_final.groupby(['algorithm', 'init']).mean(numeric_only=True).reset_index()
+        df_std_config = df_final.groupby(['algorithm', 'init']).std(numeric_only=True).reset_index()
+        df_std_config['Average Ranking Overall'] = 0.0
+
+        # b) Cálculo de Average Ranking Overall (Método)
+        resumen_method = df_mean_config.copy()
+        rank_matrix_method = []
+        for m in disponibles:
+            asce = False if m in higher_is_better else True
+            rank_matrix_method.append(resumen_method[m].rank(ascending=asce).values)
+        resumen_method['Average Ranking Overall'] = np.mean(rank_matrix_method, axis=0)
+        df_mean_config = pd.merge(df_mean_config, resumen_method[['algorithm', 'init', 'Average Ranking Overall']], on=['algorithm', 'init'])
+
+        # c) Cálculo de Average Ranking (Algorithm)
+        df_mean_algo = df_final.groupby(['algorithm']).mean(numeric_only=True).reset_index()
+        rank_matrix_algo = []
+        for m in disponibles:
+            asce = False if m in higher_is_better else True
+            rank_matrix_algo.append(df_mean_algo[m].rank(ascending=asce).values)
+        df_mean_algo['Average Ranking (Algorithm)'] = np.mean(rank_matrix_algo, axis=0)
+
+        # d) Cálculo de Average Ranking (Initialization)
+        df_mean_init = df_final.groupby(['init']).mean(numeric_only=True).reset_index()
+        rank_matrix_init = []
+        for m in disponibles:
+            asce = False if m in higher_is_better else True
+            rank_matrix_init.append(df_mean_init[m].rank(ascending=asce).values)
+        df_mean_init['Average Ranking (Initialization)'] = np.mean(rank_matrix_init, axis=0)
+
+        # --- 2. Impresión Unificada de Rankings y Estadísticas ---
+        imprimir_subseccion("Ranking por Métrica", icono="🏆")
+        
+        # Definición del orden y tipo de métrica
+        # (Nombre, Ascendente?, Flecha, Tipo [config, algorithm, init])
+        metricas_ranking = [
+            ('Range', False, '↑', 'config'),
+            ('MinSum', True, '↓', 'config'),
+            ('SumMin', True, '↓', 'config'),
+            ('MaxToleranceRate', False, '↑', 'config'),
+            ('AvgToleranceRate', False, '↑', 'config'),
+            ('AvgHammingDistance', False, '↑', 'config'),
+            ('Hypervolume', False, '↑', 'config'),
+            ('Average Ranking Overall', True, '↓', 'config'),
+            ('Average Ranking (Algorithm)', True, '↓', 'algorithm'),
+            ('Average Ranking (Initialization)', True, '↓', 'init')
         ]
         
-        df_mean = df_final.groupby(['algorithm', 'init']).mean(numeric_only=True).reset_index()
-        df_std = df_final.groupby(['algorithm', 'init']).std(numeric_only=True).reset_index()
-        
-        for metrica, ascending, flecha in metricas_top10:
-            if metrica in df_mean.columns:
+        for metrica, ascending, flecha, tipo in metricas_ranking:
+            # Seleccionar dataframe según tipo
+            if tipo == 'config':
+                df_act = df_mean_config
+                df_std_act = df_std_config
+                cols_grp = ['algorithm', 'init']
+            elif tipo == 'algorithm':
+                df_act = df_mean_algo
+                df_std_act = None
+                cols_grp = ['algorithm']
+            else: # init
+                df_act = df_mean_init
+                df_std_act = None
+                cols_grp = ['init']
+
+            if metrica in df_act.columns:
                 print(f"    • \033[1m{metrica}\033[0m ({flecha})")
-                df_sorted = df_mean.sort_values(by=metrica, ascending=ascending).head(10)
-                for idx, row in enumerate(df_sorted.itertuples(), 1):
-                    val_mean = getattr(row, metrica)
+                df_sorted = df_act.sort_values(by=metrica, ascending=ascending)
+                
+                # Exportar CSV
+                ruta_csv = os.path.join(cfg.carpetas['rankings'], f"ranking_{metrica.replace(' ', '_')}_{cfg.modo_ejecucion}.csv")
+                df_sorted[cols_grp + [metrica]].to_csv(ruta_csv, index=False)
+                
+                total = len(df_sorted)
+                
+                # Imprimir Ranking (Top 10 + Peores 5)
+                for idx, (_, row) in enumerate(df_sorted.head(10).iterrows(), 1):
+                    val = row[metrica]
+                    str_std = " ± 0.0000"
+                    if df_std_act is not None:
+                        std_v = df_std_act.loc[(df_std_act['algorithm'] == row['algorithm']) & (df_std_act['init'] == row['init']), metrica].values
+                        str_std = f" ± {std_v[0]:.4f}" if len(std_v) > 0 and pd.notna(std_v[0]) else " ± 0.0000"
                     
-                    std_val = df_std.loc[(df_std['algorithm'] == row.algorithm) & (df_std['init'] == row.init), metrica].values
-                    str_std = f" ± {std_val[0]:.4f}" if len(std_val) > 0 and pd.notna(std_val[0]) else " ± 0.0000"
-                    
-                    print(f"        {idx:2d}. {row.algorithm} ({row.init}): {val_mean:.4f}{str_std}")
-        print()
+                    nombre = f"{row['algorithm']} ({row['init']})" if tipo == 'config' else row[tipo]
+                    print(f"         {idx:2d}. {nombre}: {val:.4f}{str_std}")
+                
+                if total > 10:
+                    print(f"         ...")
+                    n_worst = min(5, total - 10)
+                    for idx, (_, row) in enumerate(df_sorted.tail(n_worst).iterrows(), total - n_worst + 1):
+                        val = row[metrica]
+                        str_std = " ± 0.0000"
+                        if df_std_act is not None:
+                            std_v = df_std_act.loc[(df_std_act['algorithm'] == row['algorithm']) & (df_std_act['init'] == row['init']), metrica].values
+                            str_std = f" ± {std_v[0]:.4f}" if len(std_v) > 0 and pd.notna(std_v[0]) else " ± 0.0000"
+                        nombre = f"{row['algorithm']} ({row['init']})" if tipo == 'config' else row[tipo]
+                        print(f"         {idx:2d}. {nombre}: {val:.4f}{str_std}")
 
-    imprimir_subseccion("Resumen Estadístico de Métricas", icono="📊️")
-    if not df_final.empty:
-        graficar_comparativa_objetivos(df_final, cfg.carpetas['rankings'], cfg.modo_ejecucion)
+                # --- VALIDACIÓN ESTADÍSTICA ANIDADA ---
+                if tipo == 'config' and 'Average Ranking' not in metrica:
+                    graficar_analisis_kruskal_dunn(df_final, cfg.carpetas['estadistica_hv'], metrica, cfg.modo_ejecucion, indent=9)
+                    graficar_diagrama_diferencia_critica(df_final, cfg.carpetas['estadistica_hv'], metrica, cfg.modo_ejecucion, indent=9)
+                elif 'Average Ranking' in metrica:
+                    col_friedman = 'config' if metrica == 'Average Ranking Overall' else ('algorithm' if 'Algorithm' in metrica else 'init')
+                    graficar_analisis_estadistico(df_final, cfg.carpetas['rankings'], cfg.modo_ejecucion, col_group=col_friedman, indent=9)
+                
+                print() # Espacio entre métricas
 
-
-    imprimir_subseccion("Análisis Estadístico Riguroso (Friedman + Nemenyi)", icono="📈")
-    if not df_final.empty:
-        graficar_analisis_estadistico(df_final, cfg.carpetas['rankings'], cfg.modo_ejecucion)
 
 
 def ejecutar_pipeline_report_only(args):

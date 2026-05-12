@@ -30,24 +30,70 @@ def filtrar_snps_monomorficos(H: np.ndarray):
 
 def generar_bloque_haplotipico_ld(n_haplotipos=40, n_snps=1200, tam_bloque=50, 
                                  prob_flip=0.02, semilla=42, 
-                                 dif_min_pares: int = 0, intentos_max: int = 1000):
+                                 dif_min_pares: int = 0, intentos_max: int = 1000,
+                                 ancho_transicion: int = 7):
     """
-    Genera una matriz binaria (Haplotipo x SNP) con estructura de bloques LD.
-    Garantiza opcionalmente una distancia Hamming mínima entre individuos.
+    Genera una matriz binaria (Haplotipo x SNP) con estructura de bloques LD
+    realista. Cada SNP se genera copiando su predecesor inmediato (modelo de
+    cadena), con probabilidad de flip que crece con la distancia al inicio del
+    bloque (decaimiento intra-bloque) y zonas de transición graduales entre
+    bloques donde la probabilidad sube a ~0.5.
+
+    Parámetros
+    ----------
+    ancho_transicion : int
+        Número de posiciones a cada lado de una frontera de bloque donde
+        prob_flip se interpola hacia 0.5. Por defecto 7 (zona total ~14 SNPs).
     """
     rng = np.random.default_rng(semilla)
     n_bloques = int(np.ceil(n_snps / tam_bloque))
     patrones_base = rng.integers(0, 2, size=(n_haplotipos, n_bloques), dtype=np.int8)
     X = np.zeros((n_haplotipos, n_snps), dtype=np.int8)
-    
+
+    # Probabilidad máxima en la zona de transición (esencialmente aleatorio)
+    prob_transicion_max = 0.5
+
     snp_idx = 0
     for b in range(n_bloques):
         restante = n_snps - snp_idx
         ancho = min(tam_bloque, restante)
         lider = patrones_base[:, b].copy()
-        for _ in range(ancho):
-            col = lider.copy()
-            mascara_flip = rng.random(n_haplotipos) < prob_flip
+
+        # Limitar la transición a un tercio del bloque para no saturarlo
+        trans = min(ancho_transicion, ancho // 3)
+
+        for d in range(ancho):
+            # --- 1. Decaimiento intra-bloque ---
+            # prob_flip crece linealmente con la distancia al inicio del bloque,
+            # produciendo r² adyacente variable (mayor cerca del inicio).
+            prob_base_d = prob_flip * (1.0 + d / max(1, tam_bloque))
+
+            # --- 2. Zonas de transición en fronteras de bloque ---
+            es_ultimo = (b == n_bloques - 1)
+            es_primero = (b == 0)
+
+            if not es_ultimo and trans > 0 and d >= ancho - trans:
+                # Rampa ascendente al final del bloque → r² cae gradualmente
+                t = (d - (ancho - trans)) / max(1, trans - 1)
+                prob_efectiva = prob_base_d + (prob_transicion_max - prob_base_d) * t
+            elif not es_primero and trans > 0 and d < trans:
+                # Rampa descendente al inicio del bloque → r² se recupera
+                t = d / max(1, trans - 1)
+                prob_efectiva = prob_transicion_max - (prob_transicion_max - prob_base_d) * t
+            else:
+                prob_efectiva = prob_base_d
+
+            prob_efectiva = min(prob_efectiva, prob_transicion_max)
+
+            # --- 3. Generación encadenada ---
+            # Primera posición del bloque: copiar del líder (nuevo patrón base).
+            # Resto: copiar de la columna anterior (cadena acumulativa).
+            if d == 0:
+                col = lider.copy()
+            else:
+                col = X[:, snp_idx - 1].copy()
+
+            mascara_flip = rng.random(n_haplotipos) < prob_efectiva
             col[mascara_flip] = 1 - col[mascara_flip]
             X[:, snp_idx] = col
             snp_idx += 1

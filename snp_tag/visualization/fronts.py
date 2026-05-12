@@ -86,8 +86,8 @@ def graficar_frentes_pareto(df_datos: pd.DataFrame, nombre_algoritmo: str,
     colores_init = {
         'random_sparse': '#ff7f0e',
         'random_dense': '#9467bd',
-        'greedy_hybrid': '#1f77b4',
         'greedy_multi': '#2ca02c',
+        'greedy_holistic': '#1f77b4',
     }
 
     etiquetas_ejes = {
@@ -225,14 +225,14 @@ def graficar_coordenadas_paralelas_pareto(df_total: pd.DataFrame, seed: int, car
     style_map = {
         'random_sparse': '--',
         'random_dense': ':',
-        'greedy_hybrid': '-',
         'greedy_multi': '-.',
+        'greedy_holistic': '-',
     }
     color_map = {
         'random_sparse': '#ff7f0e',
         'random_dense': '#9467bd',
-        'greedy_hybrid': '#1f77b4',
         'greedy_multi': '#2ca02c',
+        'greedy_holistic': '#1f77b4',
     }
 
     algorithms = sorted(df_norm[algo_col].dropna().astype(str).unique().tolist())

@@ -33,10 +33,9 @@ CLAVES_TUNABLES_REQUERIDAS = (
     'dif_min_pares_sintetico',
     'intentos_max_sintetico',
     'report_plot_dpi',
-    'prob_aleatoria_gi',
     'ratio_greedy_ting',
     'max_cobertura_objetivo',
-    'max_k_elite',
+    'max_k_holistic',
     'cap_tolerancia',
 )
 
@@ -213,7 +212,8 @@ PARAMETROS_CONFIGURACION = {
     # MOEA/D se expone en tres variantes independientes.
     'algoritmos_disponibles': (
         'NSGA2', 'NSGA3', 'SPEA2',
-        'MOEAD_TCHE', 'MOEAD_PBI', 'MOEAD_WS'
+        'MOEAD_TCHE', 'MOEAD_PBI', 'MOEAD_WS',
+        'AGEMOEA2', 'SMSEMOA', 'RVEA'
     ),
 
     # Parámetros tunables editables (se cargan desde user_config.ini).
@@ -262,8 +262,8 @@ class ConfiguracionExperimento:
     # Parámetros con valores por defecto (deben ir al final)
     INIT_PERMITIDAS: List[str] = field(default_factory=lambda: [
         'random_sparse', 'random_dense',
-        'greedy_hybrid', 'greedy_multi',
-        'greedy_ting', 'greedy_elite'
+        'greedy_multi',
+        'greedy_ting', 'greedy_holistic'
     ])
 
     ALGORITMOS_PERMITIDOS: List[str] = field(default_factory=lambda: list(ALGORITMOS_DISPONIBLES))
@@ -279,8 +279,6 @@ class ConfiguracionExperimento:
     # Ruta al dataset histórico de Hinds et al. (2005) - Localizado dentro del paquete (snp_tag/data/datasets/)
     ruta_hinds2005: str = str(Path(__file__).parent / "data" / "datasets" / "hinds2005_1032.txt")
     
-    # Probabilidad de bit=1 en inicialización aleatoria de GI 50/50
-    prob_aleatoria_gi: float = PARAMS_TUNABLES_DEFECTO['prob_aleatoria_gi']
 
     # Proporcion de poblacion creada con greedy Ting
     ratio_greedy_ting: float = PARAMS_TUNABLES_DEFECTO['ratio_greedy_ting']
@@ -288,8 +286,8 @@ class ConfiguracionExperimento:
     # Cobertura máxima para inicialización progresiva multiobjetivo
     max_cobertura_objetivo: int = PARAMS_TUNABLES_DEFECTO.get('max_cobertura_objetivo', 5)
     
-    # Cobertura máxima para inicialización greedy_elite (Tier 2)
-    max_k_elite: int = PARAMS_TUNABLES_DEFECTO.get('max_k_elite', 5)
+    # Cobertura máxima para inicialización greedy_holistic (Tier 2)
+    max_k_holistic: int = PARAMS_TUNABLES_DEFECTO.get('max_k_holistic', 5)
     
     algoritmos_activos: List[str] = field(default_factory=list)
     opciones_init: List[str] = field(default_factory=list)
@@ -304,7 +302,7 @@ def es_opcion_init_valida(nombre_init: str) -> bool:
     """
     Verifica si una estrategia de inicialización es compatible con el sistema.
     """
-    if nombre_init in ['random_sparse', 'random_dense', 'greedy_hybrid', 'greedy_multi', 'greedy_ting', 'greedy_elite']:
+    if nombre_init in ['random_sparse', 'random_dense', 'greedy_multi', 'greedy_ting', 'greedy_holistic']:
         return True
     return False
 
@@ -452,10 +450,9 @@ def construir_configuracion(modo: str = 'medium', data_source: str = 'hinds2005'
         dif_min_pares_sintetico=int(params['dif_min_pares_sintetico']),
         intentos_max_sintetico=int(params['intentos_max_sintetico']),
         report_plot_dpi=int(params['report_plot_dpi']),
-        prob_aleatoria_gi=float(params['prob_aleatoria_gi']),
         ratio_greedy_ting=ratio_greedy_ting,
         max_cobertura_objetivo=int(params.get('max_cobertura_objetivo', 5)),
-        max_k_elite=int(params.get('max_k_elite', 5)),
+        max_k_holistic=int(params.get('max_k_holistic', 5)),
         algoritmos_activos=algoritmos_activos,
         opciones_init=opciones_init,
         modo_normalizacion=resolver_modo_normalizacion(params.get('modo_normalizacion')),
