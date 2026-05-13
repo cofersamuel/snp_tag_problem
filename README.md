@@ -10,8 +10,8 @@ Este repositorio contiene la implementación de un pipeline modular basado en al
 2. **[Marco Experimental](#sección-2-marco-experimental)**
    * Datasets (Hinds et al. y Sintéticos).
    * Suite de diagnóstico y caracterización de datos.
-   * Objetivos de optimización.
-   * Algoritmos e Inicializaciones.
+   * Objetivos de optimización
+   * Algoritmos e Inicializaciones
    * Parámetros configurables.
 3. **[Ejecución y Estructura del Proyecto](#sección-3-ejecución-y-estructura-del-proyecto)**
    * Dependencias e Instalación.
@@ -20,14 +20,18 @@ Este repositorio contiene la implementación de un pipeline modular basado en al
 4. **[Profundizamiento de Algoritmos y Motor Evolutivo](#sección-4-profundizamiento-de-algoritmos-y-motor-evolutivo)**
    * Implementación y Operadores de Variación.
    * Direcciones de Referencia (Das-Dennis).
+   * Operador de Reparación (ReparaciónSNP).
    * Motor de Paralelización y Gestión de Recursos.
    * Gestión de Escalas y Normalización.
 5. **[Validación Estadística Rigurosa](#sección-5-validación-estadística-rigurosa)**
-   * Test de Friedman.
-   * Análisis Post-hoc de Nemenyi.
+   * Test de Friedman y Kruskal-Wallis.
+   * Análisis Post-hoc (Nemenyi y Dunn).
 6. **[Diccionario de Métricas Técnicas y Supra-métricas](#sección-6-diccionario-de-métricas-técnicas-y-supra-métricas)**
-   * Métricas de Rendimiento Analizadas.
+   * Métricas de Rendimiento Analizadas (IGD+, GD+).
    * La Supra-métrica Analítica: Average Rank.
+7. **[Multi-Criteria Decision Making (MCDM)](#sección-7-multi-criteria-decision-making-mcdm)**
+   * Criterios de Selección Técnica (Knee Point, ASF).
+   * Visualización de Decisiones (Radar y Pétalos).
 
 ---
 
@@ -91,22 +95,27 @@ La obtención del dataset de Hinds et al. (2005) fue un proceso de "arqueología
 
 En resumen, el dataset no fue descargado de una base de datos genómica general, sino directamente del **paquete de replicación oficial** de los autores originales, garantizando la integridad absoluta de las comparativas de *benchmarking*.
 
-#### Datasets Sintéticos - Simulación Controlada
+#### Datasets Sintéticos - Simulación de Bloques LD
 
-Los datos sintéticos se generan mediante procesos estocásticos para evaluar la robustez y escalabilidad. En las pruebas realizadas (modo `fast`), se suele configurar una matriz de **1032 SNPs x 40 haplotipos**.
+Los datos sintéticos se generan mediante un modelo estocástico avanzado diseñado para evaluar la robustez y escalabilidad de los algoritmos bajo condiciones controladas. El motor de generación ha sido actualizado para simular una arquitectura genética más realista:
 
-A diferencia de la rigidez de los datos biológicos, el generador sintético permite diseñar escenarios experimentales a medida, facilitando el análisis del comportamiento de los algoritmos bajo condiciones controladas de diversidad y ruido. Esta flexibilidad se gestiona a través de los parámetros tunables en `user_config.ini`:
+* **Modelo de Cadena LD**: Los SNPs se generan secuencialmente siguiendo un modelo de cadena acumulativa. Cada marcador se deriva de su predecesor con una probabilidad de inversión (*flip*) que garantiza una correlación de ligamiento coherente.
+* **Zonas de Transición Gradual**: Se han implementado regiones de transición entre bloques de ligamiento. En estas zonas, la probabilidad de mutación se interpola suavemente hacia 0.5, simulando los puntos de recombinación biológica donde el ligamiento decae.
+* **Diversidad Garantizada**: El sistema aplica un proceso iterativo de "reparación de diversidad" para asegurar que la distancia genotípica entre cualquier par de haplotipos supere un umbral mínimo (`dif_min_pares_sintetico`), evitando poblaciones genéticamente redundantes.
 
-* `num_bloques`: Define el número de bloques genómicos en los que se divide la secuencia, permitiendo simular distintos grados de fragmentación del ligamiento.
-* `n_snps`: Determina la escala global de la simulación (columnas de la matriz). *(El número de haplotipos es fijo por fuente de datos: 48 en Hinds y 40 en synthetic.)*
-* `prob_flip_sintetico`: Determina la probabilidad de inversión de bits (mutación) por cada SNP, controlando el nivel de ruido y la imperfección del ligamiento.
-* `dif_min_pares_sintetico`: Establece la distancia Hamming mínima exigida entre pares de haplotipos para garantizar la divergencia biológica.
-* `intentos_max_sintetico`: Especifica el número máximo de iteraciones para satisfacer las restricciones de diversidad impuestas.
+Esta flexibilidad se gestiona a través de los parámetros en `user_config.ini`:
 
-![Mapa de Calor de Haplotipos Sintéticos](readme_assets/heatmap_haplotipos_fast.png)
-*Figura 5: Mapa de calor de la estructura haplotípica sintética, donde se observa la regularidad impuesta por el modelo de simulación.*
+* `n_snps` / `n_haplotipos`: Dimensiones de la matriz.
+* `tam_bloque_sintetico`: Tamaño promedio de los bloques de ligamiento.
+* `prob_flip_sintetico`: Probabilidad base de mutación intra-bloque.
+* `ancho_transicion`: Anchura de la zona de recombinación entre bloques.
+* `dif_min_pares_sintetico`: Distancia Hamming mínima exigida entre pares.
 
-La distribución de distancias en datos sintéticos muestra extremos más polarizados (P33=145.0, P66=887.0), lo que resulta ideal para evaluar el rendimiento de los algoritmos en escenarios de alta divergencia genética inducida.
+![Estructura de Bloques Sintética](readme_assets/bloques_synthetic.png)
+*Figura 5: Visualización de los bloques de ligamiento y la matriz de haplotipos generada estocásticamente con el nuevo modelo.*
+
+![Mapa de Calor Sintético](readme_assets/heatmap_synthetic.png)
+*Figura 6: Mapa de calor de la estructura haplotípica sintética, donde se observa la coherencia estructural inducida por el modelo de cadenas LD.*
 
 ### Suite de Diagnóstico y Caracterización
 
@@ -205,14 +214,14 @@ En este modo, las métricas biológicas se calculan de forma **proporcional** a 
 
 Las fórmulas resultantes para los objetivos en modo proporcional son:
 
-*   **Tolerancia Proporcional ($f_2^{prop}$):** 
-    $$f_2^{prop} = \frac{\min(\text{cobertura\_mínima}, \text{cap\_tolerancia})}{k}$$
-*   **Distancia Hamming Proporcional ($f_3^{prop}$):** 
-    $$f_3^{prop} = -\left( \frac{\sum_{i=1}^{N_{pares}} H_i}{N_{pares} \cdot k} \right)$$
-*   **Disimilitud Proporcional ($f_4^{prop}$):**
-    $$f_4^{prop} = \frac{\sigma^2(H)}{k^2}$$
+* **Tolerancia Proporcional ($f_2^{prop}$):** 
+  $$f_2^{prop} = \frac{\min(\text{cobertura mínima}, \text{cap tolerancia})}{k}$$
+* **Distancia Hamming Proporcional ($f_3^{prop}$):** 
+  $$f_3^{prop} = - \left( \frac{\sum_{i=1}^{N_{pares}} H_i}{N_{pares} \cdot k} \right)$$
+* **Disimilitud Proporcional ($f_4^{prop}$):**
+  $$f_4^{prop} = \frac{\sigma^{2}(H)}{k^2}$$
 
-*Donde $k$ es el número de SNPs seleccionados, $H_i$ la distancia de Hamming del par $i$, y $\sigma^2(H)$ la varianza de las distancias entre todos los pares.*
+*Donde $k$ es el número de SNPs seleccionados, $H_i$ la distancia de Hamming del par $i$, $N_{pares}$ el número total de pares de haplotipos y $\sigma^2(H)$ la varianza de las distancias.*
 
 ### Algoritmos e Inicializaciones
 
@@ -231,7 +240,6 @@ El sistema implementa un entorno comparativo que evalúa la sinergia entre difer
 
 * **Estrategias de Inicialización**:
   
-  * `random_sparse`: Inicialización estocástica centrada en la **eficiencia y compacidad** ($P_{bit} \approx 70 / N_{snps}$).
   * `random_dense`: Muestreo aleatorio estándar (probabilidad 0.5 por bit). Ideal para evaluar la capacidad de "poda" de los algoritmos.
   * `greedy_multi`: Inicialización de **cobertura múltiple progresiva**. Distribuye objetivos de redundancia biológica en la población para asegurar que el frente de Pareto esté poblado desde el inicio con soluciones robustas.
   * `greedy_holistic`: La estrategia más avanzada del sistema. Utiliza un enfoque de **5 niveles (Tiers)**:
@@ -366,7 +374,7 @@ python -m snp_tag.main --mode [MODO] --data-source [FUENTE]
 * `--data-source` (`-d`): Especifica el dataset objetivo.
   * `hinds2005`: Utiliza el dataset biológico real de Hinds et al. (1032 SNPs).
   * `synthetic`: Genera un dataset sintético basado en los parámetros de simulación.
-* **Interfaz de Línea de Comandos (CLI) Premium**: El sistema ofrece un dashboard dinámico en terminal que reporta el progreso en tiempo real. Además, utiliza secuencias **OSC 8** para generar hipervínculos clicables directamente en la terminal, permitiendo abrir los reportes CSV y figuras PDF de forma instantánea al finalizar el experimento.
+* **Interfaz de Línea de Comandos (CLI)**: El sistema ofrece un dashboard dinámico en terminal que reporta el progreso en tiempo real. Además, utiliza secuencias **OSC 8** para generar hipervínculos clicables directamente en la terminal, permitiendo abrir los reportes CSV y figuras PDF de forma instantánea al finalizar el experimento.
 
 ### Estructura del Código
 
@@ -407,9 +415,9 @@ El motor utiliza el método de **Das-Dennis** para distribuir puntos de referenc
 
 Para garantizar la integridad del proceso evolutivo y evitar soluciones degeneradas, el sistema implementa un **Operador de Reparación** personalizado. Este operador actúa inmediatamente después de las fases de cruce y mutación:
 
-*   **Detección de Individuos Vacíos**: Intercepta cualquier solución que, tras la variación genética, haya quedado con cero SNPs seleccionados ($k=0$).
-*   **Activación Aleatoria**: En caso de detectar un individuo vacío, el operador activa automáticamente un SNP aleatorio de la secuencia genómica.
-*   **Propósito**: Esta mecánica asegura que cada individuo en la población represente un fenotipo válido con al menos una mínima representación biológica. Además, previene errores matemáticos (divisiones por cero) en el cálculo de métricas proporcionales y mantiene la presión selectiva sobre soluciones factibles.
+* **Detección de Individuos Vacíos**: Intercepta cualquier solución que, tras la variación genética, haya quedado con cero SNPs seleccionados ($k=0$).
+* **Activación Aleatoria**: En caso de detectar un individuo vacío, el operador activa automáticamente un SNP aleatorio de la secuencia genómica.
+* **Propósito**: Esta mecánica asegura que cada individuo en la población represente un fenotipo válido con al menos una mínima representación biológica. Además, previene errores matemáticos (divisiones por cero) en el cálculo de métricas proporcionales y mantiene la presión selectiva sobre soluciones factibles.
 
 ### Motor de Paralelización y Gestión de Recursos
 
@@ -484,13 +492,14 @@ El sistema evalúa el **Test de Friedman** para comparativas globales de algorit
 ### 5.2 Análisis Post-hoc (Nemenyi y Dunn)
 
 Si se detecta significancia, el sistema ejecuta automáticamente:
+
 * **Test de Nemenyi**: Para identificar grupos de algoritmos con rendimiento equivalente en el ranking global.
 * **Test de Dunn**: Para realizar comparaciones pareadas profundas sobre métricas individuales (como Hypervolume o IGD+).
 
 El resultado se visualiza mediante *Heatmaps estadísticos* y diagramas de Diferencia Crítica (CD).
 
 ![Heatmap Nemenyi](readme_assets/heatmap_nemenyi.png)
-*Figura 6: Mapa de calor de significancia. Nemenyi desvela los grupos de algoritmos que, pese a tener medias dispares, son empíricamente equivalentes frente a las fluctuaciones probabilísticas del TSSP.*
+*Figura 7: Mapa de calor de significancia. Nemenyi desvela los grupos de algoritmos que, pese a tener medias dispares, son empíricamente equivalentes frente a las fluctuaciones probabilísticas del TSSP.*
 
 ---
 
@@ -509,7 +518,7 @@ Para diseccionar rigurosamente los frentes de Pareto resultantes, el sistema lo 
 
 ![Heatmap Comparativa](readme_assets/heatmap_comparativa.png)
 
-*Figura 7: Mapa de calor de perfiles algorítmicos. Las zonas de color oscuro indican mejores posiciones (rankings bajos) para cada métrica individual.*
+*Figura 8: Mapa de calor de perfiles algorítmicos. Las zonas de color oscuro indican mejores posiciones (rankings bajos) para cada métrica individual.*
 
 ### La Supra-métrica Analítica: Average Rank
 
@@ -518,7 +527,7 @@ Puesto que en los ecosistemas *Many-Objective* rara vez un algoritmo domina simu
 El **Average Rank** procesa las posiciones relativas (1º, 2º, 3º...) que obtiene cada configuración en las 7 métricas individuales y genera una media global ponderada. Este agregador es indispensable para dictaminar conclusiones cuando las varianzas son altísimas y los test de Friedman dictaminan empates múltiples, permitiendo coronar a los algoritmos con el comportamiento histórico más estable.
 
 ![Ranking Global](readme_assets/rangos_promedio.png)
-*Figura 8: Visualización del Ranking Promedio consolidado. Se observa la superioridad de las variantes basadas en AGEMOEA-II y NSGA-III.*
+*Figura 9: Visualización del Ranking Promedio consolidado. Se observa la superioridad de las variantes basadas en AGEMOEA-II y NSGA-III.*
 
 ---
 
@@ -528,15 +537,18 @@ Dado que los frentes de Pareto pueden contener cientos de soluciones, el sistema
 
 ### Criterios de Selección Técnica
 
-1.  **Knee Point (Punto de Inflexión)**: Identifica la solución con la curvatura máxima en el frente. Es el punto donde una mejora marginal en un objetivo requeriría un sacrificio desproporcionado en los demás.
-2.  **Pseudo-Weights**: Calcula la importancia relativa de cada solución basándose en su posición normalizada en el espacio objetivo, permitiendo elegir soluciones con perfiles específicos (ej. máxima compacidad).
-3.  **ASF (Achievement Scalarization Function)**: Minimiza la distancia hacia un punto de referencia ideal, localizando la solución de compromiso matemáticamente más equilibrada.
+1. **Knee Point (Punto de Inflexión)**: Identifica la solución con la curvatura máxima en el frente. Es el punto donde una mejora marginal en un objetivo requeriría un sacrificio desproporcionado en los demás.
+2. **Pseudo-Weights**: Calcula la importancia relativa de cada solución basándose en su posición normalizada en el espacio objetivo, permitiendo elegir soluciones con perfiles específicos (ej. máxima compacidad).
+3. **ASF (Achievement Scalarization Function)**: Minimiza la distancia hacia un punto de referencia ideal, localizando la solución de compromiso matemáticamente más equilibrada.
 
 ### Visualización de Decisiones
 
-*   **Diagramas de Radar (Spider Charts)**: Permiten comparar el perfil funcional de las mejores soluciones en las 4 dimensiones biológicas simultáneamente.
-*   **Diagramas de Pétalos**: Representación visual de la magnitud de cada objetivo, facilitando la identificación rápida de fortalezas y debilidades.
-*   **Scatter Plots MCDM**: Visualización 2D/3D del frente resaltando los Knee points y las soluciones ASF.
+* **Diagramas de Radar (Spider Charts)**: Permiten comparar el perfil funcional de las mejores soluciones en las 4 dimensiones biológicas simultáneamente.
+* **Diagramas de Pétalos**: Representación visual de la magnitud de cada objetivo, facilitando la identificación rápida de fortalezas y debilidades.
+* **Scatter Plots MCDM**: Visualización 2D/3D del frente resaltando los Knee points y las soluciones ASF.
 
 ![MCDM Radar](readme_assets/test_radar.png)
-*Figura 9: Ejemplo de diagrama de radar comparando diferentes soluciones de compromiso.*
+*Figura 10: Ejemplo de diagrama de radar comparando diferentes soluciones de compromiso.*
+
+![MCDM Pétalos](readme_assets/test_petal.png)
+*Figura 11: Representación en pétalos de una solución seleccionada, mostrando el balance de objetivos.*
