@@ -100,20 +100,6 @@ def ejecutar_diagnostico_ld(H, cfg: ConfiguracionExperimento, rutas_ld=None):
         imprimir_grafico_guardado(rutas_ld['histograma'], "Distribución de correlaciones (LD)")
         imprimir_grafico_guardado(rutas_ld['cdf'], "CDF de correlación LD")
     
-    # 2. Resumen Estructural
-    imprimir_subseccion("Resumen Estructural del Dataset", icono="📜")
-    # Para datos sintéticos, usar el número de bloques estructurales configurado;
-    # para datos reales (hinds2005), usar el conteo detectado estadísticamente.
-    n_bloques_informe = (
-        int(cfg.num_bloques)
-        if cfg.origen_datos == 'synthetic'
-        else n_bloques
-    )
-    naturaleza = 'Benchmark biológico (Hinds)' if cfg.origen_datos == 'hinds2005' else 'Simulación sintetizada'
-    print(f"      • \033[1mEstructura detectada\033[0m: {n_bloques_informe} bloques de ligamiento")
-    print(f"      • \033[1mCorrelación media absoluta (|r|)\033[0m: {media_ld:.4f}")
-    print(f"      • \033[1mNaturaleza del dato\033[0m: {naturaleza}")
-
     # 3. Similitud Genotípica
     dvals, p33, p66, top_sim, top_dist = analizar_similitud_genotipica(H)
     imprimir_subseccion("Análisis de Similitud Genotípica (Pares de Haplotipos)", icono="📐")

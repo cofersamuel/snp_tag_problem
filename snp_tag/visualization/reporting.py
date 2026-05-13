@@ -54,7 +54,7 @@ def graficar_rendimiento_tiempo(df_runs: pd.DataFrame, dir_salida: str, etiqueta
 def graficar_comparativa_objetivos(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str, dpi=300):
     """Genera un heatmap comparativo de las métricas (Réplica Legacy: Rojo=Peor, Verde=Mejor)."""
     # 1. Agregación y preparación
-    cols_met = ['Range', 'SumMin', 'MinSum', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'Hypervolume']
+    cols_met = ['Range', 'SumMin', 'MinSum', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'Hypervolume', 'IGD+', 'GD+']
     disponibles = [c for c in cols_met if c in df_runs.columns]
     
     resumen = df_runs.groupby(['algorithm', 'init'])[disponibles].mean().reset_index()
@@ -65,7 +65,7 @@ def graficar_comparativa_objetivos(df_runs: pd.DataFrame, dir_salida: str, etiqu
     
     # 2. Lógica de Normalización de Calidad (Legacy)
     higher_is_better = ['Hypervolume', 'Range', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance']
-    lower_is_better = ['SumMin', 'MinSum']
+    lower_is_better = ['SumMin', 'MinSum', 'IGD+', 'GD+']
     
     for col in disponibles:
         c_min, c_max = heat_df_plot[col].min(), heat_df_plot[col].max()
@@ -98,7 +98,7 @@ def graficar_comparativa_objetivos(df_runs: pd.DataFrame, dir_salida: str, etiqu
 def graficar_violin_metricas(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str,
                              dpi=300, emitir_log: bool = True) -> List[Tuple[str, str]]:
     """Genera panel general y diagramas de violín individuales para las métricas primarias."""
-    metricas = ['Range', 'SumMin', 'MinSum', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'Hypervolume']
+    metricas = ['Range', 'SumMin', 'MinSum', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'Hypervolume', 'IGD+', 'GD+']
     disponibles = [m for m in metricas if m in df_runs.columns]
     if not disponibles:
         return []
@@ -143,7 +143,7 @@ def graficar_violin_metricas(df_runs: pd.DataFrame, dir_salida: str, etiqueta_mo
 def graficar_media_std_metricas(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str,
                                 dpi=300, emitir_log: bool = True) -> List[Tuple[str, str]]:
     """Genera panel general y pointplots (media +- std) individuales."""
-    metricas = ['Range', 'SumMin', 'MinSum', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'Hypervolume']
+    metricas = ['Range', 'SumMin', 'MinSum', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'Hypervolume', 'IGD+', 'GD+']
     disponibles = [m for m in metricas if m in df_runs.columns]
     if not disponibles:
         return []
@@ -187,7 +187,7 @@ def graficar_media_std_metricas(df_runs: pd.DataFrame, dir_salida: str, etiqueta
 def graficar_boxplot_metricas(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str,
                               dpi=300, emitir_log: bool = True) -> List[Tuple[str, str]]:
     """Genera panel general y diagramas de caja individuales para las métricas finales."""
-    metricas = ['Range', 'SumMin', 'MinSum', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'Hypervolume']
+    metricas = ['Range', 'SumMin', 'MinSum', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'Hypervolume', 'IGD+', 'GD+']
     disponibles = [m for m in metricas if m in df_runs.columns]
     if not disponibles:
         return []
@@ -250,7 +250,7 @@ def graficar_analisis_estadistico(df_runs, dir_salida, etiqueta_modo, col_group=
         df_plot['config'] = df_plot['algorithm'] + '-' + df_plot['init']
     
     # 1. Preparar datos
-    metricas = ['Hypervolume', 'Range', 'MinSum', 'SumMin', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance']
+    metricas = ['Hypervolume', 'Range', 'MinSum', 'SumMin', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'IGD+', 'GD+']
     higher_is_better = ['Hypervolume', 'Range', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance']
     disponibles = [m for m in metricas if m in df_plot.columns]
     
@@ -271,17 +271,22 @@ def graficar_analisis_estadistico(df_runs, dir_salida, etiqueta_modo, col_group=
         asce = False if m in higher_is_better else True
         rank_matrix.append(resumen[m].rank(ascending=asce).values)
     rank_matrix = np.array(rank_matrix) # (metrics, groups)
+    n_groups = rank_matrix.shape[1]
     
     # 2. Test de Friedman
-    stat, p_value = ss.friedmanchisquare(*rank_matrix.T)
-    
-    # Encabezado manual con sangría
     sub_line = "─" * (len(titulo) + 24)
-    print(f"\n{espacios}📊  \033[1mTEST DE FRIEDMAN ({titulo})\033[0m")
-    print(f"{espacios}{sub_line}")
-    print(f"{espacios}    Estadístico: {stat:.4f}")
-    print(f"{espacios}    P-valor: {p_value:.4e}")
-    print(f"{espacios}    Significativo (p < 0.05): {'Sí' if p_value < 0.05 else 'No'}\n")
+    if n_groups < 3:
+        print(f"\n{espacios}📊  \033[1mTEST ESTADÍSTICO ({titulo})\033[0m")
+        print(f"{espacios}{sub_line}")
+        print(f"{espacios}    ⚠️  Test de Friedman omitido: se requieren al menos 3 grupos, pero solo hay {n_groups}.\n")
+        p_value = 1.0
+    else:
+        stat, p_value = ss.friedmanchisquare(*rank_matrix.T)
+        print(f"\n{espacios}📊  \033[1mTEST DE FRIEDMAN ({titulo})\033[0m")
+        print(f"{espacios}{sub_line}")
+        print(f"{espacios}    Estadístico: {stat:.4f}")
+        print(f"{espacios}    P-valor: {p_value:.4e}")
+        print(f"{espacios}    Significativo (p < 0.05): {'Sí' if p_value < 0.05 else 'No'}\n")
     
     # 3. Gráfico de Rangos Promedio (Siempre se genera)
     avg_ranks = np.mean(rank_matrix, axis=0)
@@ -364,10 +369,16 @@ def graficar_analisis_kruskal_dunn(df_runs, dir_salida, metrica_objetivo, etique
     for n in nombres:
         grupos.append(df_plot[df_plot['config'] == n][metrica_objetivo].values)
     
+    sub_line = "─" * (len(metrica_objetivo) + 28)
+    if len(grupos) < 2:
+        print(f"\n{espacios}📊  \033[1mVALIDACIÓN ESTADÍSTICA ({metrica_objetivo})\033[0m")
+        print(f"{espacios}{sub_line}")
+        print(f"{espacios}    ⚠️  Kruskal-Wallis omitido: se requieren al menos 2 grupos.\n")
+        return
+
     # 2. Kruskal-Wallis
     stat, p_val = ss.kruskal(*grupos)
     
-    sub_line = "─" * (len(metrica_objetivo) + 28)
     print(f"\n{espacios}📊  \033[1mVALIDACIÓN ESTADÍSTICA ({metrica_objetivo})\033[0m")
     print(f"{espacios}{sub_line}")
     print(f"{espacios}    Estadístico H (Kruskal-Wallis): {stat:.4f}")

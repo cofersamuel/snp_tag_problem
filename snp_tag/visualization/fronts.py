@@ -56,6 +56,16 @@ def _anexar_objetivos_reales(df_base: pd.DataFrame, modo_transformacion_objetivo
     df['min_cobertura'] = objetivos_reales['min_cobertura']
     return df[df['min_cobertura'] >= 1.0].copy()
 
+def _anexar_crossover(df: pd.DataFrame) -> pd.DataFrame:
+    df_out = df.copy()
+    if 'crossover' in df_out.columns:
+        df_out['init_cross'] = df_out['init'] + '+' + df_out['crossover']
+    elif 'init' in df_out.columns:
+        df_out['init_cross'] = df_out['init']
+    elif 'init_type' in df_out.columns:
+        df_out['init_cross'] = df_out['init_type']
+    return df_out
+
 def graficar_frentes_pareto(df_datos: pd.DataFrame, nombre_algoritmo: str,
                             nombre_init: Optional[str] = None,
                             carpetas: Optional[Dict] = None,
@@ -80,8 +90,9 @@ def graficar_frentes_pareto(df_datos: pd.DataFrame, nombre_algoritmo: str,
         modo_transformacion_objetivos=modo_transformacion_objetivos,
     )
 
-    init_col = 'init' if 'init' in df_algo.columns else 'init_type'
-    unidades_init = [nombre_init] if nombre_init else sorted(df_algo[init_col].unique())
+    df_algo = _anexar_crossover(df_algo)
+    init_col = 'init_cross'
+    unidades_init = [nombre_init] if nombre_init else sorted(df_algo[init_col].dropna().unique())
 
     colores_init = {
         'random_sparse': '#ff7f0e',
@@ -104,7 +115,8 @@ def graficar_frentes_pareto(df_datos: pd.DataFrame, nombre_algoritmo: str,
         fig, axes = plt.subplots(2, 2, figsize=(14, 12))
         fig.suptitle(f"Frente de Pareto: {nombre_algoritmo} | {i_val}", fontsize=16, weight='bold')
         
-        color = colores_init.get(str(i_val), '#1f77b4')
+        base_init = str(i_val).split('+')[0]
+        color = colores_init.get(base_init, '#1f77b4')
         proyecciones = [
             (axes[0, 0], 'Compacidad', 'Tolerancia', '(a) Compacidad vs. Tolerancia'),
             (axes[0, 1], 'Tolerancia', 'Hamming', '(b) Tolerancia vs. Hamming'),
@@ -198,7 +210,8 @@ def graficar_coordenadas_paralelas_pareto(df_total: pd.DataFrame, seed: int, car
         df_total,
         modo_transformacion_objetivos=modo_transformacion_objetivos,
     )
-    init_col = 'init'
+    df_par = _anexar_crossover(df_par)
+    init_col = 'init_cross'
     algo_col = 'algorithm'
 
     df_par['Compacidad ($f_1$ min)'] = df_par['Compacidad']
@@ -249,8 +262,9 @@ def graficar_coordenadas_paralelas_pareto(df_total: pd.DataFrame, seed: int, car
             df_plot = df_sub.sample(sample_n, random_state=seed) if len(df_sub) > sample_n else df_sub
 
             fig, ax = plt.subplots(figsize=(8, 5))
-            c = color_map.get(str(init_name), '#1f77b4')
-            s = style_map.get(str(init_name), '-')
+            base_init = str(init_name).split('+')[0]
+            c = color_map.get(base_init, '#1f77b4')
+            s = style_map.get(base_init, '-')
             for i in range(len(df_plot)):
                 row = df_plot.iloc[i]
                 ax.plot(display_cols, row[display_cols].values, alpha=0.18, color=c, linestyle=s)
@@ -283,6 +297,7 @@ def graficar_coordenadas_paralelas_pareto(df_total: pd.DataFrame, seed: int, car
 def graficar_frentes_pareto_agregados(df_datos: pd.DataFrame, titulo_gen: str, 
                                      nombre_archivo: str,
                                      hue_col: str = 'init',
+                                     style_col: Optional[str] = None,
                                      carpetas: Optional[Dict] = None,
                                      dpi: int = 300,
                                      emitir_log: bool = True,
@@ -300,7 +315,7 @@ def graficar_frentes_pareto_agregados(df_datos: pd.DataFrame, titulo_gen: str,
         df_datos,
         modo_transformacion_objetivos=modo_transformacion_objetivos,
     )
-
+    df = _anexar_crossover(df)
     etiquetas_ejes = {
         'Compacidad': 'Compacidad (Nº Tag SNPs)',
         'Tolerancia': 'Tolerancia',
@@ -323,7 +338,7 @@ def graficar_frentes_pareto_agregados(df_datos: pd.DataFrame, titulo_gen: str,
     palette = 'tab10' if n_colors <= 10 else 'husl'
 
     for ax, x_col, y_col, titulo in proyecciones:
-        sns.scatterplot(data=df, x=x_col, y=y_col, ax=ax, hue=hue_col, 
+        sns.scatterplot(data=df, x=x_col, y=y_col, ax=ax, hue=hue_col, style=style_col,
                         s=50, alpha=0.7, palette=palette, edgecolor='w')
         
         # Aplicar límites estandarizados si están disponibles
@@ -338,7 +353,7 @@ def graficar_frentes_pareto_agregados(df_datos: pd.DataFrame, titulo_gen: str,
 
     # Añadir leyenda única fuera de los subplots
     handles, labels = axes[0, 0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc='center right', title=hue_col.capitalize(), 
+    fig.legend(handles, labels, loc='center right', title='Leyenda', 
                bbox_to_anchor=(1.12, 0.5), fontsize=11, title_fontsize=13)
 
     plt.tight_layout(rect=[0, 0, 0.98, 0.95])

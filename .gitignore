@@ -45,7 +45,6 @@ venv.bak
 otras/
 README_former.md
 
-# --- Disable for AI scope ---
 snp_tag/results/
 snp_tag/input/
 personal/
@@ -54,6 +53,7 @@ brain/
 .github/
 scripts/
 didactic contents/
+snp_tag/scratch/
 
 # LaTeX auxiliary files
 *.aux

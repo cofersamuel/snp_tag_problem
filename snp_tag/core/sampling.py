@@ -8,6 +8,7 @@ métodos aleatorios dispersos y construcciones heurísticas tipo Greedy.
 import numpy as np
 from pymoo.core.sampling import Sampling
 from snp_tag.core.problem import calcular_distinguibilidad_snps
+from snp_tag.data.diagnostics import detectar_bloques_ld
 
 def _construir_tabla_cobertura(H, pair_idx):
     """
@@ -34,26 +35,30 @@ def _agrupar_por_cobertura(cover_table):
 
 def _orden_greedy_ting(H, rng):
     """
-    Ordena SNPs por balance de alelos, con desempates aleatorios.
+    Ordena SNPs por balance de alelos, filtrando duplicados exactos vectorizadamente.
     """
     if H.size == 0:
         return np.array([], dtype=int)
+        
+    # 1. Filtrar columnas idénticas (SNPs redundantes) de forma 100% vectorizada
+    _, indices_unicos = np.unique(H, axis=1, return_index=True)
+    
     n_hap = H.shape[0]
-    suma = H.sum(axis=0).astype(float)
+    
+    # 2. Calcular la suma sólo para los representantes únicos
+    suma = H[:, indices_unicos].sum(axis=0).astype(float)
+    
+    # 3. Calcular balance (cercanía a n_hap / 2)
     balance = (n_hap / 2.0) - np.abs(suma - (n_hap / 2.0))
+    
+    # 4. Añadir ruido mínimo para desempates estocásticos
     ruido = rng.normal(0.0, 1e-6, size=balance.shape[0])
-    orden = np.argsort(balance + ruido)
-
-    columnas = H.T.astype(np.uint8)
-    vistos = set()
-    unicos = []
-    for idx in orden:
-        key = columnas[idx].tobytes()
-        if key in vistos:
-            continue
-        vistos.add(key)
-        unicos.append(int(idx))
-    return np.array(unicos, dtype=int)
+    
+    # 5. Ordenar los índices únicos basándose en el balance perturbado
+    orden_relativo = np.argsort(balance + ruido)
+    
+    # Devolver los índices originales ordenados
+    return indices_unicos[orden_relativo].astype(int)
 
 def _greedy_por_orden(orden, cover_table):
     """
@@ -396,6 +401,7 @@ def _construir_solucion_bloques(discrepancia, bloques, n_snps, n_pares,
     """
     Construye una solución seleccionando representantes de un subconjunto de
     bloques LD mediante mini-greedy restringido a los SNPs de cada bloque.
+    Incorpora un mecanismo de reparación para garantizar cobertura total.
     """
     seleccionados = np.zeros(n_snps, dtype=bool)
     cubiertos = np.zeros(n_pares, dtype=bool)
@@ -419,6 +425,27 @@ def _construir_solucion_bloques(discrepancia, bloques, n_snps, n_pares,
                 cubiertos |= contrib
             if cubiertos.all():
                 break
+        if cubiertos.all():
+            break
+
+    # Reparación greedy si los bloques seleccionados fueron insuficientes
+    if not cubiertos.all():
+        pendientes = ~cubiertos
+        scores_globales = discrepancia[pendientes].sum(axis=0).astype(float)
+        scores_globales[seleccionados] = -1
+        
+        ruido = rng.normal(0.0, 1e-6, size=n_snps)
+        orden_reparacion = np.argsort(-(scores_globales + ruido))
+        
+        for s_global in orden_reparacion:
+            if scores_globales[s_global] <= 0:
+                continue
+            contrib = discrepancia[:, s_global].astype(bool)
+            if np.any((~cubiertos) & contrib):
+                seleccionados[s_global] = True
+                cubiertos |= contrib
+            if cubiertos.all():
+                break
 
     if not seleccionados.any() and n_snps > 0:
         seleccionados[rng.integers(0, n_snps)] = True
@@ -428,7 +455,8 @@ def _construir_solucion_bloques(discrepancia, bloques, n_snps, n_pares,
 def _construir_complemento(discrepancia, solucion_base, n_snps, n_pares, rng):
     """
     Construye el complemento de una solución existente: apunta a los pares
-    peor cubiertos por la base para ocupar una región diferente del frente.
+    peor cubiertos por la base y, tras satisfacerlos, continúa la selección
+    para garantizar una solución 100% factible.
     """
     D_base = discrepancia[:, solucion_base].sum(axis=1).astype(float)
 
@@ -450,13 +478,33 @@ def _construir_complemento(discrepancia, solucion_base, n_snps, n_pares, rng):
     seleccionados = np.zeros(n_snps, dtype=bool)
     cubiertos_obj = np.zeros(n_pares, dtype=bool)
 
+    # Primera fase: cubrir los pares débiles (mal_cubiertos)
     for s in orden:
         if scores[s] <= 0:
             break
-        seleccionados[s] = True
-        cubiertos_obj |= discrepancia[:, s].astype(bool)
+        contrib = discrepancia[:, s].astype(bool)
+        if np.any((~cubiertos_obj) & contrib):
+            seleccionados[s] = True
+            cubiertos_obj |= contrib
         if cubiertos_obj[mal_cubiertos].all():
             break
+
+    # Segunda fase: completar la cobertura total para evitar soluciones infactibles
+    if not cubiertos_obj.all():
+        pendientes = ~cubiertos_obj
+        scores_resto = discrepancia[pendientes].sum(axis=0).astype(float)
+        scores_resto[seleccionados] = -1
+        
+        orden_resto = np.argsort(-(scores_resto + rng.normal(0.0, 1e-6, size=n_snps)))
+        for s in orden_resto:
+            if scores_resto[s] <= 0:
+                continue
+            contrib = discrepancia[:, s].astype(bool)
+            if np.any((~cubiertos_obj) & contrib):
+                seleccionados[s] = True
+                cubiertos_obj |= contrib
+            if cubiertos_obj.all():
+                break
 
     if not seleccionados.any():
         candidatos = np.where(~solucion_base)[0]
@@ -467,9 +515,10 @@ def _construir_complemento(discrepancia, solucion_base, n_snps, n_pares, rng):
     return seleccionados
 
 
-def _muestreo_guiado_disperso(distinguibilidad, n_snps, k_objetivo, rng):
+def _muestreo_guiado_disperso(distinguibilidad, discrepancia, n_snps, n_pares, k_objetivo, rng):
     """
-    Muestreo ponderado por distinguibilidad con cardinalidad objetivo.
+    Muestreo ponderado por distinguibilidad con cardinalidad objetivo,
+    seguido de una reparación greedy para asegurar cobertura total.
     """
     total = distinguibilidad.sum()
     if total <= 0:
@@ -481,6 +530,29 @@ def _muestreo_guiado_disperso(distinguibilidad, n_snps, k_objetivo, rng):
     p = np.clip(p, 0.01, 0.8)
 
     sol = rng.random(n_snps) < p
+    
+    # Evaluar cobertura
+    cubiertos = discrepancia[:, sol].any(axis=1) if sol.any() else np.zeros(n_pares, dtype=bool)
+    
+    # Reparación greedy
+    if not cubiertos.all():
+        pendientes = ~cubiertos
+        scores = discrepancia[pendientes].sum(axis=0).astype(float)
+        scores[sol] = -1
+        
+        ruido = rng.normal(0.0, 1e-6, size=n_snps)
+        orden = np.argsort(-(scores + ruido))
+        
+        for s in orden:
+            if scores[s] <= 0:
+                continue
+            contrib = discrepancia[:, s].astype(bool)
+            if np.any((~cubiertos) & contrib):
+                sol[s] = True
+                cubiertos |= contrib
+            if cubiertos.all():
+                break
+
     if not sol.any():
         sol[rng.integers(0, n_snps)] = True
     return sol
@@ -517,7 +589,6 @@ class MuestreoGreedyHolistico(Sampling):
 
         # Detección de bloques LD para Tier 3 (basada en datos,
         # funciona con cualquier dataset).
-        from snp_tag.data.diagnostics import detectar_bloques_ld
         segmentos = detectar_bloques_ld(H)
         # Fallback: si la estructura LD es demasiado uniforme y produce
         # muy pocos bloques, dividir posicionalmente para garantizar diversidad.
@@ -610,28 +681,29 @@ class MuestreoGreedyHolistico(Sampling):
         return resultados
 
     def _guided_sparse(self):
-        """Tier 5: un individuo con muestreo disperso ponderado."""
+        """Tier 5: un individuo con muestreo disperso ponderado y reparación."""
         # Cardinalidad objetivo: entre el min-k observado y algo moderado
         k_obj = self.rng.integers(
             max(1, int(self.distinguibilidad.size * 0.01)),
             max(2, int(self.distinguibilidad.size * 0.15))
         )
         return _muestreo_guiado_disperso(
-            self.distinguibilidad, self.n_snps, k_obj, self.rng
+            self.distinguibilidad, self.discrepancia, self.n_snps, self.n_pares, k_obj, self.rng
         )
 
     def _deduplicar(self, X):
-        """Post-procesado: deduplicación fenotípica (siempre activo)."""
+        """Post-procesado: deduplicación fenotípica mediante mutaciones monótonas."""
         huellas = set()
         for i in range(len(X)):
             fp = X[i].tobytes()
             if fp in huellas:
-                # Mutar: invertir 1-3 bits aleatorios
-                n_flips = self.rng.integers(1, 4)
-                bits = self.rng.choice(self.n_snps, n_flips, replace=False)
-                X[i, bits] = ~X[i, bits]
-                if not X[i].any():
-                    X[i, self.rng.integers(0, self.n_snps)] = True
+                # Mutar de forma segura: convertir de 1 a 3 bits 'False' a 'True'.
+                # Añadir SNPs matemáticamente preserva la cobertura existente.
+                candidatos = np.where(~X[i])[0]
+                if len(candidatos) > 0:
+                    n_flips = min(len(candidatos), int(self.rng.integers(1, 4)))
+                    bits = self.rng.choice(candidatos, n_flips, replace=False)
+                    X[i, bits] = True
             huellas.add(X[i].tobytes())
         return X
 

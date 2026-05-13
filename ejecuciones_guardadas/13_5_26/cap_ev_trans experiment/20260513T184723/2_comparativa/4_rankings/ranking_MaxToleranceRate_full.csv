@@ -1,0 +1,7 @@
+algorithm,init,crossover,MaxToleranceRate
+NSGA2,greedy_multi,UX,0.2552261868071063
+NSGA3,random_dense,UX,0.2513513943295126
+MOEAD_TCHE,greedy_multi,UX,0.2471213626163411
+NSGA2,random_dense,UX,0.24159387170119123
+NSGA3,greedy_multi,UX,0.2123931623931624
+MOEAD_TCHE,random_dense,UX,0.19455409218810601

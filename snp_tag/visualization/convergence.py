@@ -22,13 +22,18 @@ def graficar_evolucion_generacional(df_gen: pd.DataFrame, dir_salida: Optional[s
     evitando solapamiento entre algoritmos.
     """
     metricas = [
+        # Pareto Front Geometric Metrics
         ('Range', 'Rango (Range): Diversidad Geométrica'),
-        ('SumMin', 'SumMin: Convergencia Marginal'),
         ('MinSum', 'MinSum: Convergencia Central'),
+        ('SumMin', 'SumMin: Convergencia Marginal'),
+        # Domain-Specific (Physical SNP Metrics)
         ('MaxToleranceRate', 'Tasa de Tolerancia Máxima'),
-        ('AvgHammingDistance', 'Distancia Hamming Promedio'),
         ('AvgToleranceRate', 'Tasa de Tolerancia Promedio'),
-        ('Hypervolume', 'Hipervolumen (HV)')
+        ('AvgHammingDistance', 'Distancia Hamming Promedio'),
+        # Performance Indicators (Convergence & Spread)
+        ('Hypervolume', 'Hipervolumen (HV)'),
+        ('IGD+', 'Distancia Generacional Invertida Plus (IGD+)'),
+        ('GD+', 'Distancia Generacional Plus (GD+)')
     ]
 
     cols_base = {'algorithm', 'init', 'generation'}

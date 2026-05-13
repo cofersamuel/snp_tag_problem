@@ -59,6 +59,7 @@ from snp_tag.visualization.reporting import (
     graficar_analisis_estadistico,
     graficar_analisis_kruskal_dunn, graficar_diagrama_diferencia_critica
 )
+from snp_tag.visualization.decision import analizar_decision_mcdm
 
 
 def _tarea_plot_frentes(
@@ -115,10 +116,11 @@ def _tarea_plot_frentes(
                 )
                 # NUEVO: Gráfico agregado por algoritmo (todas sus inits juntas)
                 nombre_agg = f'frentes_pareto_agregados_{algo.lower()}_{etiqueta_modo}.png'
+                style_col = 'crossover' if 'crossover' in df_algo.columns else None
                 artefactos.extend(
                     graficar_frentes_pareto_agregados(
                         df_algo, f"Frentes de Pareto Agregados: {algo}", 
-                        nombre_agg, hue_col='init', carpetas=carpetas, 
+                        nombre_agg, hue_col='init', style_col=style_col, carpetas=carpetas, 
                         dpi=dpi,
                         emitir_log=False,
                         limites_ejes=limites_ejes,
@@ -134,7 +136,7 @@ def _tarea_plot_frentes(
             artefactos.extend(
                 graficar_frentes_pareto_agregados(
                     df_global, "Comparativa Global de Frentes de Pareto", 
-                    nombre_global, hue_col='Configuración', carpetas=carpetas,
+                    nombre_global, hue_col='Configuración', style_col=None, carpetas=carpetas,
                     dpi=dpi,
                     emitir_log=False,
                     limites_ejes=limites_ejes,
@@ -164,16 +166,73 @@ def inicializar_configuracion(modo='medium', data_source='hinds2005'):
     return construir_configuracion(modo=modo, data_source=data_source)
 
 def informar_configuracion(cfg: ConfiguracionExperimento):
-    """Muestra un resumen de la configuración en la terminal."""
-    imprimir_subseccion("CONFIGURACIÓN", icono="⚙️")
-    print(f"      • Modo={cfg.modo_ejecucion} | POP_SIZE={cfg.tam_poblacion} | N_GEN={cfg.n_generaciones} | "
-          f"OFFSPRING={cfg.n_descendencia} | PC={cfg.pc} | PM={cfg.pm:.6f} | N_RUNS={cfg.n_ejecuciones}")
+    """Muestra un resumen jerárquico y condicional de user_config.ini en la terminal."""
+    imprimir_encabezado("CONFIGURACIÓN (user_config.ini)")
+    
+    # [General]
+    print(f"      • [General]")
+    print(f"          - dir_salida_base: {cfg.dir_salida_base}")
+    
+    # [Dataset]
+    print(f"      • [Dataset]")
+    print(f"          - n_snps: {cfg.n_snps}")
+    print(f"          - num_bloques: {cfg.num_bloques}")
+    print(f"          - origen_datos: {cfg.origen_datos}")
+    if cfg.origen_datos == 'synthetic':
+        print(f"          - prob_flip_sintetico: {cfg.prob_flip_sintetico}")
+        print(f"          - dif_min_pares_sintetico: {cfg.dif_min_pares_sintetico}")
+        print(f"          - intentos_max_sintetico: {cfg.intentos_max_sintetico}")
+    
+    # [Objetivos]
+    print(f"      • [Objetivos]")
+    print(f"          - transform: {cfg.modo_transformacion_objetivos}")
+    print(f"          - eval: {cfg.modo_evaluacion}")
+    print(f"          - cap_tolerancia: {cfg.cap_tolerancia}")
+    
+    # [Algoritmos - General]
+    print(f"      • [Algoritmos]")
+    print(f"          - semilla_maestra: {cfg.semilla_maestra}")
+    print(f"          - modo_semillas: {cfg.modo_semillas}")
+    print(f"          - normalizacion: {cfg.modo_normalizacion}")
+    print(f"          - pc: {cfg.pc}")
+    print(f"          - pm: {cfg.pm:.6f}")
+    print(f"          - cruces: {', '.join(cfg.crossover_operadores_activos)}")
+    print(f"          - algoritmos: {', '.join(cfg.algoritmos_activos)}")
+    print(f"          - inits: {', '.join(cfg.opciones_init)}")
+    
+    # [Algoritmos - Específicos] (Condicional)
+    moead_activos = [a for a in cfg.algoritmos_activos if 'MOEAD' in a]
+    if 'greedy_ting' in cfg.opciones_init or 'greedy_multi' in cfg.opciones_init or 'greedy_holistic' in cfg.opciones_init or moead_activos:
+        print(f"      • [Parámetros Específicos de Algoritmo]")
+        if 'greedy_ting' in cfg.opciones_init:
+            print(f"          - ratio_greedy_ting: {cfg.ratio_greedy_ting}")
+        if 'greedy_multi' in cfg.opciones_init:
+            print(f"          - max_cobertura_objetivo: {cfg.max_cobertura_objetivo}")
+        if 'greedy_holistic' in cfg.opciones_init:
+            print(f"          - max_k_holistic: {cfg.max_k_holistic}")
+        if moead_activos:
+            print(f"          - moead_vecinos: {cfg.vecinos_moead}")
+            print(f"          - moead_prob_vecindad: {cfg.prob_vecindad_moead}")
+            if 'MOEAD_PBI' in cfg.algoritmos_activos:
+                print(f"          - moead_theta_pbi: {cfg.theta_moead_pbi}")
+
+    # [Reporting]
+    print(f"      • [Sistema]")
+    print(f"          - report_plot_dpi: {cfg.report_plot_dpi}")
+    
+    # [Resumen de Objetivos]
+    suffix = " Prop." if cfg.modo_evaluacion == 'proportional' else ""
+    print("      • Objetivos de optimización:")
+    print(f"          - f1 (Compacidad): Minimizar")
+    print(f"          - f2 (Tolerancia{suffix}): Maximizar")
+    print(f"          - f3 (Hamming Medio{suffix}): Maximizar")
+    print(f"          - f4 (Disimilitud{suffix}): Minimizar")
 
 
 def _construir_df_fronts_desde_resultados(resultados, modo_transformacion_objetivos: str = 'neg'):
     """Construye un DataFrame tabular de soluciones de frentes finales para CSV/plots."""
     columnas = [
-        'algorithm', 'init', 'run', 'seed',
+        'algorithm', 'init', 'crossover', 'run', 'seed',
         'f1_compactness',
         'f2_transformed_tolerance',
         'f3_transformed_hamming_avg',
@@ -191,6 +250,7 @@ def _construir_df_fronts_desde_resultados(resultados, modo_transformacion_objeti
             filas.append({
                 'algorithm': rr.algoritmo,
                 'init': rr.inicializacion,
+                'crossover': rr.crossover,
                 'run': rr.replica,
                 'seed': rr.semilla,
                 'f1_compactness': f[0],
@@ -203,7 +263,7 @@ def _construir_df_fronts_desde_resultados(resultados, modo_transformacion_objeti
     df = pd.DataFrame(filas, columns=columnas)
     # Elimina duplicados exactos (puntos repetidos en el frente final)
     subset = [
-        'algorithm', 'init', 'run', 'seed',
+        'algorithm', 'init', 'crossover', 'run', 'seed',
         'f1_compactness',
         'f2_transformed_tolerance',
         'f3_transformed_hamming_avg',
@@ -410,7 +470,7 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
     print(f"      • Tiempo bloque 'Frentes de Pareto': {time.time() - t0_frentes:.1f}s")
 
     imprimir_subseccion("Análisis de Convergencia Progresiva", icono="🔄")
-    if not df_gen.empty and {'algorithm', 'init', 'generation'}.issubset(df_gen.columns):
+    if not df_gen.empty and {'algorithm', 'init', 'crossover', 'generation'}.issubset(df_gen.columns):
         artefactos_conv = graficar_evolucion_generacional(
             df_gen,
             dir_salida=cfg.carpetas['metricas_convergencia'],
@@ -418,7 +478,7 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
             dpi=cfg.report_plot_dpi,
             emitir_log=False,
         )
-        for ruta, descripcion in sorted(artefactos_conv, key=lambda x: (x[1], x[0])):
+        for ruta, descripcion in artefactos_conv:
             imprimir_grafico_guardado(ruta, descripcion)
     else:
         print("      • ⚠️  Convergencia omitida: no hay histórico generacional válido.")
@@ -466,12 +526,12 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
     if not df_final.empty:
         # --- 1. Preparación de Datos y Rankings ---
         higher_is_better = ['Hypervolume', 'Range', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance']
-        metricas_base = ['MinSum', 'Range', 'SumMin', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'Hypervolume']
+        metricas_base = ['MinSum', 'Range', 'SumMin', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'Hypervolume', 'IGD+', 'GD+']
         disponibles = [m for m in metricas_base if m in df_final.columns]
 
-        # a) Medias y Desviaciones por Configuración (Algoritmo + Init)
-        df_mean_config = df_final.groupby(['algorithm', 'init']).mean(numeric_only=True).reset_index()
-        df_std_config = df_final.groupby(['algorithm', 'init']).std(numeric_only=True).reset_index()
+        # a) Medias y Desviaciones por Configuración (Algoritmo + Init + Crossover)
+        df_mean_config = df_final.groupby(['algorithm', 'init', 'crossover']).mean(numeric_only=True).reset_index()
+        df_std_config = df_final.groupby(['algorithm', 'init', 'crossover']).std(numeric_only=True).reset_index()
         df_std_config['Average Ranking Overall'] = 0.0
 
         # b) Cálculo de Average Ranking Overall (Método)
@@ -481,7 +541,7 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
             asce = False if m in higher_is_better else True
             rank_matrix_method.append(resumen_method[m].rank(ascending=asce).values)
         resumen_method['Average Ranking Overall'] = np.mean(rank_matrix_method, axis=0)
-        df_mean_config = pd.merge(df_mean_config, resumen_method[['algorithm', 'init', 'Average Ranking Overall']], on=['algorithm', 'init'])
+        df_mean_config = pd.merge(df_mean_config, resumen_method[['algorithm', 'init', 'crossover', 'Average Ranking Overall']], on=['algorithm', 'init', 'crossover'])
 
         # c) Cálculo de Average Ranking (Algorithm)
         df_mean_algo = df_final.groupby(['algorithm']).mean(numeric_only=True).reset_index()
@@ -499,6 +559,14 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
             rank_matrix_init.append(df_mean_init[m].rank(ascending=asce).values)
         df_mean_init['Average Ranking (Initialization)'] = np.mean(rank_matrix_init, axis=0)
 
+        # e) Cálculo de Average Ranking (Crossover)
+        df_mean_cross = df_final.groupby(['crossover']).mean(numeric_only=True).reset_index()
+        rank_matrix_cross = []
+        for m in disponibles:
+            asce = False if m in higher_is_better else True
+            rank_matrix_cross.append(df_mean_cross[m].rank(ascending=asce).values)
+        df_mean_cross['Average Ranking (Crossover)'] = np.mean(rank_matrix_cross, axis=0)
+
         # --- 2. Impresión Unificada de Rankings y Estadísticas ---
         imprimir_subseccion("Ranking por Métrica", icono="🏆")
         
@@ -512,9 +580,12 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
             ('AvgToleranceRate', False, '↑', 'config'),
             ('AvgHammingDistance', False, '↑', 'config'),
             ('Hypervolume', False, '↑', 'config'),
+            ('IGD+', True, '↓', 'config'),
+            ('GD+', True, '↓', 'config'),
             ('Average Ranking Overall', True, '↓', 'config'),
             ('Average Ranking (Algorithm)', True, '↓', 'algorithm'),
-            ('Average Ranking (Initialization)', True, '↓', 'init')
+            ('Average Ranking (Initialization)', True, '↓', 'init'),
+            ('Average Ranking (Crossover)', True, '↓', 'crossover')
         ]
         
         for metrica, ascending, flecha, tipo in metricas_ranking:
@@ -522,15 +593,19 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
             if tipo == 'config':
                 df_act = df_mean_config
                 df_std_act = df_std_config
-                cols_grp = ['algorithm', 'init']
+                cols_grp = ['algorithm', 'init', 'crossover']
             elif tipo == 'algorithm':
                 df_act = df_mean_algo
                 df_std_act = None
                 cols_grp = ['algorithm']
-            else: # init
+            elif tipo == 'init':
                 df_act = df_mean_init
                 df_std_act = None
                 cols_grp = ['init']
+            else: # crossover
+                df_act = df_mean_cross
+                df_std_act = None
+                cols_grp = ['crossover']
 
             if metrica in df_act.columns:
                 print(f"    • \033[1m{metrica}\033[0m ({flecha})")
@@ -547,10 +622,10 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
                     val = row[metrica]
                     str_std = " ± 0.0000"
                     if df_std_act is not None:
-                        std_v = df_std_act.loc[(df_std_act['algorithm'] == row['algorithm']) & (df_std_act['init'] == row['init']), metrica].values
+                        std_v = df_std_act.loc[(df_std_act['algorithm'] == row['algorithm']) & (df_std_act['init'] == row['init']) & (df_std_act['crossover'] == row['crossover']), metrica].values
                         str_std = f" ± {std_v[0]:.4f}" if len(std_v) > 0 and pd.notna(std_v[0]) else " ± 0.0000"
                     
-                    nombre = f"{row['algorithm']} ({row['init']})" if tipo == 'config' else row[tipo]
+                    nombre = f"{row['algorithm']} ({row['init']}+{row['crossover']})" if tipo == 'config' else row[tipo]
                     print(f"         {idx:2d}. {nombre}: {val:.4f}{str_std}")
                 
                 if total > 10:
@@ -560,20 +635,45 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
                         val = row[metrica]
                         str_std = " ± 0.0000"
                         if df_std_act is not None:
-                            std_v = df_std_act.loc[(df_std_act['algorithm'] == row['algorithm']) & (df_std_act['init'] == row['init']), metrica].values
+                            std_v = df_std_act.loc[(df_std_act['algorithm'] == row['algorithm']) & (df_std_act['init'] == row['init']) & (df_std_act['crossover'] == row['crossover']), metrica].values
                             str_std = f" ± {std_v[0]:.4f}" if len(std_v) > 0 and pd.notna(std_v[0]) else " ± 0.0000"
-                        nombre = f"{row['algorithm']} ({row['init']})" if tipo == 'config' else row[tipo]
+                        nombre = f"{row['algorithm']} ({row['init']}+{row['crossover']})" if tipo == 'config' else row[tipo]
                         print(f"         {idx:2d}. {nombre}: {val:.4f}{str_std}")
+
+                # Enlace al CSV detallado del ranking
+                link_csv = obtener_enlace_terminal(ruta_csv)
+                print(f"         • \033[1mPara más detalles\033[0m: {link_csv}")
 
                 # --- VALIDACIÓN ESTADÍSTICA ANIDADA ---
                 if tipo == 'config' and 'Average Ranking' not in metrica:
                     graficar_analisis_kruskal_dunn(df_final, cfg.carpetas['estadistica_hv'], metrica, cfg.modo_ejecucion, indent=9)
                     graficar_diagrama_diferencia_critica(df_final, cfg.carpetas['estadistica_hv'], metrica, cfg.modo_ejecucion, indent=9)
                 elif 'Average Ranking' in metrica:
-                    col_friedman = 'config' if metrica == 'Average Ranking Overall' else ('algorithm' if 'Algorithm' in metrica else 'init')
+                    if metrica == 'Average Ranking Overall':
+                        col_friedman = 'config'
+                    elif 'Algorithm' in metrica:
+                        col_friedman = 'algorithm'
+                    elif 'Initialization' in metrica:
+                        col_friedman = 'init'
+                    else:
+                        col_friedman = 'crossover'
                     graficar_analisis_estadistico(df_final, cfg.carpetas['rankings'], cfg.modo_ejecucion, col_group=col_friedman, indent=9)
                 
                 print() # Espacio entre métricas
+
+    # --- Análisis de Decisión Multi-Criterio (MCDM) ---
+    imprimir_subseccion("Análisis de Decisión Multi-Criterio (MCDM)", icono="🎯")
+    if df_fronts_total is not None and not df_fronts_total.empty:
+        analizar_decision_mcdm(
+            df_fronts_total,
+            dir_salida=cfg.carpetas['decision_mcdm'],
+            etiqueta_modo=cfg.modo_ejecucion,
+            modo_transformacion_objetivos=cfg.modo_transformacion_objetivos,
+            dpi=cfg.report_plot_dpi,
+            emitir_log=True,
+        )
+    else:
+        print("      • ⚠️  MCDM omitido: no hay datos de frentes de Pareto disponibles.")
 
 
 
@@ -632,15 +732,7 @@ def ejecutar_pipeline(args):
     # Obtener ruta relativa del fichero si existe
     fichero_rel = os.path.relpath(cfg.ruta_hinds2005) if cfg.origen_datos == 'hinds2005' else "N/A"
     
-    print(f"      • ORIGEN_DATOS={cfg.origen_datos} ({'Hinds et al. 2005 / Perlegen' if cfg.origen_datos == 'hinds2005' else 'Simulación'}) | "
-          f"N_SNPS={len(snp_ids)} | N_PATRONES={len(hap_ids)} | PM={cfg.pm:.6f}")
-    print(f"      • FICHERO={fichero_rel}")
-    modo_eval_display = 'absolute' if cfg.modo_evaluacion == 'absoluta' else cfg.modo_evaluacion
-    print(
-        f"      • REPORT_DPI={cfg.report_plot_dpi} | EVALUATION_MODE={modo_eval_display} | "
-        f"NORMALIZATION_MODE={cfg.modo_normalizacion} | SEED_MODE={cfg.modo_semillas} | "
-        f"OBJ_TRANSFORM={cfg.modo_transformacion_objetivos}"
-    )
+    print(f"      • N_SNPS={len(snp_ids)} | N_PATRONES={len(hap_ids)} | FICHERO={fichero_rel}")
     
     # 3. Diagnóstico y EDA
     imprimir_encabezado("DIAGNÓSTICO DE DATOS Y DESEQUILIBRIO (LD)")
@@ -670,24 +762,19 @@ def ejecutar_pipeline(args):
     
     # 5. Ejecución Evolutiva
     imprimir_encabezado("MOTOR MULTIOBJETIVO")
-    imprimir_subseccion("Configuración del Motor Evolutivo", icono="⚙️")
-    
-    # Línea de resumen de parámetros ( must be exact)
-    print(f"      • Modo={cfg.modo_ejecucion} | POP_SIZE={cfg.tam_poblacion} | N_GEN={cfg.n_generaciones} | "
-          f"OFFSPRING={cfg.n_descendencia} | PC={cfg.pc} | PM={cfg.pm:.6f} | N_RUNS={cfg.n_ejecuciones}")
     
     n_algoritmos = len(cfg.algoritmos_activos)
-    n_ejec_total = n_algoritmos * len(cfg.opciones_init) * cfg.n_ejecuciones
+    n_inits = len(cfg.opciones_init)
+    n_cross = len(cfg.crossover_operadores_activos)
+    n_ejec_total = n_algoritmos * n_inits * n_cross * cfg.n_ejecuciones
+    
+    imprimir_subseccion("Planificación de Ejecución", icono="📅")
     print(
-        f"      • Desglose: {n_algoritmos} algoritmos x {len(cfg.opciones_init)} inicializaciones "
-        f"x {cfg.n_ejecuciones} runs = {n_ejec_total} ejecuciones"
+        f"      • Total: {n_algoritmos} alg. x {n_inits} inits. x {n_cross} cruces x {cfg.n_ejecuciones} runs = {n_ejec_total} ejecuciones"
     )
-    print(f"      • Configuraciones únicas (algoritmo-init): {n_algoritmos * len(cfg.opciones_init)}")
-    print(f"      • Algoritmos activos: {', '.join(cfg.algoritmos_activos)}")
     
     dirs_ref, n_part = construir_direcciones_referencia(cfg.tam_poblacion)
-    print(f"      • Puntos de referencia (ref_dirs): {len(dirs_ref)} | Particiones: {n_part}")
-    print(f"      • Tamaño de población (pop_size): {cfg.tam_poblacion}")
+    print(f"      • Referencias: {len(dirs_ref)} puntos | Particiones: {n_part}")
     
     pares_idx = np.array(list(combinations(range(cfg.n_haplotipos), 2)), dtype=np.int32)
     resultados = ejecutar_suite_completa(H, pares_idx, cfg)
@@ -700,7 +787,7 @@ def ejecutar_pipeline(args):
     imprimir_subseccion("Análisis de Rendimiento y Tiempo", icono="⏱️")
     t0_perf = time.time()
     df_perf = pd.DataFrame([
-        {'algorithm': rr.algoritmo, 'init': rr.inicializacion, 'time_seg': rr.tiempo_seg, 'run': rr.replica, 'frente_size': len(rr.F_final) if rr.F_final is not None else 0}
+        {'algorithm': rr.algoritmo, 'init': rr.inicializacion, 'crossover': rr.crossover, 'time_seg': rr.tiempo_seg, 'run': rr.replica, 'frente_size': len(rr.F_final) if rr.F_final is not None else 0}
         for rr in resultados
     ])
     if not df_perf.empty:

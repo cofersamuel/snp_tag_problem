@@ -1,0 +1,7 @@
+algorithm,init,crossover,Hypervolume
+NSGA2,greedy_multi,UX,0.27326931836292234
+NSGA3,greedy_multi,UX,0.2703875869663809
+MOEAD_TCHE,greedy_multi,UX,0.2630060005430471
+NSGA3,random_dense,UX,0.2428601939721315
+NSGA2,random_dense,UX,0.2320690604392392
+MOEAD_TCHE,random_dense,UX,0.13117611111238797

@@ -1,0 +1,7 @@
+algorithm,init,crossover,AvgHammingDistance
+MOEAD_TCHE,greedy_multi,UX,0.4973802200755255
+NSGA3,greedy_multi,UX,0.47864058782321106
+NSGA2,greedy_multi,UX,0.43674278814848233
+NSGA3,random_dense,UX,0.42114836774290776
+NSGA2,random_dense,UX,0.3785223058343672
+MOEAD_TCHE,random_dense,UX,0.36679488578442243

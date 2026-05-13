@@ -37,6 +37,7 @@ CLAVES_TUNABLES_REQUERIDAS = (
     'max_cobertura_objetivo',
     'max_k_holistic',
     'cap_tolerancia',
+    'crossover_operadores_activos',
 )
 
 
@@ -86,6 +87,13 @@ def _parsear_valor_tunable(valor_raw: str) -> Any:
         return [_parsear_valor_atomico(t) for t in tokens]
 
     return _parsear_valor_atomico(valor)
+
+
+def _asegurar_lista(valor: Any) -> List[Any]:
+    """Garantiza que el valor sea una lista, incluso si el parser devolvió un átomo."""
+    if isinstance(valor, list):
+        return valor
+    return [valor]
 
 
 def cargar_params_tunables_desde_ini(ruta_config: Path = RUTA_USER_CONFIG) -> Dict[str, Any]:
@@ -196,7 +204,7 @@ PARAMETROS_CONFIGURACION = {
     # Modos permitidos para la evaluación del fitness.
     # - 'absoluta': usa las distancias de Hamming totales.
     # - 'proportional': escala las distancias por la cantidad de SNPs (ej. métrica de Ting).
-    'modos_evaluacion_disponibles': ('absoluta', 'proportional'),
+    'modos_evaluacion_disponibles': ('absoluta', 'absolute', 'proportional'),
 
     # Modos de semilla para el motor evolutivo.
     # - 'non_deterministic': semillas por tiempo/sistema (modo habitual)
@@ -253,6 +261,7 @@ class ConfiguracionExperimento:
     n_generaciones: int
     n_descendencia: int
     pc: float
+    crossover_operadores_activos: List[str]
     pm: float
     vecinos_moead: int
     prob_vecindad_moead: float
@@ -330,6 +339,9 @@ def resolver_modo_evaluacion(modo: Optional[str]) -> str:
     Normaliza y valida el esquema de evaluación (fitness).
     """
     modo_normalizado = str(modo or 'absoluta').strip().lower()
+    if modo_normalizado == 'absolute':
+        modo_normalizado = 'absoluta'
+        
     permitidos = set(MODOS_EVALUACION_DISPONIBLES)
     if modo_normalizado not in permitidos:
         raise ValueError(f"Esquema de evaluación no soportado: {modo}. Opciones válidas: {sorted(permitidos)}")
@@ -396,12 +408,12 @@ def construir_configuracion(modo: str = 'medium', data_source: str = 'hinds2005'
     params = dict(PARAMS_TUNABLES_DEFECTO)
     params.update(_validar_overrides(overrides))
 
-    opciones_init = list(params.get('opciones_init', []))
+    opciones_init = _asegurar_lista(params.get('opciones_init', []))
     for nombre_init in opciones_init:
         if not es_opcion_init_valida(str(nombre_init)):
             raise ValueError(f"Inicialización no válida: {nombre_init}")
 
-    algoritmos_activos = list(params.get('algoritmos_activos', []))
+    algoritmos_activos = _asegurar_lista(params.get('algoritmos_activos', []))
     if not algoritmos_activos:
         raise ValueError("Debe definirse al menos un algoritmo en 'algoritmos_activos'.")
     for nombre_algoritmo in algoritmos_activos:
@@ -427,6 +439,13 @@ def construir_configuracion(modo: str = 'medium', data_source: str = 'hinds2005'
     tam_bloque_sintetico = max(1, n_snps // num_bloques)
     modo_cfg = PERFILES_MODO[modo]
 
+    crossover_operadores_activos = _asegurar_lista(params.get('crossover_operadores_activos', []))
+    if not crossover_operadores_activos:
+        raise ValueError("Debe definirse al menos un operador en 'crossover_operadores_activos'.")
+    for op in crossover_operadores_activos:
+        if str(op).strip().upper() not in ['UX', 'HUX', '1P', '2P']:
+            raise ValueError(f"Operador de cruce no soportado: {op}. Opciones: UX, HUX, 1P, 2P")
+
     return ConfiguracionExperimento(
         modo_ejecucion=modo,
         num_bloques=num_bloques,
@@ -441,6 +460,7 @@ def construir_configuracion(modo: str = 'medium', data_source: str = 'hinds2005'
         n_generaciones=int(modo_cfg['n_gen']),
         n_descendencia=int(modo_cfg['descendencia']),
         pc=float(params['pc']),
+        crossover_operadores_activos=[str(op).strip().upper() for op in crossover_operadores_activos],
         pm=1.0 / max(1, n_snps),
         vecinos_moead=int(params['vecinos_moead']),
         prob_vecindad_moead=prob_vec,

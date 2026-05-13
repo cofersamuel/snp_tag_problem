@@ -1,0 +1,7 @@
+algorithm,init,crossover,Average Ranking Overall
+NSGA2,greedy_multi,UX,1.7777777777777777
+NSGA3,greedy_multi,UX,2.0
+MOEAD_TCHE,greedy_multi,UX,2.4444444444444446
+NSGA3,random_dense,UX,4.111111111111111
+NSGA2,random_dense,UX,4.666666666666667
+MOEAD_TCHE,random_dense,UX,6.0

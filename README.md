@@ -200,23 +200,19 @@ El motor evolutivo busca optimizar simultáneamente cuatro dimensiones críticas
 #### Evaluación de Fitness (`modo_evaluacion`)
 
 El motor permite alterar la naturaleza matemática de las funciones objetivo a través del parámetro de evaluación. La configuración más avanzada es `modo_evaluacion=proportional`.
-En este modo, las penalizaciones o recompensas de las métricas biológicas no se calculan de forma absoluta respecto al total del genoma, sino de forma **proporcional** a la compacidad (tamaño) de la solución que se está evaluando. Esto elimina los sesgos algorítmicos que históricamente favorecían a las soluciones sobredimensionadas, obligando a los optimizadores a valorar la calidad del SNP de forma estrictamente relacional a los recursos genéticos empleados.
 
-Las fórmulas resultantes para los objetivos afectados son:
+En este modo, las métricas biológicas se calculan de forma **proporcional** a la compacidad (tamaño $k$) de la solución. Además, se introduce el parámetro `cap_tolerancia` para acotar la recompensa por redundancia excesiva, evitando que soluciones sobredimensionadas dominen el frente por pura fuerza bruta.
 
-* **Distancia Hamming Proporcional ($f_3$):** 
+Las fórmulas resultantes para los objetivos en modo proporcional son:
 
-$$
-f_3 = -\left( \frac{\sum_{i=1}^{N_{pares}} H_i}{N_{pares} \cdot k} \right)
-$$
+*   **Tolerancia Proporcional ($f_2^{prop}$):** 
+    $$f_2^{prop} = \frac{\min(\text{cobertura\_mínima}, \text{cap\_tolerancia})}{k}$$
+*   **Distancia Hamming Proporcional ($f_3^{prop}$):** 
+    $$f_3^{prop} = -\left( \frac{\sum_{i=1}^{N_{pares}} H_i}{N_{pares} \cdot k} \right)$$
+*   **Disimilitud Proporcional ($f_4^{prop}$):**
+    $$f_4^{prop} = \frac{\sigma^2(H)}{k^2}$$
 
-* **Disimilitud Proporcional ($f_4$):**
-
-$$
-f_4 = \frac{\sigma^2(H)}{k^2}
-$$
-
-*Donde $k$ representa el número de SNPs seleccionados, $H_i$ la distancia de Hamming del par $i$, y $\sigma^2(H)$ la varianza de las distancias entre todos los pares de haplotipos.*
+*Donde $k$ es el número de SNPs seleccionados, $H_i$ la distancia de Hamming del par $i$, y $\sigma^2(H)$ la varianza de las distancias entre todos los pares.*
 
 ### Algoritmos e Inicializaciones
 
@@ -224,22 +220,27 @@ El sistema implementa un entorno comparativo que evalúa la sinergia entre difer
 
 * **Algoritmos Soportados**:
   
-  * **NSGA-II**: Non-dominated Sorting Genetic Algorithm II.
-  * **NSGA-III**: Evolución del anterior, especializado en problemas many-objective.
+  * **NSGA-II / NSGA-III**: Algoritmos de ordenación no dominada (estándar y para many-objective).
   * **SPEA2**: Strength Pareto Evolutionary Algorithm 2.
-  * **MOEA/D-TCHE**: Variante de MOEA/D con descomposición Tchebycheff.
-  * **MOEA/D-PBI**: Variante de MOEA/D con descomposición Penalty-based Boundary Intersection (\(\theta\) configurable).
-  * **MOEA/D-WS**: Variante de MOEA/D con descomposición Weighted Sum.
+  * **MOEA/D (TCHE, PBI, WS)**: Variantes basadas en descomposición.
+  * **AGE-MOEA-II**: Especializado en aproximación adaptativa de la geometría del frente.
+  * **SMS-EMOA**: Optimización basada en la métrica S (Hipervolumen).
+  * **RVEA**: Reference Vector Guided Evolutionary Algorithm.
   
   La selección final de algoritmos a ejecutar es totalmente configurable mediante la lista tunable `algoritmos_activos`.
 
 * **Estrategias de Inicialización**:
   
-  * `random_sparse`: Inicialización estocástica centrada en la **eficiencia y compacidad**. Funciona calculando una probabilidad de activación dinámica basada en un objetivo matemático ($P_{bit} \approx 70 / N_{snps}$). Esto inyecta individuos en el algoritmo que, desde la generación cero, ya poseen un número muy reducido de SNPs, forzando la optimización inmediata en lugar de comenzar en regiones de sobredimensión.
-  * `random_dense`: Muestreo aleatorio estándar (probabilidad 0.5 por bit). Proporciona una **cobertura masiva y redundante** del genoma. Es ideal para evaluar la capacidad de "poda" de los algoritmos, obligándoles a descartar marcadores inútiles durante la evolución.
-  * `greedy_pure`: Estrategia constructiva **puramente voraz**. Ordena los SNPs por su "puntuación de distinguibilidad" (número de pares de haplotipos que logran diferenciar) y construye los individuos añadiendo marcadores de forma determinista hasta cubrir el 100% de la varianza biológica, utilizando permutaciones aleatorias ligeras únicamente para resolver empates entre SNPs idénticos.
-  * `greedy_hybrid`: Enfoque de **compromiso explotación-exploración**. El rellenado de la población inicial se divide en dos fases matemáticamente aisladas: una mitad de la población se construye aplicando la lógica determinista voraz (greedy), mientras que la otra mitad se rellena utilizando un ruido puramente estocástico (probabilidad configurable).
-  * `greedy_ting`: Algoritmo complejo de construcción estructurada e inyección. Funciona mediante un cálculo previo de **puntos ancla** basándose en la fórmula $N_{ancla} = \lceil P_{size} \times ratio\_greedy \rceil \times 10$. El relleno se divide en fases jerárquicas: se inyectan semillas densas y greedy puras en las posiciones ancla, seguido de un relleno constructivo basado en la cobertura probabilística de bloques, para finalizar completando el remanente de la población de forma puramente estocástica.
+  * `random_sparse`: Inicialización estocástica centrada en la **eficiencia y compacidad** ($P_{bit} \approx 70 / N_{snps}$).
+  * `random_dense`: Muestreo aleatorio estándar (probabilidad 0.5 por bit). Ideal para evaluar la capacidad de "poda" de los algoritmos.
+  * `greedy_multi`: Inicialización de **cobertura múltiple progresiva**. Distribuye objetivos de redundancia biológica en la población para asegurar que el frente de Pareto esté poblado desde el inicio con soluciones robustas.
+  * `greedy_holistic`: La estrategia más avanzada del sistema. Utiliza un enfoque de **5 niveles (Tiers)**:
+    1. **Anclas de Pareto**: Extremos teóricos de cada objetivo.
+    2. **Barrido k-Cover**: Cobertura progresiva con espaciado geométrico.
+    3. **Ensamblaje por Bloques LD**: Diversidad estructural basada en ligamiento real.
+    4. **Inyección de Complementos**: Soluciones que "parchean" debilidades de individuos existentes.
+    5. **Exploración Guiada Dispersa**: Muestreo ponderado por importancia de SNP.
+  * `greedy_ting`: Algoritmo complejo de construcción jerárquica basado en puntos ancla y bloques.
 
 ##### Detalle Técnico de las Estrategias de Muestreo
 
@@ -258,7 +259,11 @@ El sistema permite un ajuste fino a través de perfiles predefinidos (`presets`)
   * `high`: Configuración intermedia orientada a explorar más que `medium` con un coste computacional moderado.
   * `full`: Búsqueda exhaustiva diseñada para obtener el frente de Pareto más preciso.
   * `full_20`: Idéntico a `full` pero elevando el número de repeticiones a **20 ejecuciones por método**, diseñado para análisis de significancia estadística profunda.
-* **Parámetros Tunables**: Incluyen probabilidades de cruce (`pc`), mutación (`pm`), lista de algoritmos activos (`algoritmos_activos`), tamaño/probabilidad de vecindad de MOEA/D, parámetro `theta_moead_pbi`, modo de semillas (`non_deterministic` o `deterministic`), transformación de objetivos (`neg` o `inverse`)...
+* **Parámetros Tunables**: Incluyen probabilidades de cruce (`pc`), mutación (`pm`), lista de algoritmos activos (`algoritmos_activos`), operadores de cruce (`crossover_operadores_activos`: UX, HUX, 1P, 2P), modo de semillas, transformación de objetivos, y los nuevos parámetros de control:
+  * `cap_tolerancia`: Tope máximo de recompensa por cobertura de pares (ej. 3.0).
+  * `max_cobertura_objetivo`: Nivel de redundancia para `greedy_multi`.
+  * `max_k_holistic`: Nivel de redundancia para el Tier 2 de `greedy_holistic`.
+  * `ratio_greedy_ting`: Proporción de individuos heurísticos en la estrategia Ting.
 
 Formato recomendado en `user_config.ini`:
 
@@ -361,24 +366,7 @@ python -m snp_tag.main --mode [MODO] --data-source [FUENTE]
 * `--data-source` (`-d`): Especifica el dataset objetivo.
   * `hinds2005`: Utiliza el dataset biológico real de Hinds et al. (1032 SNPs).
   * `synthetic`: Genera un dataset sintético basado en los parámetros de simulación.
-* `--report-only-csv`: Activa el **Modo de Reporte Exclusivo**. Ejecuta únicamente las fases de diagnóstico post-procesado y generación de visualizaciones estadísticas (Pareto, convergencia, boxplots) utilizando resultados previos vinculados al conjunto de datos más reciente localizado en el directorio `snp_tag/input/`.
-  - Permite regenerar toda la suite visual sin necesidad de relanzar el motor evolutivo.
-  - No requiere argumentos adicionales; el sistema identifica automáticamente los ficheros `.csv` (detallados, históricos y frentes) necesarios.
-
-**Ejemplos de uso:**
-
-1. **Ejecución Estándar (Pipeline Completo):**
-   
-   ```bash
-   python -m snp_tag.main --mode medium --data-source hinds2005
-   ```
-
-2. **Modo Reporte (Regenerar visualizaciones):**
-   
-   ```bash
-   # Selecciona automáticamente los CSV más recientes en snp_tag/input/
-   python -m snp_tag.main --report-only-csv
-   ```
+* **Interfaz de Línea de Comandos (CLI) Premium**: El sistema ofrece un dashboard dinámico en terminal que reporta el progreso en tiempo real. Además, utiliza secuencias **OSC 8** para generar hipervínculos clicables directamente en la terminal, permitiendo abrir los reportes CSV y figuras PDF de forma instantánea al finalizar el experimento.
 
 ### Estructura del Código
 
@@ -394,7 +382,7 @@ El paquete `snp_tag` está organizado de forma modular para facilitar su manteni
 
 Fuera del paquete principal, el repositorio gestiona la persistencia de resultados históricos:
 
-* **`ejecuciones_guardadas/`**: Almacén de experimentos de referencia y sus correspondientes informes técnicos. Se organiza por fechas y contiene tanto los datos brutos de las simulaciones (`experimentos/`) como el código fuente de los análisis académicos desarrollados en LaTeX (`analisis/`).
+* **`ejecuciones_guardadas/`**: Almacén jerárquico de experimentos. Se organiza por fechas y contiene los datos brutos (`experimentos/`), visualizaciones de alta resolución y los **reportes técnicos en LaTeX** (`analisis/`) que generan la documentación final del TFG en formato PDF.
 
 ---
 
@@ -414,6 +402,14 @@ El pipeline utiliza el marco de trabajo **PyMoo** para instanciar algoritmos de 
 Para algoritmos basados en descomposición o preservación de la diversidad (como **NSGA-III** y **MOEA/D**), el sistema genera un conjunto de direcciones de referencia que guían la búsqueda de forma uniforme sobre el hiperplano de los objetivos.
 
 El motor utiliza el método de **Das-Dennis** para distribuir puntos de referencia sobre el frente de Pareto de 4 dimensiones. El número de particiones se ajusta automáticamente en función del tamaño de población configurado para garantizar una cobertura densa y balanceada de todas las regiones de compromiso (*trade-offs*).
+
+### Operador de Reparación (ReparaciónSNP)
+
+Para garantizar la integridad del proceso evolutivo y evitar soluciones degeneradas, el sistema implementa un **Operador de Reparación** personalizado. Este operador actúa inmediatamente después de las fases de cruce y mutación:
+
+*   **Detección de Individuos Vacíos**: Intercepta cualquier solución que, tras la variación genética, haya quedado con cero SNPs seleccionados ($k=0$).
+*   **Activación Aleatoria**: En caso de detectar un individuo vacío, el operador activa automáticamente un SNP aleatorio de la secuencia genómica.
+*   **Propósito**: Esta mecánica asegura que cada individuo en la población represente un fenotipo válido con al menos una mínima representación biológica. Además, previene errores matemáticos (divisiones por cero) en el cálculo de métricas proporcionales y mantiene la presión selectiva sobre soluciones factibles.
 
 ### Motor de Paralelización y Gestión de Recursos
 
@@ -481,15 +477,17 @@ Se pueden configurar esquemas de escalado en `snp_tag/config.py` a través del p
 
 El motor incluye un subsistema avanzado (apoyado en `scikit-posthocs`) para auditar científicamente los resultados y prevenir falsos positivos derivados del comportamiento estocástico intrínseco de los algoritmos evolutivos. En lugar de limitarse a tabular promedios, el pipeline procesa la matriz en base a decenas de réplicas e inicializaciones.
 
-### 5.1 Test de Friedman
+### 5.1 Test de Friedman y Kruskal-Wallis
 
-El sistema evalúa el **Test no paramétrico de Friedman** sobre las distribuciones de resultados para detectar la existencia de significancia estadística real ($p < 0.05$). Al analizar las métricas *run-a-run*, el test determina si un algoritmo que aparenta ser superior en la media global es genuinamente mejor, o si su victoria es solo un subproducto de la alta varianza (azar de las semillas).
+El sistema evalúa el **Test de Friedman** para comparativas globales de algoritmos y el test de **Kruskal-Wallis** para el análisis independiente de cada métrica. Estos tests no paramétricos permiten detectar si las diferencias observadas son estadísticamente significativas ($p < 0.05$).
 
-### 5.2 Análisis Post-hoc de Nemenyi
+### 5.2 Análisis Post-hoc (Nemenyi y Dunn)
 
-Si el Test de Friedman rechaza la hipótesis nula, el sistema ejecuta automáticamente el test pareado de Nemenyi. Este análisis cruza todos los métodos entre sí evaluando las **Diferencias Críticas (CD)**.
+Si se detecta significancia, el sistema ejecuta automáticamente:
+* **Test de Nemenyi**: Para identificar grupos de algoritmos con rendimiento equivalente en el ranking global.
+* **Test de Dunn**: Para realizar comparaciones pareadas profundas sobre métricas individuales (como Hypervolume o IGD+).
 
-El resultado se renderiza en un *Heatmap estadístico*, donde las interacciones en color rojizo denotan empates técnicos ($p > 0.05$) y las zonas frías confirman aislamientos de rendimiento estadísticamente superiores.
+El resultado se visualiza mediante *Heatmaps estadísticos* y diagramas de Diferencia Crítica (CD).
 
 ![Heatmap Nemenyi](readme_assets/heatmap_nemenyi.png)
 *Figura 6: Mapa de calor de significancia. Nemenyi desvela los grupos de algoritmos que, pese a tener medias dispares, son empíricamente equivalentes frente a las fluctuaciones probabilísticas del TSSP.*
@@ -502,11 +500,12 @@ Para diseccionar rigurosamente los frentes de Pareto resultantes, el sistema lo 
 
 ### Métricas de Rendimiento Analizadas
 
-* **Hypervolume (HV):** [Deseable: Mayor] La "métrica reina" en MOEAs. Cuantifica el hipervolumen del espacio objetivo cubierto por las soluciones. Premia el balance absoluto entre convergencia (cercanía al óptimo) y diversidad.
-* **Range (RG):** [Deseable: Mayor] Mide la amplitud de la distribución poblacional. Un alto Range indica que el algoritmo no ha colapsado prematuramente y es capaz de ofrecer un espectro funcional amplio.
-* **MinSum (MS) / SumMin (SM):** [Deseable: Menor] Cuantificadores de distancia funcional hacia las fronteras topológicas ideales (Punto Ideal inalcanzable) y nefastas (Punto Nadir).
-* **AvgHammingDistance (AH):** [Deseable: Mayor] Medida del rescate de diversidad biológica pura, promediando cuán diferentes entre sí son las firmas genotípicas preservadas.
-* **MaxTolRate (MT) / AvgTolRate (AT):** [Deseable: Mayor] Índices de resiliencia del conjunto. Evalúan estadísticamente la capacidad de las soluciones para soportar pérdida de información o deleciones de lectura sin sacrificar la cobertura del LD.
+* **Hypervolume (HV):** [Deseable: Mayor] Cuantifica el volumen del espacio objetivo cubierto. Premia el balance entre convergencia y diversidad.
+* **IGD+ / GD+:** [Deseable: Menor] Inverted Generational Distance Plus y Generational Distance Plus. Miden la distancia promedio entre el frente obtenido y el frente de referencia (Pareto real/empírico).
+* **Range (RG):** [Deseable: Mayor] Amplitud de la distribución poblacional.
+* **MinSum (MS) / SumMin (SM):** [Deseable: Menor] Distancias hacia los límites topológicos ideales.
+* **AvgHammingDistance (AH):** [Deseable: Mayor] Promedio de separación genotípica preservada.
+* **MaxTolRate (MT) / AvgTolRate (AT):** [Deseable: Mayor] Índices de resiliencia del panel SNP.
 
 ![Heatmap Comparativa](readme_assets/heatmap_comparativa.png)
 
@@ -519,4 +518,25 @@ Puesto que en los ecosistemas *Many-Objective* rara vez un algoritmo domina simu
 El **Average Rank** procesa las posiciones relativas (1º, 2º, 3º...) que obtiene cada configuración en las 7 métricas individuales y genera una media global ponderada. Este agregador es indispensable para dictaminar conclusiones cuando las varianzas son altísimas y los test de Friedman dictaminan empates múltiples, permitiendo coronar a los algoritmos con el comportamiento histórico más estable.
 
 ![Ranking Global](readme_assets/rangos_promedio.png)
-*Figura 8: Visualización del Ranking Promedio consolidado. Se observa la superioridad de las variantes basadas en MOEA/D y NSGA-III sobre el resto de configuraciones.*
+*Figura 8: Visualización del Ranking Promedio consolidado. Se observa la superioridad de las variantes basadas en AGEMOEA-II y NSGA-III.*
+
+---
+
+## Sección 7: Multi-Criteria Decision Making (MCDM)
+
+Dado que los frentes de Pareto pueden contener cientos de soluciones, el sistema integra un módulo de toma de decisiones multicriterio para identificar las soluciones más prometedoras.
+
+### Criterios de Selección Técnica
+
+1.  **Knee Point (Punto de Inflexión)**: Identifica la solución con la curvatura máxima en el frente. Es el punto donde una mejora marginal en un objetivo requeriría un sacrificio desproporcionado en los demás.
+2.  **Pseudo-Weights**: Calcula la importancia relativa de cada solución basándose en su posición normalizada en el espacio objetivo, permitiendo elegir soluciones con perfiles específicos (ej. máxima compacidad).
+3.  **ASF (Achievement Scalarization Function)**: Minimiza la distancia hacia un punto de referencia ideal, localizando la solución de compromiso matemáticamente más equilibrada.
+
+### Visualización de Decisiones
+
+*   **Diagramas de Radar (Spider Charts)**: Permiten comparar el perfil funcional de las mejores soluciones en las 4 dimensiones biológicas simultáneamente.
+*   **Diagramas de Pétalos**: Representación visual de la magnitud de cada objetivo, facilitando la identificación rápida de fortalezas y debilidades.
+*   **Scatter Plots MCDM**: Visualización 2D/3D del frente resaltando los Knee points y las soluciones ASF.
+
+![MCDM Radar](readme_assets/test_radar.png)
+*Figura 9: Ejemplo de diagrama de radar comparando diferentes soluciones de compromiso.*

@@ -13,6 +13,9 @@ import concurrent.futures
 from functools import lru_cache
 from typing import List, Tuple, Dict, Any
 from collections import defaultdict
+from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
+from pymoo.indicators.igd_plus import IGDPlus
+from pymoo.indicators.gd_plus import GDPlus
 
 from snp_tag.config import resolver_modo_normalizacion
 
@@ -260,6 +263,31 @@ def _calcular_referencias_por_modo(
     algoritmos = sorted({str(rr.algoritmo) for rr in resultados_ejecucion})
     return {alg: (ideal_g, denom_g) for alg in algoritmos}
 
+
+def extraer_frente_referencia_empirico(resultados_ejecucion, modo_transformacion_objetivos='neg'):
+    """Construye el Frente de Referencia Empírico combinando los frentes finales de todos los algoritmos."""
+    todos_frentes = []
+    for rr in resultados_ejecucion:
+        if rr.F_final is None or len(rr.F_final) == 0:
+            continue
+        F_factibles = filtrar_soluciones_factibles(
+            rr.F_final,
+            modo_transformacion_objetivos=modo_transformacion_objetivos,
+        )
+        if len(F_factibles) > 0:
+            todos_frentes.append(F_factibles)
+    
+    if not todos_frentes:
+        return None
+
+    F_global = np.vstack(todos_frentes)
+    if len(F_global) > 1:
+        F_global = np.unique(F_global, axis=0)
+    
+    nds = NonDominatedSorting()
+    fronts = nds.do(F_global, only_non_dominated_front=True)
+    return F_global[fronts[0]]
+
 def evaluar_metricas_finales(resultados_ejecucion, n_snps_total=1032, 
                              modo_normalizacion='static_dataset_limits',
                              hamming_pares=None,
@@ -284,9 +312,20 @@ def evaluar_metricas_finales(resultados_ejecucion, n_snps_total=1032,
         modo_transformacion_objetivos=modo_transformacion_objetivos,
     )
 
+    F_referencia_global = extraer_frente_referencia_empirico(
+        resultados_ejecucion, 
+        modo_transformacion_objetivos=modo_transformacion_objetivos
+    )
+    igd_plus_metric = None
+    gd_plus_metric = None
+    if F_referencia_global is not None:
+        F_ref_norm_global = np.clip((F_referencia_global - ideal_g) / denom_g, 0, 1)
+        igd_plus_metric = IGDPlus(F_ref_norm_global)
+        gd_plus_metric = GDPlus(F_ref_norm_global)
+
     conteos_replica = defaultdict(int)
     for rr_aux in resultados_ejecucion:
-        conteos_replica[(str(rr_aux.algoritmo), str(rr_aux.inicializacion))] += 1
+        conteos_replica[(str(rr_aux.algoritmo), str(rr_aux.inicializacion), str(rr_aux.crossover))] += 1
 
     filas = []
     total_ejecuciones = len(resultados_ejecucion)
@@ -318,6 +357,11 @@ def evaluar_metricas_finales(resultados_ejecucion, n_snps_total=1032,
         # Hipervolumen consistente con el modo de normalización seleccionado
         hv_ref = calcular_hipervolumen(F_norm_ref)
         
+        # IGD+ / GD+ (usando el espacio global normalizado)
+        F_crudo_norm_global = np.clip((F_crudo - ideal_g) / denom_g, 0, 1)
+        igd_plus_val = float(igd_plus_metric(F_crudo_norm_global)) if igd_plus_metric is not None else np.nan
+        gd_plus_val = float(gd_plus_metric(F_crudo_norm_global)) if gd_plus_metric is not None else np.nan
+        
         # Métricas crudas
         crudas = calcular_metricas_crudas(
             F_crudo,
@@ -326,19 +370,21 @@ def evaluar_metricas_finales(resultados_ejecucion, n_snps_total=1032,
         )
         
         filas.append({
-            'algorithm': rr.algoritmo, 'init': rr.inicializacion, 'run': rr.replica,
+            'algorithm': rr.algoritmo, 'init': rr.inicializacion, 'crossover': rr.crossover, 'run': rr.replica,
             'seed': rr.semilla,
             'elapsed_sec': rr.tiempo_seg,
             'n_solutions_final_front': n_factibles,
             'n_infeasible_final_front': n_infactibles,
             'Range': rng, 'SumMin': smn, 'MinSum': msn,
             'Hypervolume': hv_ref,
+            'IGD+': igd_plus_val,
+            'GD+': gd_plus_val,
             **{f"{k}": v for k, v in crudas.items()}
         })
         procesadas += 1
         duracion_ind = time.time() - t0_ind
-        total_config = conteos_replica[(str(rr.algoritmo), str(rr.inicializacion))]
-        print(f"      • [Progreso: {procesadas:>{w}}/{total_ejecuciones}] | [{rr.algoritmo}-{rr.inicializacion}] ejecución {rr.replica}/{total_config} ({duracion_ind:.1f} s)")
+        total_config = conteos_replica[(str(rr.algoritmo), str(rr.inicializacion), str(rr.crossover))]
+        print(f"      • [Progreso: {procesadas:>{w}}/{total_ejecuciones}] | [{rr.algoritmo}-{rr.inicializacion}-{rr.crossover}] ejecución {rr.replica}/{total_config} ({duracion_ind:.1f} s)")
         
     return pd.DataFrame(filas), ideal_g, nadir_g
 
@@ -349,6 +395,8 @@ def _construir_filas_generacionales_por_ejecucion(
     denom_algo,
     ideal_global,
     denom_global,
+    igd_plus_metric,
+    gd_plus_metric,
     n_snps_total=1032,
     modo_transformacion_objetivos='neg',
 ):
@@ -380,6 +428,10 @@ def _construir_filas_generacionales_por_ejecucion(
 
         hv_ref = calcular_hipervolumen(F_norm_ref)
 
+        F_crudo_norm_global = np.clip((F_crudo - ideal_global) / denom_global, 0, 1)
+        igd_plus_val = float(igd_plus_metric(F_crudo_norm_global)) if igd_plus_metric is not None else np.nan
+        gd_plus_val = float(gd_plus_metric(F_crudo_norm_global)) if gd_plus_metric is not None else np.nan
+
         crudas = calcular_metricas_crudas(
             F_crudo,
             n_snps_total,
@@ -390,6 +442,7 @@ def _construir_filas_generacionales_por_ejecucion(
             'generation': idx_gen + 1,
             'algorithm': rr.algoritmo,
             'init': rr.inicializacion,
+            'crossover': rr.crossover,
             'run': rr.replica,
             'seed': rr.semilla,
             'n_solutions': len(F_crudo),
@@ -397,6 +450,8 @@ def _construir_filas_generacionales_por_ejecucion(
             'SumMin': smn,
             'MinSum': msn,
             'Hypervolume': hv_ref,
+            'IGD+': igd_plus_val,
+            'GD+': gd_plus_val,
             **{f"{k}": v for k, v in crudas.items()}
         })
     return filas
@@ -404,7 +459,7 @@ def _construir_filas_generacionales_por_ejecucion(
 
 def _evaluar_metrica_generacional_individual(args):
     """Wrapper picklable para paralelizar métricas generacionales."""
-    rr, ideal_algo, denom_algo, ideal_global, denom_global, n_snps_total, modo_transformacion_objetivos = args
+    rr, ideal_algo, denom_algo, ideal_global, denom_global, igd_metric, gd_metric, n_snps_total, modo_transformacion_objetivos = args
     t0 = time.time()
     df = pd.DataFrame(
         _construir_filas_generacionales_por_ejecucion(
@@ -413,6 +468,8 @@ def _evaluar_metrica_generacional_individual(args):
             denom_algo,
             ideal_global,
             denom_global,
+            igd_metric,
+            gd_metric,
             n_snps_total=n_snps_total,
             modo_transformacion_objetivos=modo_transformacion_objetivos,
         )
@@ -444,12 +501,23 @@ def construir_metricas_generacionales(resultados_ejecucion, ideal_global, nadir_
     if not ejecuciones_validas:
         return pd.DataFrame()
 
+    F_referencia_global = extraer_frente_referencia_empirico(
+        resultados_ejecucion, 
+        modo_transformacion_objetivos=modo_transformacion_objetivos
+    )
+    igd_plus_metric = None
+    gd_plus_metric = None
+    if F_referencia_global is not None:
+        F_ref_norm_global = np.clip((F_referencia_global - ideal_global) / denom_global, 0, 1)
+        igd_plus_metric = IGDPlus(F_ref_norm_global)
+        gd_plus_metric = GDPlus(F_ref_norm_global)
+
     max_workers = max(1, (os.cpu_count() or 2) - 2)
     total_ejecuciones = len(ejecuciones_validas)
     ancho = len(str(total_ejecuciones))
     conteos_replica = defaultdict(int)
     for rr_aux in ejecuciones_validas:
-        conteos_replica[(str(rr_aux.algoritmo), str(rr_aux.inicializacion))] += 1
+        conteos_replica[(str(rr_aux.algoritmo), str(rr_aux.inicializacion), str(rr_aux.crossover))] += 1
 
     completadas = 0
     tablas = []
@@ -464,6 +532,8 @@ def construir_metricas_generacionales(resultados_ejecucion, ideal_global, nadir_
                     refs_algo[str(rr.algoritmo)][1],
                     ideal_global,
                     denom_global,
+                    igd_plus_metric,
+                    gd_plus_metric,
                     n_snps_total,
                     modo_transformacion_objetivos,
                 ),
@@ -476,12 +546,12 @@ def construir_metricas_generacionales(resultados_ejecucion, ideal_global, nadir_
                 df_res, duracion_ind = future.result()
                 tablas.append(df_res)
             except Exception as e:
-                print(f"      • ⚠️  Error en métricas generacionales [{rr.algoritmo}-{rr.inicializacion}] ejecución {rr.replica}: {e}")
+                print(f"      • ⚠️  Error en métricas generacionales [{rr.algoritmo}-{rr.inicializacion}-{rr.crossover}] ejecución {rr.replica}: {e}")
                 continue
 
             completadas += 1
-            total_config = conteos_replica[(str(rr.algoritmo), str(rr.inicializacion))]
-            print(f"      • [Progreso: {completadas:>{ancho}}/{total_ejecuciones}] | [{rr.algoritmo}-{rr.inicializacion}] ejecución {rr.replica}/{total_config} ({duracion_ind:.1f} s)")
+            total_config = conteos_replica[(str(rr.algoritmo), str(rr.inicializacion), str(rr.crossover))]
+            print(f"      • [Progreso: {completadas:>{ancho}}/{total_ejecuciones}] | [{rr.algoritmo}-{rr.inicializacion}-{rr.crossover}] ejecución {rr.replica}/{total_config} ({duracion_ind:.1f} s)")
 
     if not tablas:
         return pd.DataFrame()

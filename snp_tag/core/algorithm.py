@@ -17,8 +17,11 @@ from pymoo.decomposition.pbi import PBI
 from pymoo.decomposition.weighted_sum import WeightedSum
 from pymoo.algorithms.moo.nsga3 import HyperplaneNormalization
 from pymoo.operators.crossover.ux import UX
+from pymoo.operators.crossover.hux import HUX
+from pymoo.operators.crossover.pntx import SinglePointCrossover, TwoPointCrossover
 from pymoo.operators.mutation.bitflip import BitflipMutation
 from pymoo.operators.sampling.rnd import BinaryRandomSampling
+from pymoo.core.repair import Repair
 from pymoo.util.ref_dirs import get_reference_directions
 from pymoo.util.dominator import Dominator
 from pymoo.util.misc import vectorized_cdist
@@ -91,28 +94,43 @@ class SPEA2SurvivalSeguro(SPEA2Survival):
 def construir_direcciones_referencia(tam_poblacion, n_obj=4):
     """
     Genera direcciones de referencia balanceadas para algoritmos basados en descomposición.
+    Fuerza compatibilidad estricta con los tamaños de población de Das-Dennis.
     """
     tam_poblacion = int(max(1, tam_poblacion))
-    particiones = 1
     p = 1
     while True:
         cand = get_reference_directions('das-dennis', n_obj, n_partitions=p)
-        if len(cand) >= tam_poblacion:
-            # Selección determinista para ajustar exactamente al tamaño de población.
-            if len(cand) == tam_poblacion:
-                return cand, p
-            idx = np.linspace(0, len(cand) - 1, tam_poblacion).astype(int)
-            idx = np.unique(idx)
-            if len(idx) < tam_poblacion:
-                # Completar por orden (estable)
-                faltan = tam_poblacion - len(idx)
-                extra = np.setdiff1d(np.arange(len(cand)), idx)[:faltan]
-                idx = np.concatenate([idx, extra])
-            return cand[idx], p
-        particiones = p
+        if len(cand) == tam_poblacion:
+            return cand, p
+        elif len(cand) > tam_poblacion:
+            prev_cand = get_reference_directions('das-dennis', n_obj, n_partitions=p-1) if p > 1 else []
+            prev_len = len(prev_cand) if p > 1 else 1
+            error_msg = (
+                f"\n=== [ERROR DE CONFIGURACIÓN] ===\n"
+                f"El tamaño de población ({tam_poblacion}) no es compatible "
+                f"con una distribución geométrica Das-Dennis para {n_obj} objetivos.\n"
+                f"Los tamaños válidos más cercanos son {prev_len} o {len(cand)}.\n"
+                f"Por favor, ajusta 'tam_poblacion' en tu configuración o usa otro algoritmo.\n"
+                f"================================\n"
+            )
+            print(error_msg)
+            raise ValueError(error_msg)
         p += 1
 
-def fabricar_algoritmo(problema, H, nombre_algo, nombre_init, cfg: ConfiguracionExperimento, 
+class ReparacionSNP(Repair):
+    """
+    Operador de reparación que intercepta individuos vacíos (k=0) y activa 
+    un SNP aleatorio para mantener la validez del fenotipo y la diversidad.
+    """
+    def _do(self, problem, Z, **kwargs):
+        k = Z.sum(axis=1)
+        vacios = np.where(k == 0)[0]
+        if len(vacios) > 0:
+            for idx in vacios:
+                Z[idx, np.random.randint(0, problem.n_var)] = True
+        return Z
+
+def fabricar_algoritmo(problema, H, nombre_algo, nombre_init, nombre_crossover, cfg: ConfiguracionExperimento, 
                        semilla=42, dirs_ref=None):
     """
     Instancia un algoritmo específico con su estrategia de muestreo y operadores.
@@ -151,12 +169,22 @@ def fabricar_algoritmo(problema, H, nombre_algo, nombre_init, cfg: Configuracion
     else:
         raise ValueError(f"Estrategia de muestreo no soportada: {nombre_init}")
 
-    cruce = UX(prob=cfg.pc)
+    nombre_crossover = str(nombre_crossover).upper()
+    if nombre_crossover == 'HUX':
+        cruce = HUX(prob=cfg.pc)
+    elif nombre_crossover == '1P':
+        cruce = SinglePointCrossover(prob=cfg.pc)
+    elif nombre_crossover == '2P':
+        cruce = TwoPointCrossover(prob=cfg.pc)
+    else:
+        cruce = UX(prob=cfg.pc)
+        
     mutacion = BitflipMutation(prob=cfg.pm)
+    reparador = ReparacionSNP()
 
     if nombre_algo == 'NSGA2':
         return NSGA2(pop_size=cfg.tam_poblacion, sampling=sampling, crossover=cruce, 
-                     mutation=mutacion, eliminate_duplicates=True, n_offsprings=cfg.n_descendencia)
+                     mutation=mutacion, repair=reparador, eliminate_duplicates=True, n_offsprings=cfg.n_descendencia)
     
     if nombre_algo == 'SPEA2':
         return SPEA2(
@@ -164,6 +192,7 @@ def fabricar_algoritmo(problema, H, nombre_algo, nombre_init, cfg: Configuracion
             sampling=sampling,
             crossover=cruce,
             mutation=mutacion,
+            repair=reparador,
             survival=SPEA2SurvivalSeguro(normalize=True),
             eliminate_duplicates=True,
         )
@@ -174,6 +203,7 @@ def fabricar_algoritmo(problema, H, nombre_algo, nombre_init, cfg: Configuracion
             sampling=sampling,
             crossover=cruce,
             mutation=mutacion,
+            repair=reparador,
             eliminate_duplicates=True
         )
 
@@ -183,6 +213,7 @@ def fabricar_algoritmo(problema, H, nombre_algo, nombre_init, cfg: Configuracion
             sampling=sampling,
             crossover=cruce,
             mutation=mutacion,
+            repair=reparador,
             eliminate_duplicates=True
         )
 
@@ -191,7 +222,7 @@ def fabricar_algoritmo(problema, H, nombre_algo, nombre_init, cfg: Configuracion
 
     if nombre_algo == 'NSGA3':
         return NSGA3(pop_size=cfg.tam_poblacion, ref_dirs=dirs_ref, sampling=sampling, 
-                     crossover=cruce, mutation=mutacion, eliminate_duplicates=True, 
+                     crossover=cruce, mutation=mutacion, repair=reparador, eliminate_duplicates=True, 
                      n_offsprings=cfg.n_descendencia)
 
     if nombre_algo == 'RVEA':
@@ -201,6 +232,7 @@ def fabricar_algoritmo(problema, H, nombre_algo, nombre_init, cfg: Configuracion
             sampling=sampling, 
             crossover=cruce, 
             mutation=mutacion, 
+            repair=reparador,
             eliminate_duplicates=True
         )
 
@@ -220,6 +252,7 @@ def fabricar_algoritmo(problema, H, nombre_algo, nombre_init, cfg: Configuracion
             sampling=sampling,
             crossover=cruce,
             mutation=mutacion,
+            repair=reparador,
         )
 
         # Salvaguardas: elimina duplicados si el backend lo soporta.

@@ -48,6 +48,7 @@ def crear_arbol_directorios_dataset(cfg: ConfiguracionExperimento, tipo_dataset:
         'sintesis_barras': sintesis_root / '2_barras',
         'rankings': comparativa_root / '4_rankings',
         'estadistica_hv': comparativa_root / '4_rankings' / 'estadistica_hv',
+        'decision_mcdm': comparativa_root / '5_decision_mcdm',
     }
 
     for p in carpetas.values():

@@ -23,9 +23,11 @@ def transformar_objetivos_a_minimizacion(
     """
     modo = str(modo_transformacion or 'neg').strip().lower()
     if modo == 'inverse':
-        # En inverse, usar dominio positivo estable para evitar explosiones numéricas
-        f2 = 1.0 / np.maximum(min_cobertura, epsilon)
-        f3 = 1.0 / np.maximum(hamming_med, epsilon)
+        # En inverse, aislamos las divisiones por cero (infactibles).
+        # Les asignamos 0.0 temporalmente; la máscara de infactibilidad 
+        # se encargará después de anclarlos por encima del peor factible.
+        f2 = np.divide(1.0, min_cobertura, out=np.zeros_like(min_cobertura, dtype=float), where=(min_cobertura > 0))
+        f3 = np.divide(1.0, hamming_med, out=np.zeros_like(hamming_med, dtype=float), where=(hamming_med > 0))
     else:
         f2 = -min_cobertura
         f3 = -hamming_med
@@ -37,11 +39,21 @@ def transformar_objetivos_a_minimizacion(
         varianza,
     ]).astype(float)
 
-    # Penalización fuerte y compatible con algoritmos sin soporte de restricciones
+    # Penalización dinámica y estricta
     if mask_infactible is not None and np.any(mask_infactible):
         deficit = 1.0 - np.minimum(min_cobertura[mask_infactible], 1.0)
-        penalizacion = penalizacion_infactible + deficit
-        F[mask_infactible, :] += penalizacion[:, None]
+        
+        # Anclar la base de la penalización al peor individuo factible de la generación
+        # para garantizar que ningún infactible domine a un factible, sin explotar a 1e9.
+        if np.any(~mask_infactible):
+            peor_factible = np.max(F[~mask_infactible, :], axis=0)
+        else:
+            peor_factible = 0.0
+            
+        base_penalizacion = np.maximum(penalizacion_infactible, peor_factible)
+        
+        # Sobrescribir todos los objetivos de los infactibles para asegurar dominancia pura
+        F[mask_infactible, :] = base_penalizacion + deficit[:, None]
 
     return F
 
@@ -60,12 +72,11 @@ def evaluar_poblacion_vectorizado(
     # k: número de SNPs seleccionados por cada individuo
     k = X_bool.sum(axis=1).astype(float)
     
-    # Prevenir divisiones por cero en individuos vacíos
+    # Salvaguarda de emergencia: penalizar masivamente individuos vacíos.
+    # El operador de reparación ('Repair') de PyMoo evita que esto ocurra en la práctica.
     sin_seleccion = (k == 0)
     if sin_seleccion.any():
-        X_bool = X_bool.copy()
-        X_bool[sin_seleccion, 0] = True
-        k[sin_seleccion] = 1.0
+        k[sin_seleccion] = 1e9
 
     # Distancias de Hamming por par mediante producto matricial
     # D shape: (tam_poblacion, n_pares)
