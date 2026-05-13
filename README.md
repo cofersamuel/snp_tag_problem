@@ -9,9 +9,10 @@ Este repositorio contiene la implementación de un pipeline modular basado en al
    * Enfoque evolutivo multiobjetivo.
 2. **[Marco Experimental](#sección-2-marco-experimental)**
    * Datasets (Hinds et al. y Sintéticos).
+   * **Preprocesamiento de Datos (Filtrado de SNPs).**
    * Suite de diagnóstico y caracterización de datos.
-   * Objetivos de optimización
-   * Algoritmos e Inicializaciones
+   * Objetivos de optimización (Modo Proporcional).
+   * Algoritmos e Inicializaciones (Greedy Holistic).
    * Parámetros configurables.
 3. **[Ejecución y Estructura del Proyecto](#sección-3-ejecución-y-estructura-del-proyecto)**
    * Dependencias e Instalación.
@@ -116,6 +117,14 @@ Esta flexibilidad se gestiona a través de los parámetros en `user_config.ini`:
 
 ![Mapa de Calor Sintético](readme_assets/heatmap_synthetic.png)
 *Figura 6: Mapa de calor de la estructura haplotípica sintética, donde se observa la coherencia estructural inducida por el modelo de cadenas LD.*
+
+### Preprocesamiento de Datos
+
+Antes de cualquier análisis o búsqueda evolutiva, el sistema realiza un filtrado automático de la matriz haplotípica para asegurar la calidad de la entrada:
+
+* **Filtrado de SNPs Monomórficos**: Se eliminan todos los loci que no presentan variación alélica (es decir, aquellos donde todos los individuos tienen el mismo alelo, ya sea 0 o 1). 
+* **Criterio de Inclusión**: Un SNP se conserva si y solo si cumple la condición $0 < \sum(\text{columna}) < N_{\text{haplotipos}}$.
+* **Justificación**: Los SNPs monomórficos no aportan información para distinguir entre haplotipos y actúan como ruido computacional, inflando el espacio de búsqueda sin ofrecer beneficios biológicos para la selección de Tags. El sistema reporta automáticamente el número de SNPs útiles tras esta fase (ej. 772 de los 1032 originales en Hinds).
 
 ### Suite de Diagnóstico y Caracterización
 
@@ -402,7 +411,10 @@ Esta sección describe la arquitectura técnica del motor de optimización, deta
 
 El pipeline utiliza el marco de trabajo **PyMoo** para instanciar algoritmos de optimización multiobjetivo de vanguardia. La efectividad de la búsqueda en el espacio binario de los SNPs se apoya en operadores de variación específicamente seleccionados:
 
-* **Uniform Crossover (UX)**: Se emplea una probabilidad de cruce equilibrada ($P_c = 0.7$). Al ser un problema donde la posición lineal de los SNPs no siempre dicta su relación funcional (especialmente en bloques LD distantes), el cruce uniforme permite una recombinación de alelos más flexible que el cruce de un solo punto.
+* **Operadores de Cruce (Crossover)**: El sistema soporta múltiples estrategias de recombinación configurables ($P_c = 0.7$):
+  * **Uniform Crossover (UX)**: Intercambio de alelos bit a bit con probabilidad 0.5. Es ideal para el TSSP ya que permite una exploración flexible sin asumir que la proximidad física en el genoma implica una relación funcional absoluta.
+  * **Half Uniform Crossover (HUX)**: Cruce de "barajado" que identifica los bits diferentes entre padres e intercambia exactamente la mitad de ellos. Maximiza la diversidad genética en la descendencia.
+  * **Single Point (1P) / Two Point (2P)**: Operadores clásicos de corte que preservan segmentos contiguos de SNPs. Son útiles para mantener bloques de ligamiento (LD) completos si la estructura del dataset es muy secuencial.
 * **Bitflip Mutation**: La probabilidad de mutación se calibra dinámicamente siguiendo la heurística $P_m = 1/N_{vars}$. Para el bloque de Hinds (1032 SNPs), esto resulta en $P_m \approx 0.000969$, asegurando que, estadísticamente, se explore un cambio de marcador por cada individuo en cada generación, manteniendo la estabilidad de las soluciones de alta calidad.
 
 ### Direcciones de Referencia (Das-Dennis)
@@ -425,7 +437,6 @@ Dada la naturaleza estocástica de los algoritmos, el sistema orquesta múltiple
 
 * **Paralelismo Adaptativo**: Utiliza la utilidad `runtime.py` para calcular el número óptimo de procesos en paralelo en función de los núcleos de CPU y, fundamentalmente, de la **memoria RAM disponible**.
 * **Protección de Recursos**: El sistema estima el consumo de memoria por algoritmo y limita el número de trabajadores para evitar fallos de segmentación o colapsos del sistema operativo bajo cargas intensas.
-* **Semillas Configurables**: El motor soporta dos modos: `non_deterministic` (uso habitual, semillas no fijas) y `deterministic` (réplicas reconstruibles derivadas de `semilla_maestra`).
 
 <details>
 <summary><b>Ver ejemplo de ejecución del Motor Multiobjetivo</b></summary>
