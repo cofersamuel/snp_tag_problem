@@ -11,8 +11,8 @@ Este repositorio contiene la implementación de un pipeline modular basado en al
    * Datasets (Hinds et al. y Sintéticos).
    * **Preprocesamiento de Datos (Filtrado de SNPs).**
    * Suite de diagnóstico y caracterización de datos.
-   * Objetivos de optimización (Modo Proporcional).
-   * Algoritmos e Inicializaciones (Greedy Holistic).
+   * Objetivos de optimización
+   * Algoritmos e Inicializaciones
    * Parámetros configurables.
 3. **[Ejecución y Estructura del Proyecto](#sección-3-ejecución-y-estructura-del-proyecto)**
    * Dependencias e Instalación.
