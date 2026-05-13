@@ -28,11 +28,11 @@ Este repositorio contiene la implementación de un pipeline modular basado en al
    * Test de Friedman y Kruskal-Wallis.
    * Análisis Post-hoc (Nemenyi y Dunn).
 6. **[Diccionario de Métricas Técnicas y Supra-métricas](#sección-6-diccionario-de-métricas-técnicas-y-supra-métricas)**
-   * Métricas de Rendimiento Analizadas (IGD+, GD+).
+   * Métricas de Rendimiento Analizadas
    * La Supra-métrica Analítica: Average Rank.
 7. **[Multi-Criteria Decision Making (MCDM)](#sección-7-multi-criteria-decision-making-mcdm)**
-   * Criterios de Selección Técnica (Knee Point, ASF).
-   * Visualización de Decisiones (Radar y Pétalos).
+   * Criterios de Selección Técnica
+   * Visualización de Decisiones
 
 ---
 
