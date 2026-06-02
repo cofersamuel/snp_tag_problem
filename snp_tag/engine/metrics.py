@@ -17,7 +17,11 @@ from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 from pymoo.indicators.igd_plus import IGDPlus
 from pymoo.indicators.gd_plus import GDPlus
 
-from snp_tag.config import resolver_modo_normalizacion
+from snp_tag.config import resolver_modo_normalizacion, cargar_params_tunables_desde_ini, resolver_modo_evaluacion
+
+# Cargar el modo de evaluación desde la configuración una sola vez
+_PARAMS_TUNABLES_GLOBALES = cargar_params_tunables_desde_ini()
+_MODO_EVALUACION_GLOBAL = resolver_modo_evaluacion(_PARAMS_TUNABLES_GLOBALES.get('modo_evaluacion', 'absoluta'))
 
 
 def decodificar_objetivos_reales(
@@ -39,11 +43,15 @@ def decodificar_objetivos_reales(
     if modo == 'inverse':
         min_cobertura = 1.0 / np.maximum(F[:, 1], epsilon)
         hamming_prom_real = 1.0 / np.maximum(F[:, 2], epsilon)
-        tolerancia_real = min_cobertura - 1.0
     else:
-        tolerancia_real = -F[:, 1]
-        min_cobertura = tolerancia_real + 1.0
+        min_cobertura = -F[:, 1]
         hamming_prom_real = -F[:, 2]
+
+    if _MODO_EVALUACION_GLOBAL == 'proportional':
+        min_cobertura = min_cobertura * F[:, 0]
+        hamming_prom_real = hamming_prom_real * F[:, 0]
+        
+    tolerancia_real = min_cobertura - 1.0
 
     return {
         'compacidad': F[:, 0],
@@ -399,6 +407,7 @@ def _construir_filas_generacionales_por_ejecucion(
     gd_plus_metric,
     n_snps_total=1032,
     modo_transformacion_objetivos='neg',
+    paso_generacional_metricas=10,
 ):
     """Construye filas de métricas por generación para una ejecución individual."""
     filas = []
@@ -406,7 +415,15 @@ def _construir_filas_generacionales_por_ejecucion(
     if historial is None or len(historial) == 0:
         return filas
 
+    ultimo_idx = len(historial) - 1
     for idx_gen, F_crudo in enumerate(historial):
+        es_primero = (idx_gen == 0)
+        es_ultimo = (idx_gen == ultimo_idx)
+        es_paso = (paso_generacional_metricas > 0) and (idx_gen % paso_generacional_metricas == 0)
+        
+        if not (es_primero or es_ultimo or es_paso):
+            continue
+
         if F_crudo is None or len(F_crudo) == 0:
             continue
 
@@ -459,7 +476,7 @@ def _construir_filas_generacionales_por_ejecucion(
 
 def _evaluar_metrica_generacional_individual(args):
     """Wrapper picklable para paralelizar métricas generacionales."""
-    rr, ideal_algo, denom_algo, ideal_global, denom_global, igd_metric, gd_metric, n_snps_total, modo_transformacion_objetivos = args
+    rr, ideal_algo, denom_algo, ideal_global, denom_global, igd_metric, gd_metric, n_snps_total, modo_transformacion_objetivos, paso_generacional_metricas = args
     t0 = time.time()
     df = pd.DataFrame(
         _construir_filas_generacionales_por_ejecucion(
@@ -472,6 +489,7 @@ def _evaluar_metrica_generacional_individual(args):
             gd_metric,
             n_snps_total=n_snps_total,
             modo_transformacion_objetivos=modo_transformacion_objetivos,
+            paso_generacional_metricas=paso_generacional_metricas,
         )
     )
     return df, time.time() - t0
@@ -480,7 +498,8 @@ def construir_metricas_generacionales(resultados_ejecucion, ideal_global, nadir_
                                     n_snps_total=1032,
                                     modo_normalizacion='static_dataset_limits',
                                     hamming_pares=None,
-                                    modo_transformacion_objetivos='neg'):
+                                    modo_transformacion_objetivos='neg',
+                                    paso_generacional_metricas=10):
     """
     Procesa el historial de cada réplica para extraer métricas por generación.
     """
@@ -536,6 +555,7 @@ def construir_metricas_generacionales(resultados_ejecucion, ideal_global, nadir_
                     gd_plus_metric,
                     n_snps_total,
                     modo_transformacion_objetivos,
+                    paso_generacional_metricas,
                 ),
             ): rr for rr in ejecuciones_validas
         }

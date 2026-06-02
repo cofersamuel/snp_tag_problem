@@ -1,0 +1,5 @@
+algorithm,init,crossover,Hypervolume
+MOEAD_TCHE,greedy_multi,HUX,0.26315646992641367
+MOEAD_TCHE,greedy_multi,UX,0.2618536473546683
+MOEAD_TCHE,greedy_multi,2P,0.26154440724677325
+MOEAD_TCHE,greedy_multi,1P,0.2574314459462848

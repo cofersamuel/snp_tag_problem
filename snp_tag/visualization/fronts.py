@@ -337,9 +337,11 @@ def graficar_frentes_pareto_agregados(df_datos: pd.DataFrame, titulo_gen: str,
     n_colors = df[hue_col].nunique()
     palette = 'tab10' if n_colors <= 10 else 'husl'
 
-    for ax, x_col, y_col, titulo in proyecciones:
-        sns.scatterplot(data=df, x=x_col, y=y_col, ax=ax, hue=hue_col, style=style_col,
-                        s=50, alpha=0.7, palette=palette, edgecolor='w')
+    with warnings.catch_warnings():
+        warnings.filterwarnings('ignore', category=UserWarning)
+        for ax, x_col, y_col, titulo in proyecciones:
+            sns.scatterplot(data=df, x=x_col, y=y_col, ax=ax, hue=hue_col, style=style_col,
+                            s=50, alpha=0.7, palette=palette, edgecolor='w')
         
         # Aplicar límites estandarizados si están disponibles
         if limites_ejes:
@@ -349,7 +351,9 @@ def graficar_frentes_pareto_agregados(df_datos: pd.DataFrame, titulo_gen: str,
         ax.set_title(titulo, fontsize=14, weight='semibold')
         ax.set_xlabel(etiquetas_ejes[x_col], fontsize=12)
         ax.set_ylabel(etiquetas_ejes[y_col], fontsize=12)
-        ax.get_legend().remove() # Quitamos leyenda individual para poner una global
+        legend = ax.get_legend()
+        if legend is not None:
+            legend.remove() # Quitamos leyenda individual para poner una global
 
     # Añadir leyenda única fuera de los subplots
     handles, labels = axes[0, 0].get_legend_handles_labels()

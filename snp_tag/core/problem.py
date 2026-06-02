@@ -129,6 +129,17 @@ class ProblemaTagSNP(Problem):
         modo_evaluacion: str = 'absoluta',
         cap_tolerancia: float = 3.0,
     ):
+        """
+        Inicializa el problema de selección de Tag SNPs.
+
+        Args:
+            H (np.ndarray): Matriz de haplotipos.
+            pair_idx (np.ndarray): Índices de pares de haplotipos.
+            normalizar_busqueda (bool): Normalizar la búsqueda.
+            modo_transformacion_objetivos (str): Modo de transformación de objetivos.
+            modo_evaluacion (str): Modo de evaluación.
+            cap_tolerancia (float): Tope de tolerancia.
+        """
         self.H = H
         self.pair_idx = pair_idx
         self.normalizar_busqueda = bool(normalizar_busqueda)
@@ -166,6 +177,18 @@ class ProblemaTagSNP(Problem):
         super().__init__(n_var=n_var, n_obj=4, n_ieq_constr=0, xl=0, xu=1, vtype=bool)
 
     def _evaluate(self, X, out, *args, **kwargs):
+        """
+        Evalúa la población.
+
+        Args:
+            X (np.ndarray): Población de soluciones.
+            out (dict): Diccionario para almacenar los resultados.
+            *args: Argumentos adicionales.
+            **kwargs: Argumentos adicionales.
+
+        Returns:
+            np.ndarray: Población evaluada.
+        """
         X_bool = X.astype(bool)
         F_crudo, min_cobertura = evaluar_poblacion_vectorizado(
             X_bool,

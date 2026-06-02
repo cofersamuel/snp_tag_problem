@@ -1,0 +1,5 @@
+algorithm,init,crossover,MaxToleranceRate
+MOEAD_TCHE,greedy_multi,HUX,0.2183018162098612
+MOEAD_TCHE,greedy_multi,UX,0.21595472080824404
+MOEAD_TCHE,greedy_multi,2P,0.21320082296524262
+MOEAD_TCHE,greedy_multi,1P,0.19976844370429206

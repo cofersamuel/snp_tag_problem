@@ -9,7 +9,7 @@ from pathlib import Path
 from datetime import datetime
 from snp_tag.config import ConfiguracionExperimento
 
-def crear_arbol_directorios_dataset(cfg: ConfiguracionExperimento, tipo_dataset: str):
+def crear_arbol_directorios_dataset(cfg: ConfiguracionExperimento, tipo_dataset: str, is_report_only: bool = False):
     """
     Crea un árbol de directorios específico para un dataset y devuelve la ruta base y el diccionario de carpetas.
     Prioriza snp_tag/results como raíz de resultados.
@@ -26,7 +26,10 @@ def crear_arbol_directorios_dataset(cfg: ConfiguracionExperimento, tipo_dataset:
     # Localizar la carpeta results dentro del paquete
     ruta_base_paquete = Path(__file__).parent.parent / "results"
     
-    ruta_base = ruta_base_paquete / cfg.modo_ejecucion / tipo_dataset / etiqueta_inits / ts
+    if is_report_only:
+        ruta_base = ruta_base_paquete / "report_only_csv" / cfg.modo_ejecucion / tipo_dataset / etiqueta_inits / ts
+    else:
+        ruta_base = ruta_base_paquete / cfg.modo_ejecucion / tipo_dataset / etiqueta_inits / ts
     
     comparativa_root = ruta_base / '2_comparativa'
     frentes_root = comparativa_root / '1_frentes'

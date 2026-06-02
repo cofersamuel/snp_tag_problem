@@ -332,60 +332,7 @@ def _graficar_petal_mcdm(
     plt.close(fig)
 
 
-def _graficar_tabla_mcdm(
-    df_mcdm: pd.DataFrame,
-    titulo: str,
-    ruta_salida: str,
-    dpi: int = 300,
-) -> None:
-    """Tabla visual resumen con las recomendaciones MCDM."""
-    if df_mcdm.empty:
-        return
 
-    # Evitar duplicados si una solución cumple múltiples criterios
-    df_agrupado = df_mcdm.groupby(list(df_mcdm.columns.drop('Criterio')), as_index=False).agg({
-        'Criterio': lambda x: ' + '.join(x)
-    })
-    
-    columnas_display = ['Criterio']
-    if 'algorithm' in df_agrupado.columns and 'init' in df_agrupado.columns:
-        columnas_display += ['algorithm', 'init']
-    columnas_display += _NOMBRES_OBJETIVOS
-
-    df_tabla = df_agrupado[columnas_display].copy()
-    for col in _NOMBRES_OBJETIVOS:
-        if col in df_tabla.columns:
-            df_tabla[col] = df_tabla[col].round(4)
-
-    n_rows = len(df_tabla)
-    fig_height = max(2.5, 0.5 * n_rows + 1.5)
-    fig, ax = plt.subplots(figsize=(15, fig_height))
-    ax.axis('off')
-    ax.set_title(titulo, fontsize=16, weight='bold', pad=20)
-
-    tabla = ax.table(
-        cellText=df_tabla.values,
-        colLabels=df_tabla.columns,
-        loc='center',
-        cellLoc='center',
-    )
-    tabla.auto_set_font_size(False)
-    tabla.set_fontsize(10)
-    tabla.scale(1.0, 1.8)
-
-    for j in range(len(df_tabla.columns)):
-        celda = tabla[0, j]
-        celda.set_facecolor('#2c3e50')
-        celda.set_text_props(color='white', fontweight='bold')
-
-    for i in range(1, n_rows + 1):
-        color = '#f8f9fa' if i % 2 == 0 else 'white'
-        for j in range(len(df_tabla.columns)):
-            tabla[i, j].set_facecolor(color)
-
-    plt.tight_layout()
-    fig.savefig(ruta_salida, dpi=dpi, bbox_inches='tight')
-    plt.close(fig)
 
 
 # ---------------------------------------------------------------------------
@@ -546,20 +493,11 @@ def analizar_decision_mcdm(
             
             return row
 
-    filas_resumen_global = []
-    filas_resumen_global.append(registrar_recomendacion(I_asf, 'Compromise (ASF)'))
-    filas_resumen_global.append(registrar_recomendacion(I_pw, 'Pseudo-Weights Match'))
+    registrar_recomendacion(I_asf, 'Compromise (ASF)')
+    registrar_recomendacion(I_pw, 'Pseudo-Weights Match')
     if len(I_knee) > 0:
         mejor_knee_idx = I_knee[F_norm[I_knee].mean(axis=1).argmin()]
-        filas_resumen_global.append(registrar_recomendacion([mejor_knee_idx], 'Mejor Knee Point'))
-
-    df_resumen_global = pd.DataFrame([r for r in filas_resumen_global if r is not None])
-    
-    ruta_tabla = os.path.join(dir_salida, f'mcdm_tabla_recomendaciones_{etiqueta_modo}.png')
-    _graficar_tabla_mcdm(df_resumen_global, 'Recomendaciones MCDM — Agregado Global', ruta_tabla, dpi)
-    artefactos.append((ruta_tabla, "Tabla Recomendaciones MCDM"))
-    if emitir_log:
-        imprimir_grafico_guardado(ruta_tabla, "Tabla Recomendaciones MCDM")
+        registrar_recomendacion([mejor_knee_idx], 'Mejor Knee Point')
 
     # =======================================================================
     # 2. ANÁLISIS PER-CONFIGURACIÓN

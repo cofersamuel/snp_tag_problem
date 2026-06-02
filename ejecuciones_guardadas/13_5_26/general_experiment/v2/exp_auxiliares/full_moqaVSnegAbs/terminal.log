@@ -1,0 +1,652 @@
+
+[93m[1m╔══════════════════════════════════════════════════════════════════════════════╗
+[93m[1m║                       CONFIGURACIÓN (user_config.ini)                        ║
+[93m[1m╚══════════════════════════════════════════════════════════════════════════════╝[0m
+      • [General]
+          - dir_salida_base: results
+      • [Dataset]
+          - n_snps: 1032
+          - num_bloques: 8
+          - origen_datos: hinds2005
+      • [Objetivos]
+          - transform: neg
+          - eval: absoluta
+          - cap_tolerancia: 999999.0
+      • [Algoritmos]
+          - semilla_maestra: 42
+          - modo_semillas: non_deterministic
+          - normalizacion: static_dataset_limits
+          - pc: 0.7
+          - pm: 0.000969
+          - cruces: UX
+          - algoritmos: NSGA2, NSGA3, SPEA2, MOEAD_TCHE
+          - inits: random_dense, greedy_multi
+      • [Parámetros Específicos de Algoritmo]
+          - max_cobertura_objetivo: 5
+          - moead_vecinos: 15
+          - moead_prob_vecindad: 0.9
+      • [Sistema]
+          - report_plot_dpi: 300
+          - paso_generacional_metricas: 10
+      • Objetivos de optimización:
+          - f1 (Compacidad): Minimizar
+          - f2 (Tolerancia): Maximizar
+          - f3 (Hamming Medio): Maximizar
+          - f4 (Disimilitud): Minimizar
+
+  📊  [1mMetadatos y Dimensiones del Dataset[0m
+  ─────────────────────────────────────────
+       [92m✅  Hinds 2005 cargado y filtrado: 48 patrones alelicos × 772 SNPs polimórficos (de 1032 originales) desde 'snp_tag/data/datasets/hinds2005_1032.txt'[0m
+      • N_SNPS=772 | N_PATRONES=48 | FICHERO=snp_tag/data/datasets/hinds2005_1032.txt
+
+[93m[1m╔══════════════════════════════════════════════════════════════════════════════╗
+[93m[1m║                  DIAGNÓSTICO DE DATOS Y DESEQUILIBRIO (LD)                   ║
+[93m[1m╚══════════════════════════════════════════════════════════════════════════════╝[0m
+
+  🧬  [1mVisualización de la Estructura de Haplotipos[0m
+  ──────────────────────────────────────────────────
+      🖼️  Mapa de calor de haplotipos: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/0_datos_previos/heatmap_haplotipos_full.png\ [36mheatmap_haplotipos_full.png[0m]8;;\
+      🖼️  Estructura LD (13 bloques): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/0_datos_previos/bloques_ld_haplotipos_full.png\ [36mbloques_ld_haplotipos_full.png[0m]8;;\
+
+  📈  [1mAnálisis de Variabilidad y Frecuencia Alélica[0m
+  ───────────────────────────────────────────────────
+      🖼️  Distribución de frecuencia alélica: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/0_datos_previos/histograma_alelico_full.png\ [36mhistograma_alelico_full.png[0m]8;;\
+      🖼️  Variabilidad por SNP: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/0_datos_previos/variabilidad_snps_full.png\ [36mvariabilidad_snps_full.png[0m]8;;\
+      🖼️  Alelos dominantes por haplotipo: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/0_datos_previos/conteo_alelos_full.png\ [36mconteo_alelos_full.png[0m]8;;\
+      🖼️  Distribución de distancias de Hamming: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/0_datos_previos/histograma_hamming_full.png\ [36mhistograma_hamming_full.png[0m]8;;\
+
+  🔗  [1mCaracterización Global de Correlación (LD)[0m
+  ────────────────────────────────────────────────
+      • [1mCorrelación media absoluta (global |r|)[0m: 0.1387
+      • [1mTotal de pares evaluados[0m: 297606
+      🖼️  Mapa de calor de correlación (LD): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/0_datos_previos/heatmap_correlacion_completa_full.png\ [36mheatmap_correlacion_completa_full.png[0m]8;;\
+      🖼️  Distribución de correlaciones (LD): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/0_datos_previos/histograma_correlaciones_ld_full.png\ [36mhistograma_correlaciones_ld_full.png[0m]8;;\
+      🖼️  CDF de correlación LD: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/0_datos_previos/cdf_correlacion_absoluta_ld_full.png\ [36mcdf_correlacion_absoluta_ld_full.png[0m]8;;\
+
+  📐  [1mAnálisis de Similitud Genotípica (Pares de Haplotipos)[0m
+  ────────────────────────────────────────────────────────────
+      • [1mNúmero de pares de haplotipos[0m: 1128
+      • [1mPares mostrados[0m: 3 similares / 3 distintos
+      • [1mVista parcial[0m: primeros 32 SNPs
+      • [1mPercentiles (Hamming)[0m: P33=237.00, P66=273.00
+      • [Etiquetas: <=P33 -> muy similar | (P33,P66] -> intermedio | >P66 -> muy distinto]
+
+  🤝  [1mPares de mayor similitud genética[0m
+  ───────────────────────────────────────
+      •  [1mPar (26, 27)[0m | Hamming=[1m129[0m | muy similar
+        h026: [90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m1111[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m11111...
+        h027: 1111[90m0[0m111111[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m111[90m0[0m[90m0[0m1111[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m...
+      •  [1mPar (17, 41)[0m | Hamming=[1m134[0m | muy similar
+        h017: 1111[90m0[0m111111[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m111[90m0[0m[90m0[0m1111[90m0[0m1111...
+        h041: 1111[90m0[0m111111[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m111[90m0[0m[90m0[0m1111[90m0[0m[90m0[0m111...
+      •  [1mPar (36, 46)[0m | Hamming=[1m140[0m | muy similar
+        h036: [90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m1111111[90m0[0m[90m0[0m1111[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m...
+        h046: 1111[90m0[0m111111[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m111[90m0[0m[90m0[0m1111[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m...
+
+  ↔️   [1mPares de mayor divergencia genética[0m
+  ─────────────────────────────────────────
+      •  [1mPar (29, 36)[0m | Hamming=[1m407[0m | muy distinto
+        h029: [90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m11[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m[90m0[0m[90m0[0m...
+        h036: [90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m1111111[90m0[0m[90m0[0m1111[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m...
+      •  [1mPar (28, 29)[0m | Hamming=[1m404[0m | muy distinto
+        h028: [90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m11[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m[90m0[0m[90m0[0m...
+        h029: [90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m11[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m[90m0[0m[90m0[0m...
+      •  [1mPar (24, 29)[0m | Hamming=[1m390[0m | muy distinto
+        h024: 1111[90m0[0m111111[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m111[90m0[0m[90m0[0m1[90m0[0m11[90m0[0m1111...
+        h029: [90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m11[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m[90m0[0m1[90m0[0m[90m0[0m[90m0[0m[90m0[0m...
+
+[93m[1m╔══════════════════════════════════════════════════════════════════════════════╗
+[93m[1m║                             MOTOR MULTIOBJETIVO                              ║
+[93m[1m╚══════════════════════════════════════════════════════════════════════════════╝[0m
+
+  📅  [1mPlanificación de Ejecución[0m
+  ────────────────────────────────
+      • Total: 4 alg. x 2 inits. x 1 cruces x 5 runs = 40 ejecuciones
+      • Referencias: 220 puntos | Particiones: 9
+
+  🧬  [1mFase Evolutiva[0m
+  ────────────────────
+    • Iniciando 40 experimentos en modo paralelo seguro
+      • Paralelizando con hasta 14 procesos en paralelo
+      • [Progreso:  1/40] | [NSGA3-random_dense-UX] ejecución 2/5 (178.9 s)
+      • [Progreso:  2/40] | [NSGA2-greedy_multi-UX] ejecución 2/5 (195.3 s)
+      • [Progreso:  3/40] | [NSGA2-greedy_multi-UX] ejecución 5/5 (198.9 s)
+      • [Progreso:  4/40] | [NSGA2-greedy_multi-UX] ejecución 1/5 (210.5 s)
+      • [Progreso:  5/40] | [NSGA2-random_dense-UX] ejecución 3/5 (214.1 s)
+      • [Progreso:  6/40] | [NSGA3-random_dense-UX] ejecución 4/5 (215.3 s)
+      • [Progreso:  7/40] | [NSGA3-random_dense-UX] ejecución 3/5 (220.8 s)
+      • [Progreso:  8/40] | [NSGA2-random_dense-UX] ejecución 1/5 (225.0 s)
+      • [Progreso:  9/40] | [NSGA2-random_dense-UX] ejecución 2/5 (238.9 s)
+      • [Progreso: 10/40] | [NSGA2-random_dense-UX] ejecución 5/5 (240.5 s)
+      • [Progreso: 11/40] | [NSGA3-random_dense-UX] ejecución 1/5 (241.2 s)
+      • [Progreso: 12/40] | [NSGA2-greedy_multi-UX] ejecución 4/5 (243.2 s)
+      • [Progreso: 13/40] | [NSGA2-greedy_multi-UX] ejecución 3/5 (246.5 s)
+      • [Progreso: 14/40] | [NSGA2-random_dense-UX] ejecución 4/5 (261.4 s)
+      • [Progreso: 15/40] | [NSGA3-greedy_multi-UX] ejecución 5/5 (144.6 s)
+      • [Progreso: 16/40] | [NSGA3-greedy_multi-UX] ejecución 4/5 (152.4 s)
+      • [Progreso: 17/40] | [NSGA3-greedy_multi-UX] ejecución 2/5 (196.3 s)
+      • [Progreso: 18/40] | [NSGA3-random_dense-UX] ejecución 5/5 (262.6 s)
+      • [Progreso: 19/40] | [NSGA3-greedy_multi-UX] ejecución 1/5 (250.9 s)
+      • [Progreso: 20/40] | [NSGA3-greedy_multi-UX] ejecución 3/5 (241.1 s)
+      • [Progreso: 21/40] | [SPEA2-greedy_multi-UX] ejecución 2/5 (234.1 s)
+      • [Progreso: 22/40] | [SPEA2-random_dense-UX] ejecución 4/5 (256.3 s)
+      • [Progreso: 23/40] | [SPEA2-random_dense-UX] ejecución 2/5 (289.0 s)
+      • [Progreso: 24/40] | [SPEA2-random_dense-UX] ejecución 1/5 (324.5 s)
+      • [Progreso: 25/40] | [SPEA2-greedy_multi-UX] ejecución 1/5 (338.2 s)
+      • [Progreso: 26/40] | [SPEA2-random_dense-UX] ejecución 3/5 (346.5 s)
+      • [Progreso: 27/40] | [SPEA2-random_dense-UX] ejecución 5/5 (351.5 s)
+      • [Progreso: 28/40] | [SPEA2-greedy_multi-UX] ejecución 3/5 (336.1 s)
+      • [Progreso: 29/40] | [SPEA2-greedy_multi-UX] ejecución 4/5 (314.4 s)
+      • [Progreso: 30/40] | [SPEA2-greedy_multi-UX] ejecución 5/5 (313.4 s)
+      • [Progreso: 31/40] | [MOEAD_TCHE-random_dense-UX] ejecución 1/5 (418.6 s)
+      • [Progreso: 32/40] | [MOEAD_TCHE-random_dense-UX] ejecución 4/5 (392.6 s)
+      • [Progreso: 33/40] | [MOEAD_TCHE-random_dense-UX] ejecución 5/5 (387.9 s)
+      • [Progreso: 34/40] | [MOEAD_TCHE-random_dense-UX] ejecución 2/5 (427.6 s)
+      • [Progreso: 35/40] | [MOEAD_TCHE-random_dense-UX] ejecución 3/5 (450.4 s)
+      • [Progreso: 36/40] | [MOEAD_TCHE-greedy_multi-UX] ejecución 3/5 (379.7 s)
+      • [Progreso: 37/40] | [MOEAD_TCHE-greedy_multi-UX] ejecución 2/5 (411.5 s)
+      • [Progreso: 38/40] | [MOEAD_TCHE-greedy_multi-UX] ejecución 1/5 (433.4 s)
+      • [Progreso: 39/40] | [MOEAD_TCHE-greedy_multi-UX] ejecución 4/5 (367.2 s)
+      • [Progreso: 40/40] | [MOEAD_TCHE-greedy_multi-UX] ejecución 5/5 (376.0 s)
+
+[93m[1m╔══════════════════════════════════════════════════════════════════════════════╗
+[93m[1m║                            SÍNTESIS DE RESULTADOS                            ║
+[93m[1m╚══════════════════════════════════════════════════════════════════════════════╝[0m
+  • [1mConfiguración de síntesis[0m: DPI=300
+
+  ⏱️   [1mAnálisis de Rendimiento y Tiempo[0m
+  ──────────────────────────────────────
+      🖼️  Media ± std tiempo ejecución: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/0_tiempo/media_std_tiempo_full.png\ [36mmedia_std_tiempo_full.png[0m]8;;\
+      • Tiempo bloque 'Análisis de Rendimiento y Tiempo': 0.3s
+
+  🧮  [1mProcesamiento de Métricas (con progreso)[0m
+  ──────────────────────────────────────────────
+    • Iniciando métricas finales: 40 ejecuciones
+      • [Progreso:  1/40] | [NSGA2-random_dense-UX] ejecución 1/5 (0.2 s)
+      • [Progreso:  2/40] | [NSGA2-random_dense-UX] ejecución 2/5 (0.2 s)
+      • [Progreso:  3/40] | [NSGA2-random_dense-UX] ejecución 3/5 (0.2 s)
+      • [Progreso:  4/40] | [NSGA2-random_dense-UX] ejecución 4/5 (0.2 s)
+      • [Progreso:  5/40] | [NSGA2-random_dense-UX] ejecución 5/5 (0.2 s)
+      • [Progreso:  6/40] | [NSGA2-greedy_multi-UX] ejecución 1/5 (0.2 s)
+      • [Progreso:  7/40] | [NSGA2-greedy_multi-UX] ejecución 2/5 (0.2 s)
+      • [Progreso:  8/40] | [NSGA2-greedy_multi-UX] ejecución 3/5 (0.2 s)
+      • [Progreso:  9/40] | [NSGA2-greedy_multi-UX] ejecución 4/5 (0.2 s)
+      • [Progreso: 10/40] | [NSGA2-greedy_multi-UX] ejecución 5/5 (0.2 s)
+      • [Progreso: 11/40] | [NSGA3-random_dense-UX] ejecución 1/5 (0.0 s)
+      • [Progreso: 12/40] | [NSGA3-random_dense-UX] ejecución 2/5 (0.0 s)
+      • [Progreso: 13/40] | [NSGA3-random_dense-UX] ejecución 3/5 (0.0 s)
+      • [Progreso: 14/40] | [NSGA3-random_dense-UX] ejecución 4/5 (0.0 s)
+      • [Progreso: 15/40] | [NSGA3-random_dense-UX] ejecución 5/5 (0.0 s)
+      • [Progreso: 16/40] | [NSGA3-greedy_multi-UX] ejecución 1/5 (0.0 s)
+      • [Progreso: 17/40] | [NSGA3-greedy_multi-UX] ejecución 2/5 (0.0 s)
+      • [Progreso: 18/40] | [NSGA3-greedy_multi-UX] ejecución 3/5 (0.0 s)
+      • [Progreso: 19/40] | [NSGA3-greedy_multi-UX] ejecución 4/5 (0.0 s)
+      • [Progreso: 20/40] | [NSGA3-greedy_multi-UX] ejecución 5/5 (0.0 s)
+      • [Progreso: 21/40] | [SPEA2-random_dense-UX] ejecución 1/5 (0.2 s)
+      • [Progreso: 22/40] | [SPEA2-random_dense-UX] ejecución 2/5 (0.2 s)
+      • [Progreso: 23/40] | [SPEA2-random_dense-UX] ejecución 3/5 (0.2 s)
+      • [Progreso: 24/40] | [SPEA2-random_dense-UX] ejecución 4/5 (0.2 s)
+      • [Progreso: 25/40] | [SPEA2-random_dense-UX] ejecución 5/5 (0.1 s)
+      • [Progreso: 26/40] | [SPEA2-greedy_multi-UX] ejecución 1/5 (0.2 s)
+      • [Progreso: 27/40] | [SPEA2-greedy_multi-UX] ejecución 2/5 (0.2 s)
+      • [Progreso: 28/40] | [SPEA2-greedy_multi-UX] ejecución 3/5 (0.2 s)
+      • [Progreso: 29/40] | [SPEA2-greedy_multi-UX] ejecución 4/5 (0.2 s)
+      • [Progreso: 30/40] | [SPEA2-greedy_multi-UX] ejecución 5/5 (0.2 s)
+      • [Progreso: 31/40] | [MOEAD_TCHE-random_dense-UX] ejecución 1/5 (0.0 s)
+      • [Progreso: 32/40] | [MOEAD_TCHE-random_dense-UX] ejecución 2/5 (0.0 s)
+      • [Progreso: 33/40] | [MOEAD_TCHE-random_dense-UX] ejecución 3/5 (0.0 s)
+      • [Progreso: 34/40] | [MOEAD_TCHE-random_dense-UX] ejecución 4/5 (0.0 s)
+      • [Progreso: 35/40] | [MOEAD_TCHE-random_dense-UX] ejecución 5/5 (0.0 s)
+      • [Progreso: 36/40] | [MOEAD_TCHE-greedy_multi-UX] ejecución 1/5 (0.0 s)
+      • [Progreso: 37/40] | [MOEAD_TCHE-greedy_multi-UX] ejecución 2/5 (0.0 s)
+      • [Progreso: 38/40] | [MOEAD_TCHE-greedy_multi-UX] ejecución 3/5 (0.0 s)
+      • [Progreso: 39/40] | [MOEAD_TCHE-greedy_multi-UX] ejecución 4/5 (0.0 s)
+      • [Progreso: 40/40] | [MOEAD_TCHE-greedy_multi-UX] ejecución 5/5 (0.0 s)
+      • Métricas finales completadas: 40 ejecuciones en 3.9s
+
+    • Iniciando métricas generacionales: 40 ejecuciones con historial
+      • [Progreso:  1/40] | [NSGA2-greedy_multi-UX] ejecución 4/5 (12.9 s)
+      • [Progreso:  2/40] | [NSGA3-random_dense-UX] ejecución 1/5 (15.3 s)
+      • [Progreso:  3/40] | [NSGA2-greedy_multi-UX] ejecución 1/5 (17.6 s)
+      • [Progreso:  4/40] | [NSGA3-random_dense-UX] ejecución 3/5 (17.5 s)
+      • [Progreso:  5/40] | [NSGA3-random_dense-UX] ejecución 4/5 (17.7 s)
+      • [Progreso:  6/40] | [NSGA2-random_dense-UX] ejecución 2/5 (18.6 s)
+      • [Progreso:  7/40] | [NSGA3-random_dense-UX] ejecución 2/5 (19.1 s)
+      • [Progreso:  8/40] | [NSGA2-greedy_multi-UX] ejecución 2/5 (19.3 s)
+      • [Progreso:  9/40] | [NSGA2-greedy_multi-UX] ejecución 5/5 (19.6 s)
+      • [Progreso: 10/40] | [NSGA2-random_dense-UX] ejecución 4/5 (20.3 s)
+      • [Progreso: 11/40] | [NSGA2-greedy_multi-UX] ejecución 3/5 (21.0 s)
+      • [Progreso: 12/40] | [NSGA2-random_dense-UX] ejecución 3/5 (22.9 s)
+      • [Progreso: 13/40] | [NSGA2-random_dense-UX] ejecución 5/5 (24.2 s)
+      • [Progreso: 14/40] | [NSGA2-random_dense-UX] ejecución 1/5 (24.3 s)
+      • [Progreso: 15/40] | [NSGA3-greedy_multi-UX] ejecución 2/5 (8.8 s)
+      • [Progreso: 16/40] | [NSGA3-random_dense-UX] ejecución 5/5 (17.4 s)
+      • [Progreso: 17/40] | [NSGA3-greedy_multi-UX] ejecución 4/5 (12.6 s)
+      • [Progreso: 18/40] | [NSGA3-greedy_multi-UX] ejecución 3/5 (13.7 s)
+      • [Progreso: 19/40] | [NSGA3-greedy_multi-UX] ejecución 1/5 (16.4 s)
+      • [Progreso: 20/40] | [SPEA2-random_dense-UX] ejecución 4/5 (12.1 s)
+      • [Progreso: 21/40] | [MOEAD_TCHE-random_dense-UX] ejecución 1/5 (2.0 s)
+      • [Progreso: 22/40] | [MOEAD_TCHE-random_dense-UX] ejecución 2/5 (1.8 s)
+      • [Progreso: 23/40] | [MOEAD_TCHE-random_dense-UX] ejecución 4/5 (1.4 s)
+      • [Progreso: 24/40] | [MOEAD_TCHE-greedy_multi-UX] ejecución 1/5 (0.7 s)
+      • [Progreso: 25/40] | [MOEAD_TCHE-random_dense-UX] ejecución 3/5 (2.2 s)
+      • [Progreso: 26/40] | [MOEAD_TCHE-greedy_multi-UX] ejecución 2/5 (0.4 s)
+      • [Progreso: 27/40] | [MOEAD_TCHE-random_dense-UX] ejecución 5/5 (2.0 s)
+      • [Progreso: 28/40] | [MOEAD_TCHE-greedy_multi-UX] ejecución 5/5 (0.6 s)
+      • [Progreso: 29/40] | [SPEA2-random_dense-UX] ejecución 3/5 (15.2 s)
+      • [Progreso: 30/40] | [MOEAD_TCHE-greedy_multi-UX] ejecución 4/5 (0.9 s)
+      • [Progreso: 31/40] | [MOEAD_TCHE-greedy_multi-UX] ejecución 3/5 (1.1 s)
+      • [Progreso: 32/40] | [NSGA3-greedy_multi-UX] ejecución 5/5 (16.6 s)
+      • [Progreso: 33/40] | [SPEA2-random_dense-UX] ejecución 1/5 (16.5 s)
+      • [Progreso: 34/40] | [SPEA2-random_dense-UX] ejecución 2/5 (16.6 s)
+      • [Progreso: 35/40] | [SPEA2-random_dense-UX] ejecución 5/5 (15.8 s)
+      • [Progreso: 36/40] | [SPEA2-greedy_multi-UX] ejecución 4/5 (13.2 s)
+      • [Progreso: 37/40] | [SPEA2-greedy_multi-UX] ejecución 1/5 (16.9 s)
+      • [Progreso: 38/40] | [SPEA2-greedy_multi-UX] ejecución 3/5 (16.7 s)
+      • [Progreso: 39/40] | [SPEA2-greedy_multi-UX] ejecución 2/5 (17.8 s)
+      • [Progreso: 40/40] | [SPEA2-greedy_multi-UX] ejecución 5/5 (13.2 s)
+      • Métricas generacionales completadas: 40 ejecuciones en 43.8s
+
+  📊  [1mTrazabilidad y Exportación de Datos (CSV)[0m
+  ───────────────────────────────────────────────
+      🖼️  Resultados detallados por ejecución: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/1_ejecuciones/resultados_detallados_full.csv\ [36mresultados_detallados_full.csv[0m]8;;\
+      🖼️  Historial evolutivo generacional: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/1_ejecuciones/historico_generacional_full.csv\ [36mhistorico_generacional_full.csv[0m]8;;\
+      🖼️  Soluciones de frentes finales (CSV): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/1_ejecuciones/frentes_pareto_full.csv\ [36mfrentes_pareto_full.csv[0m]8;;\
+      🖼️  Configuración del experimento (INI): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/1_ejecuciones/user_config_full.ini\ [36muser_config_full.ini[0m]8;;\
+
+  📍  [1mPuntos Críticos del Espacio de Objetivos[0m
+  ──────────────────────────────────────────────
+      • [1mPunto Ideal Empírico (mejor)[0m: [   7.         -116.         -203.46897163    1.58163259]
+      • [1mPunto Nadir Empírico (peor)[0m: [ 5.39000000e+02 -1.00000000e+00 -3.35549645e+00  1.12396535e+03]
+      • [1mPunto Ideal Teórico (Ref)[0m: [   1.         -128.         -255.78368794    0.        ]
+      • [1mPunto Nadir Teórico (Ref)[0m: [ 7.72000000e+02 -1.05754007e-14 -1.05754007e-14  2.14008441e+03]
+      • [1mPunto Ref. Hipervolumen (1.1)[0m: [ 849.1          12.8          25.5783688  2354.09285625]
+
+[93m[1m╔══════════════════════════════════════════════════════════════════════════════╗
+[93m[1m║                           REPORTES Y VISUALIZACIÓN                           ║
+[93m[1m╚══════════════════════════════════════════════════════════════════════════════╝[0m
+
+  🔍  [1mDistribución y Correlación de Frentes de Pareto[0m
+  ─────────────────────────────────────────────────────
+
+  🔗  [1mCorrelación de Objetivos[0m
+  ──────────────────────────────
+      🖼️  Correlación objetivos Pareto (Valores Reales): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/otros/correlacion_objetivos_pareto_full.png\ [36mcorrelacion_objetivos_pareto_full.png[0m]8;;\
+
+  📈  [1mCoordenadas Paralelas[0m
+  ───────────────────────────
+      🖼️  Coordenadas paralelas MOEAD_TCHE (greedy_multi+UX): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_MOEAD_TCHE_greedy_multi+UX_full.png\ [36mcoordenadas_paralelas_MOEAD_TCHE_greedy_multi+UX_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas MOEAD_TCHE (random_dense+UX): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_MOEAD_TCHE_random_dense+UX_full.png\ [36mcoordenadas_paralelas_MOEAD_TCHE_random_dense+UX_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas NSGA2 (greedy_multi+UX): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_NSGA2_greedy_multi+UX_full.png\ [36mcoordenadas_paralelas_NSGA2_greedy_multi+UX_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas NSGA2 (random_dense+UX): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_NSGA2_random_dense+UX_full.png\ [36mcoordenadas_paralelas_NSGA2_random_dense+UX_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas NSGA3 (greedy_multi+UX): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_NSGA3_greedy_multi+UX_full.png\ [36mcoordenadas_paralelas_NSGA3_greedy_multi+UX_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas NSGA3 (random_dense+UX): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_NSGA3_random_dense+UX_full.png\ [36mcoordenadas_paralelas_NSGA3_random_dense+UX_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas SPEA2 (greedy_multi+UX): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_SPEA2_greedy_multi+UX_full.png\ [36mcoordenadas_paralelas_SPEA2_greedy_multi+UX_full.png[0m]8;;\
+      🖼️  Coordenadas paralelas SPEA2 (random_dense+UX): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/coordenadas_paralelas/coordenadas_paralelas_SPEA2_random_dense+UX_full.png\ [36mcoordenadas_paralelas_SPEA2_random_dense+UX_full.png[0m]8;;\
+
+  🎯  [1mFrentes de Pareto[0m
+  ───────────────────────
+      🖼️  Frente Pareto NSGA3 (greedy_multi+UX): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_multi+ux_full.png\ [36mfrentes_pareto_nsga3_greedy_multi+ux_full.png[0m]8;;\
+      🖼️  Frente Pareto NSGA3 (random_dense+UX): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_dense+ux_full.png\ [36mfrentes_pareto_nsga3_random_dense+ux_full.png[0m]8;;\
+      🖼️  Frente Agregado: Frentes de Pareto Agregados: NSGA3: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_agregados_nsga3_full.png\ [36mfrentes_pareto_agregados_nsga3_full.png[0m]8;;\
+      🖼️  Frente Pareto MOEAD_TCHE (greedy_multi+UX): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_multi+ux_full.png\ [36mfrentes_pareto_moead_tche_greedy_multi+ux_full.png[0m]8;;\
+      🖼️  Frente Pareto MOEAD_TCHE (random_dense+UX): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_dense+ux_full.png\ [36mfrentes_pareto_moead_tche_random_dense+ux_full.png[0m]8;;\
+      🖼️  Frente Agregado: Frentes de Pareto Agregados: MOEAD_TCHE: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_agregados_moead_tche_full.png\ [36mfrentes_pareto_agregados_moead_tche_full.png[0m]8;;\
+      🖼️  Frente Pareto NSGA2 (greedy_multi+UX): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_multi+ux_full.png\ [36mfrentes_pareto_nsga2_greedy_multi+ux_full.png[0m]8;;\
+      🖼️  Frente Pareto NSGA2 (random_dense+UX): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_dense+ux_full.png\ [36mfrentes_pareto_nsga2_random_dense+ux_full.png[0m]8;;\
+      🖼️  Frente Agregado: Frentes de Pareto Agregados: NSGA2: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_agregados_nsga2_full.png\ [36mfrentes_pareto_agregados_nsga2_full.png[0m]8;;\
+      🖼️  Frente Pareto SPEA2 (greedy_multi+UX): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_multi+ux_full.png\ [36mfrentes_pareto_spea2_greedy_multi+ux_full.png[0m]8;;\
+      🖼️  Frente Pareto SPEA2 (random_dense+UX): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_dense+ux_full.png\ [36mfrentes_pareto_spea2_random_dense+ux_full.png[0m]8;;\
+      🖼️  Frente Agregado: Frentes de Pareto Agregados: SPEA2: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_agregados_spea2_full.png\ [36mfrentes_pareto_agregados_spea2_full.png[0m]8;;\
+      🖼️  Frente Agregado: Comparativa Global de Frentes de Pareto: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_global_full.png\ [36mfrentes_pareto_global_full.png[0m]8;;\
+      • Tiempo bloque 'Frentes de Pareto': 12.7s
+
+  🔄  [1mAnálisis de Convergencia Progresiva[0m
+  ─────────────────────────────────────────
+      🖼️  Convergencia por métrica (Range) con subplots por algoritmo: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/2_metricas_convergencia/convergencia_range_full.png\ [36mconvergencia_range_full.png[0m]8;;\
+      🖼️  Convergencia por métrica (MinSum) con subplots por algoritmo: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/2_metricas_convergencia/convergencia_minsum_full.png\ [36mconvergencia_minsum_full.png[0m]8;;\
+      🖼️  Convergencia por métrica (SumMin) con subplots por algoritmo: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/2_metricas_convergencia/convergencia_summin_full.png\ [36mconvergencia_summin_full.png[0m]8;;\
+      🖼️  Convergencia por métrica (MaxToleranceRate) con subplots por algoritmo: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/2_metricas_convergencia/convergencia_maxtolerancerate_full.png\ [36mconvergencia_maxtolerancerate_full.png[0m]8;;\
+      🖼️  Convergencia por métrica (AvgToleranceRate) con subplots por algoritmo: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/2_metricas_convergencia/convergencia_avgtolerancerate_full.png\ [36mconvergencia_avgtolerancerate_full.png[0m]8;;\
+      🖼️  Convergencia por métrica (AvgHammingDistance) con subplots por algoritmo: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/2_metricas_convergencia/convergencia_avghammingdistance_full.png\ [36mconvergencia_avghammingdistance_full.png[0m]8;;\
+      🖼️  Convergencia por métrica (Hypervolume) con subplots por algoritmo: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/2_metricas_convergencia/convergencia_hypervolume_full.png\ [36mconvergencia_hypervolume_full.png[0m]8;;\
+      🖼️  Convergencia por métrica (IGD+) con subplots por algoritmo: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/2_metricas_convergencia/convergencia_igd+_full.png\ [36mconvergencia_igd+_full.png[0m]8;;\
+      🖼️  Convergencia por métrica (GD+) con subplots por algoritmo: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/2_metricas_convergencia/convergencia_gd+_full.png\ [36mconvergencia_gd+_full.png[0m]8;;\
+
+  📊  [1mSíntesis Estadística Comparativa[0m
+  ──────────────────────────────────────
+
+  📦  [1mResumen Global (Boxplots)[0m
+  ───────────────────────────────
+      🖼️  Panel de Boxplots comparativos: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/0_boxplots/boxplots_metricas_finales_full.png\ [36mboxplots_metricas_finales_full.png[0m]8;;\
+      🖼️  Distribución Range (Boxplot): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/0_boxplots/boxplot_metricas_Range_full.png\ [36mboxplot_metricas_Range_full.png[0m]8;;\
+      🖼️  Distribución SumMin (Boxplot): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/0_boxplots/boxplot_metricas_SumMin_full.png\ [36mboxplot_metricas_SumMin_full.png[0m]8;;\
+      🖼️  Distribución MinSum (Boxplot): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/0_boxplots/boxplot_metricas_MinSum_full.png\ [36mboxplot_metricas_MinSum_full.png[0m]8;;\
+      🖼️  Distribución MaxToleranceRate (Boxplot): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/0_boxplots/boxplot_metricas_MaxToleranceRate_full.png\ [36mboxplot_metricas_MaxToleranceRate_full.png[0m]8;;\
+      🖼️  Distribución AvgToleranceRate (Boxplot): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/0_boxplots/boxplot_metricas_AvgToleranceRate_full.png\ [36mboxplot_metricas_AvgToleranceRate_full.png[0m]8;;\
+      🖼️  Distribución AvgHammingDistance (Boxplot): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/0_boxplots/boxplot_metricas_AvgHammingDistance_full.png\ [36mboxplot_metricas_AvgHammingDistance_full.png[0m]8;;\
+      🖼️  Distribución Hypervolume (Boxplot): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/0_boxplots/boxplot_metricas_Hypervolume_full.png\ [36mboxplot_metricas_Hypervolume_full.png[0m]8;;\
+      🖼️  Distribución IGD+ (Boxplot): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/0_boxplots/boxplot_metricas_IGD+_full.png\ [36mboxplot_metricas_IGD+_full.png[0m]8;;\
+      🖼️  Distribución GD+ (Boxplot): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/0_boxplots/boxplot_metricas_GD+_full.png\ [36mboxplot_metricas_GD+_full.png[0m]8;;\
+
+  🎻  [1mDistribuciones Detalladas (Violin Plots)[0m
+  ──────────────────────────────────────────────
+      🖼️  Panel de Distribución Violin: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/1_violines/violin_panel_metricas_finales_full.png\ [36mviolin_panel_metricas_finales_full.png[0m]8;;\
+      🖼️  Distribución Range (Violin): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/1_violines/violin_metricas_Range_full.png\ [36mviolin_metricas_Range_full.png[0m]8;;\
+      🖼️  Distribución SumMin (Violin): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/1_violines/violin_metricas_SumMin_full.png\ [36mviolin_metricas_SumMin_full.png[0m]8;;\
+      🖼️  Distribución MinSum (Violin): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/1_violines/violin_metricas_MinSum_full.png\ [36mviolin_metricas_MinSum_full.png[0m]8;;\
+      🖼️  Distribución MaxToleranceRate (Violin): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/1_violines/violin_metricas_MaxToleranceRate_full.png\ [36mviolin_metricas_MaxToleranceRate_full.png[0m]8;;\
+      🖼️  Distribución AvgToleranceRate (Violin): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/1_violines/violin_metricas_AvgToleranceRate_full.png\ [36mviolin_metricas_AvgToleranceRate_full.png[0m]8;;\
+      🖼️  Distribución AvgHammingDistance (Violin): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/1_violines/violin_metricas_AvgHammingDistance_full.png\ [36mviolin_metricas_AvgHammingDistance_full.png[0m]8;;\
+      🖼️  Distribución Hypervolume (Violin): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/1_violines/violin_metricas_Hypervolume_full.png\ [36mviolin_metricas_Hypervolume_full.png[0m]8;;\
+      🖼️  Distribución IGD+ (Violin): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/1_violines/violin_metricas_IGD+_full.png\ [36mviolin_metricas_IGD+_full.png[0m]8;;\
+      🖼️  Distribución GD+ (Violin): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/1_violines/violin_metricas_GD+_full.png\ [36mviolin_metricas_GD+_full.png[0m]8;;\
+
+  📉  [1mAnálisis de Tendencia Central (Media ± Std)[0m
+  ─────────────────────────────────────────────────
+      🖼️  Panel de Tendencia Central (Media ± Std): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/2_barras/media_std_panel_metricas_finales_full.png\ [36mmedia_std_panel_metricas_finales_full.png[0m]8;;\
+      🖼️  Media ± std Range: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/2_barras/media_std_metricas_Range_full.png\ [36mmedia_std_metricas_Range_full.png[0m]8;;\
+      🖼️  Media ± std SumMin: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/2_barras/media_std_metricas_SumMin_full.png\ [36mmedia_std_metricas_SumMin_full.png[0m]8;;\
+      🖼️  Media ± std MinSum: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/2_barras/media_std_metricas_MinSum_full.png\ [36mmedia_std_metricas_MinSum_full.png[0m]8;;\
+      🖼️  Media ± std MaxToleranceRate: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/2_barras/media_std_metricas_MaxToleranceRate_full.png\ [36mmedia_std_metricas_MaxToleranceRate_full.png[0m]8;;\
+      🖼️  Media ± std AvgToleranceRate: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/2_barras/media_std_metricas_AvgToleranceRate_full.png\ [36mmedia_std_metricas_AvgToleranceRate_full.png[0m]8;;\
+      🖼️  Media ± std AvgHammingDistance: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/2_barras/media_std_metricas_AvgHammingDistance_full.png\ [36mmedia_std_metricas_AvgHammingDistance_full.png[0m]8;;\
+      🖼️  Media ± std Hypervolume: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/2_barras/media_std_metricas_Hypervolume_full.png\ [36mmedia_std_metricas_Hypervolume_full.png[0m]8;;\
+      🖼️  Media ± std IGD+: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/2_barras/media_std_metricas_IGD+_full.png\ [36mmedia_std_metricas_IGD+_full.png[0m]8;;\
+      🖼️  Media ± std GD+: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/3_sintesis/2_barras/media_std_metricas_GD+_full.png\ [36mmedia_std_metricas_GD+_full.png[0m]8;;\
+
+  🏆  [1mRanking por Métrica[0m
+  ─────────────────────────
+    • [1mRange[0m (↑)
+          1. NSGA2 (random_dense+UX): 1.9812 ± 0.0464
+          2. MOEAD_TCHE (random_dense+UX): 1.4057 ± 0.0289
+          3. NSGA3 (random_dense+UX): 1.3402 ± 0.0974
+          4. SPEA2 (random_dense+UX): 1.2990 ± 0.0933
+          5. NSGA2 (greedy_multi+UX): 0.3305 ± 0.0138
+          6. SPEA2 (greedy_multi+UX): 0.2981 ± 0.0223
+          7. NSGA3 (greedy_multi+UX): 0.2377 ± 0.0241
+          8. MOEAD_TCHE (greedy_multi+UX): 0.2191 ± 0.0283
+         • [1mPara más detalles[0m: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/ranking_Range_full.csv\ [36mranking_Range_full.csv[0m]8;;\
+
+         📊  [1mVALIDACIÓN ESTADÍSTICA (Range)[0m
+         ─────────────────────────────────
+             Estadístico H (Kruskal-Wallis): 36.6439
+             P-valor: 5.4782e-06
+             Significativo (p < 0.05): Sí
+
+                   🖼️  Heatmap de Comparaciones Dunn (Post-hoc): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/estadistica_hv/heatmap_dunn_range_full.png\ [36mheatmap_dunn_range_full.png[0m]8;;\
+                   🖼️  Diagrama de Diferencia Crítica (CD): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/estadistica_hv/diagrama_cd_range_full.png\ [36mdiagrama_cd_range_full.png[0m]8;;\
+
+    • [1mMinSum[0m (↓)
+          1. NSGA3 (random_dense+UX): 1.4141 ± 0.0124
+          2. NSGA2 (random_dense+UX): 1.4416 ± 0.0092
+          3. SPEA2 (random_dense+UX): 1.4814 ± 0.0104
+          4. MOEAD_TCHE (random_dense+UX): 1.5344 ± 0.0088
+          5. NSGA2 (greedy_multi+UX): 1.8465 ± 0.0030
+          6. SPEA2 (greedy_multi+UX): 1.8482 ± 0.0155
+          7. NSGA3 (greedy_multi+UX): 1.8826 ± 0.0086
+          8. MOEAD_TCHE (greedy_multi+UX): 1.8988 ± 0.0098
+         • [1mPara más detalles[0m: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/ranking_MinSum_full.csv\ [36mranking_MinSum_full.csv[0m]8;;\
+
+         📊  [1mVALIDACIÓN ESTADÍSTICA (MinSum)[0m
+         ──────────────────────────────────
+             Estadístico H (Kruskal-Wallis): 37.7590
+             P-valor: 3.3671e-06
+             Significativo (p < 0.05): Sí
+
+                   🖼️  Heatmap de Comparaciones Dunn (Post-hoc): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/estadistica_hv/heatmap_dunn_minsum_full.png\ [36mheatmap_dunn_minsum_full.png[0m]8;;\
+                   🖼️  Diagrama de Diferencia Crítica (CD): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/estadistica_hv/diagrama_cd_minsum_full.png\ [36mdiagrama_cd_minsum_full.png[0m]8;;\
+
+    • [1mSumMin[0m (↓)
+          1. NSGA2 (random_dense+UX): 0.6254 ± 0.0218
+          2. NSGA3 (random_dense+UX): 0.8843 ± 0.0348
+          3. MOEAD_TCHE (random_dense+UX): 0.9518 ± 0.0176
+          4. SPEA2 (random_dense+UX): 0.9983 ± 0.0403
+          5. NSGA2 (greedy_multi+UX): 1.7521 ± 0.0081
+          6. SPEA2 (greedy_multi+UX): 1.7663 ± 0.0193
+          7. NSGA3 (greedy_multi+UX): 1.8162 ± 0.0161
+          8. MOEAD_TCHE (greedy_multi+UX): 1.8344 ± 0.0183
+         • [1mPara más detalles[0m: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/ranking_SumMin_full.csv\ [36mranking_SumMin_full.csv[0m]8;;\
+
+         📊  [1mVALIDACIÓN ESTADÍSTICA (SumMin)[0m
+         ──────────────────────────────────
+             Estadístico H (Kruskal-Wallis): 37.5015
+             P-valor: 3.7684e-06
+             Significativo (p < 0.05): Sí
+
+                   🖼️  Heatmap de Comparaciones Dunn (Post-hoc): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/estadistica_hv/heatmap_dunn_summin_full.png\ [36mheatmap_dunn_summin_full.png[0m]8;;\
+                   🖼️  Diagrama de Diferencia Crítica (CD): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/estadistica_hv/diagrama_cd_summin_full.png\ [36mdiagrama_cd_summin_full.png[0m]8;;\
+
+    • [1mMaxToleranceRate[0m (↑)
+          1. SPEA2 (greedy_multi+UX): 0.2628 ± 0.0111
+          2. NSGA2 (greedy_multi+UX): 0.2588 ± 0.0045
+          3. NSGA3 (random_dense+UX): 0.2527 ± 0.0026
+          4. NSGA3 (greedy_multi+UX): 0.2497 ± 0.0065
+          5. NSGA2 (random_dense+UX): 0.2328 ± 0.0048
+          6. SPEA2 (random_dense+UX): 0.2314 ± 0.0076
+          7. MOEAD_TCHE (random_dense+UX): 0.2141 ± 0.0072
+          8. MOEAD_TCHE (greedy_multi+UX): 0.2130 ± 0.0140
+         • [1mPara más detalles[0m: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/ranking_MaxToleranceRate_full.csv\ [36mranking_MaxToleranceRate_full.csv[0m]8;;\
+
+         📊  [1mVALIDACIÓN ESTADÍSTICA (MaxToleranceRate)[0m
+         ────────────────────────────────────────────
+             Estadístico H (Kruskal-Wallis): 34.5366
+             P-valor: 1.3665e-05
+             Significativo (p < 0.05): Sí
+
+                   🖼️  Heatmap de Comparaciones Dunn (Post-hoc): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/estadistica_hv/heatmap_dunn_maxtolerancerate_full.png\ [36mheatmap_dunn_maxtolerancerate_full.png[0m]8;;\
+                   🖼️  Diagrama de Diferencia Crítica (CD): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/estadistica_hv/diagrama_cd_maxtolerancerate_full.png\ [36mdiagrama_cd_maxtolerancerate_full.png[0m]8;;\
+
+    • [1mAvgToleranceRate[0m (↑)
+          1. NSGA3 (random_dense+UX): 0.2242 ± 0.0049
+          2. NSGA2 (random_dense+UX): 0.2132 ± 0.0051
+          3. MOEAD_TCHE (random_dense+UX): 0.1943 ± 0.0036
+          4. SPEA2 (random_dense+UX): 0.1876 ± 0.0060
+          5. NSGA2 (greedy_multi+UX): 0.1791 ± 0.0027
+          6. NSGA3 (greedy_multi+UX): 0.1579 ± 0.0063
+          7. SPEA2 (greedy_multi+UX): 0.1576 ± 0.0113
+          8. MOEAD_TCHE (greedy_multi+UX): 0.1447 ± 0.0098
+         • [1mPara más detalles[0m: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/ranking_AvgToleranceRate_full.csv\ [36mranking_AvgToleranceRate_full.csv[0m]8;;\
+
+         📊  [1mVALIDACIÓN ESTADÍSTICA (AvgToleranceRate)[0m
+         ────────────────────────────────────────────
+             Estadístico H (Kruskal-Wallis): 36.6820
+             P-valor: 5.3882e-06
+             Significativo (p < 0.05): Sí
+
+                   🖼️  Heatmap de Comparaciones Dunn (Post-hoc): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/estadistica_hv/heatmap_dunn_avgtolerancerate_full.png\ [36mheatmap_dunn_avgtolerancerate_full.png[0m]8;;\
+                   🖼️  Diagrama de Diferencia Crítica (CD): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/estadistica_hv/diagrama_cd_avgtolerancerate_full.png\ [36mdiagrama_cd_avgtolerancerate_full.png[0m]8;;\
+
+    • [1mAvgHammingDistance[0m (↑)
+          1. SPEA2 (random_dense+UX): 151.5953 ± 5.2717
+          2. NSGA2 (random_dense+UX): 141.9365 ± 2.3008
+          3. NSGA3 (random_dense+UX): 140.4313 ± 2.0756
+          4. MOEAD_TCHE (random_dense+UX): 133.2579 ± 2.6305
+          5. SPEA2 (greedy_multi+UX): 21.8360 ± 0.7012
+          6. NSGA2 (greedy_multi+UX): 19.9614 ± 0.8077
+          7. MOEAD_TCHE (greedy_multi+UX): 17.4293 ± 1.8774
+          8. NSGA3 (greedy_multi+UX): 15.9880 ± 1.1930
+         • [1mPara más detalles[0m: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/ranking_AvgHammingDistance_full.csv\ [36mranking_AvgHammingDistance_full.csv[0m]8;;\
+
+         📊  [1mVALIDACIÓN ESTADÍSTICA (AvgHammingDistance)[0m
+         ──────────────────────────────────────────────
+             Estadístico H (Kruskal-Wallis): 37.4254
+             P-valor: 3.8958e-06
+             Significativo (p < 0.05): Sí
+
+                   🖼️  Heatmap de Comparaciones Dunn (Post-hoc): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/estadistica_hv/heatmap_dunn_avghammingdistance_full.png\ [36mheatmap_dunn_avghammingdistance_full.png[0m]8;;\
+                   🖼️  Diagrama de Diferencia Crítica (CD): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/estadistica_hv/diagrama_cd_avghammingdistance_full.png\ [36mdiagrama_cd_avghammingdistance_full.png[0m]8;;\
+
+    • [1mHypervolume[0m (↑)
+          1. NSGA2 (random_dense+UX): 0.5339 ± 0.0055
+          2. NSGA3 (random_dense+UX): 0.4786 ± 0.0069
+          3. SPEA2 (random_dense+UX): 0.4326 ± 0.0082
+          4. MOEAD_TCHE (random_dense+UX): 0.4285 ± 0.0073
+          5. NSGA2 (greedy_multi+UX): 0.0604 ± 0.0020
+          6. SPEA2 (greedy_multi+UX): 0.0602 ± 0.0049
+          7. NSGA3 (greedy_multi+UX): 0.0452 ± 0.0036
+          8. MOEAD_TCHE (greedy_multi+UX): 0.0411 ± 0.0038
+         • [1mPara más detalles[0m: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/ranking_Hypervolume_full.csv\ [36mranking_Hypervolume_full.csv[0m]8;;\
+
+         📊  [1mVALIDACIÓN ESTADÍSTICA (Hypervolume)[0m
+         ───────────────────────────────────────
+             Estadístico H (Kruskal-Wallis): 37.2439
+             P-valor: 4.2171e-06
+             Significativo (p < 0.05): Sí
+
+                   🖼️  Heatmap de Comparaciones Dunn (Post-hoc): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/estadistica_hv/heatmap_dunn_hypervolume_full.png\ [36mheatmap_dunn_hypervolume_full.png[0m]8;;\
+                   🖼️  Diagrama de Diferencia Crítica (CD): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/estadistica_hv/diagrama_cd_hypervolume_full.png\ [36mdiagrama_cd_hypervolume_full.png[0m]8;;\
+
+    • [1mIGD+[0m (↓)
+          1. NSGA2 (greedy_multi+UX): 0.0002 ± 0.0004
+          2. MOEAD_TCHE (greedy_multi+UX): 0.0004 ± 0.0002
+          3. NSGA3 (greedy_multi+UX): 0.0009 ± 0.0001
+          4. SPEA2 (greedy_multi+UX): 0.0186 ± 0.0028
+          5. NSGA2 (random_dense+UX): 0.3747 ± 0.0216
+          6. MOEAD_TCHE (random_dense+UX): 0.3942 ± 0.0157
+          7. NSGA3 (random_dense+UX): 0.4804 ± 0.0080
+          8. SPEA2 (random_dense+UX): 0.5889 ± 0.0433
+         • [1mPara más detalles[0m: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/ranking_IGD+_full.csv\ [36mranking_IGD+_full.csv[0m]8;;\
+
+         📊  [1mVALIDACIÓN ESTADÍSTICA (IGD+)[0m
+         ────────────────────────────────
+             Estadístico H (Kruskal-Wallis): 37.6624
+             P-valor: 3.5125e-06
+             Significativo (p < 0.05): Sí
+
+                   🖼️  Heatmap de Comparaciones Dunn (Post-hoc): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/estadistica_hv/heatmap_dunn_igd+_full.png\ [36mheatmap_dunn_igd+_full.png[0m]8;;\
+                   🖼️  Diagrama de Diferencia Crítica (CD): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/estadistica_hv/diagrama_cd_igd+_full.png\ [36mdiagrama_cd_igd+_full.png[0m]8;;\
+
+    • [1mGD+[0m (↓)
+          1. NSGA3 (greedy_multi+UX): 0.0472 ± 0.0047
+          2. MOEAD_TCHE (greedy_multi+UX): 0.0548 ± 0.0080
+          3. NSGA2 (greedy_multi+UX): 0.0633 ± 0.0034
+          4. SPEA2 (greedy_multi+UX): 0.0705 ± 0.0026
+          5. MOEAD_TCHE (random_dense+UX): 0.7562 ± 0.0157
+          6. NSGA3 (random_dense+UX): 0.7758 ± 0.0170
+          7. NSGA2 (random_dense+UX): 0.8232 ± 0.0177
+          8. SPEA2 (random_dense+UX): 0.8975 ± 0.0457
+         • [1mPara más detalles[0m: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/ranking_GD+_full.csv\ [36mranking_GD+_full.csv[0m]8;;\
+
+         📊  [1mVALIDACIÓN ESTADÍSTICA (GD+)[0m
+         ───────────────────────────────
+             Estadístico H (Kruskal-Wallis): 37.3083
+             P-valor: 4.1002e-06
+             Significativo (p < 0.05): Sí
+
+                   🖼️  Heatmap de Comparaciones Dunn (Post-hoc): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/estadistica_hv/heatmap_dunn_gd+_full.png\ [36mheatmap_dunn_gd+_full.png[0m]8;;\
+                   🖼️  Diagrama de Diferencia Crítica (CD): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/estadistica_hv/diagrama_cd_gd+_full.png\ [36mdiagrama_cd_gd+_full.png[0m]8;;\
+
+    • [1mAverage Ranking Overall[0m (↓)
+          1. NSGA2 (random_dense+UX): 2.8889 ± 0.0000
+          2. NSGA3 (random_dense+UX): 3.1111 ± 0.0000
+          3. NSGA2 (greedy_multi+UX): 4.1111 ± 0.0000
+          4. MOEAD_TCHE (random_dense+UX): 4.2222 ± 0.0000
+          5. SPEA2 (random_dense+UX): 4.5556 ± 0.0000
+          6. SPEA2 (greedy_multi+UX): 5.0000 ± 0.0000
+          7. NSGA3 (greedy_multi+UX): 5.5556 ± 0.0000
+          8. MOEAD_TCHE (greedy_multi+UX): 6.5556 ± 0.0000
+         • [1mPara más detalles[0m: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/ranking_Average_Ranking_Overall_full.csv\ [36mranking_Average_Ranking_Overall_full.csv[0m]8;;\
+
+         📊  [1mTEST DE FRIEDMAN (Método (Algoritmo + Inicialización))[0m
+         ───────────────────────────────────────────────────────────
+             Estadístico: 15.5185
+             P-valor: 2.9898e-02
+             Significativo (p < 0.05): Sí
+
+                   🖼️  Gráfico de Rangos Promedio (Método (Algoritmo + Inicialización)): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/rangos_promedio_full.png\ [36mrangos_promedio_full.png[0m]8;;\
+                   🖼️  Heatmap de Significancia Nemenyi (Método (Algoritmo + Inicialización)): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/heatmap_nemenyi_full.png\ [36mheatmap_nemenyi_full.png[0m]8;;\
+
+    • [1mAverage Ranking (Algorithm)[0m (↓)
+          1. NSGA2: 1.5556 ± 0.0000
+          2. NSGA3: 2.3333 ± 0.0000
+          3. SPEA2: 2.8889 ± 0.0000
+          4. MOEAD_TCHE: 3.2222 ± 0.0000
+         • [1mPara más detalles[0m: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/ranking_Average_Ranking_(Algorithm)_full.csv\ [36mranking_Average_Ranking_(Algorithm)_full.csv[0m]8;;\
+
+         📊  [1mTEST DE FRIEDMAN (Algoritmo)[0m
+         ─────────────────────────────────
+             Estadístico: 8.6000
+             P-valor: 3.5110e-02
+             Significativo (p < 0.05): Sí
+
+                   🖼️  Gráfico de Rangos Promedio (Algoritmo): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/rangos_promedio_algorithm_full.png\ [36mrangos_promedio_algorithm_full.png[0m]8;;\
+                   🖼️  Heatmap de Significancia Nemenyi (Algoritmo): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/heatmap_nemenyi_algorithm_full.png\ [36mheatmap_nemenyi_algorithm_full.png[0m]8;;\
+
+    • [1mAverage Ranking (Initialization)[0m (↓)
+          1. random_dense: 1.3333 ± 0.0000
+          2. greedy_multi: 1.6667 ± 0.0000
+         • [1mPara más detalles[0m: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/ranking_Average_Ranking_(Initialization)_full.csv\ [36mranking_Average_Ranking_(Initialization)_full.csv[0m]8;;\
+
+         📊  [1mTEST ESTADÍSTICO (Inicialización)[0m
+         ──────────────────────────────────────
+             ⚠️  Test de Friedman omitido: se requieren al menos 3 grupos, pero solo hay 2.
+
+                   🖼️  Gráfico de Rangos Promedio (Inicialización): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/rangos_promedio_init_full.png\ [36mrangos_promedio_init_full.png[0m]8;;\
+             • ⚠️  Test de Friedman no significativo para Inicialización. Omitiendo post-hoc.
+
+    • [1mAverage Ranking (Crossover)[0m (↓)
+          1. UX: 1.0000 ± 0.0000
+         • [1mPara más detalles[0m: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/ranking_Average_Ranking_(Crossover)_full.csv\ [36mranking_Average_Ranking_(Crossover)_full.csv[0m]8;;\
+
+         📊  [1mTEST ESTADÍSTICO (crossover)[0m
+         ─────────────────────────────────
+             ⚠️  Test de Friedman omitido: se requieren al menos 3 grupos, pero solo hay 1.
+
+                   🖼️  Gráfico de Rangos Promedio (crossover): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/4_rankings/rangos_promedio_crossover_full.png\ [36mrangos_promedio_crossover_full.png[0m]8;;\
+             • ⚠️  Test de Friedman no significativo para crossover. Omitiendo post-hoc.
+
+
+  🎯  [1mAnálisis de Decisión Multi-Criterio (MCDM)[0m
+  ────────────────────────────────────────────────
+      • Soluciones en frente agregado: 5461
+      ┌─ Compromiso (ASF) ───────────────────────────────────────────────────┐
+      │  Solución #42: Compacidad=264, Tolerancia=61.00,                     │
+      │  Hamming=105.18, Balance=236.6010                                    │
+      │  Config: NSGA2 (random_dense)                                        │
+      └──────────────────────────────────────────────────────────────────────┘
+      ┌─ Punto de Mayor Trade-off (Knee) ────────────────────────────────────┐
+      │  260 knee points detectados                                          │
+      │  Mejor knee: Solución #2214 (NSGA3, random_dense)                    │
+      └──────────────────────────────────────────────────────────────────────┘
+      ┌─ Pseudo-Pesos ───────────────────────────────────────────────────────┐
+      │  Solución más afín a preferencias: #5114                             │
+      │  Pesos implícitos: [0.21, 0.24, 0.27, 0.27]                          │
+      └──────────────────────────────────────────────────────────────────────┘
+
+      🖼️  Scatter MCDM (Agregado Global): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_scatter_agregado_full.png\ [36mmcdm_scatter_agregado_full.png[0m]8;;\
+      🖼️  Radar Objetivos MCDM (Agregado): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_radar_objetivos_agregado_full.png\ [36mmcdm_radar_objetivos_agregado_full.png[0m]8;;\
+      🖼️  Petal Objetivos MCDM (Agregado): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_petal_objetivos_agregado_full.png\ [36mmcdm_petal_objetivos_agregado_full.png[0m]8;;\
+      🖼️  Radar Pseudo-Pesos (Agregado Global): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_radar_pseudow_full.png\ [36mmcdm_radar_pseudow_full.png[0m]8;;\
+
+      • Análisis per-configuración (8 configuraciones):
+      🖼️  Scatter MCDM MOEAD_TCHE (greedy_multi): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_scatter_moead_tche_greedy_multi_full.png\ [36mmcdm_scatter_moead_tche_greedy_multi_full.png[0m]8;;\
+      🖼️  Radar MCDM MOEAD_TCHE (greedy_multi): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_radar_objetivos_moead_tche_greedy_multi_full.png\ [36mmcdm_radar_objetivos_moead_tche_greedy_multi_full.png[0m]8;;\
+      🖼️  Petal MCDM MOEAD_TCHE (greedy_multi): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_petal_objetivos_moead_tche_greedy_multi_full.png\ [36mmcdm_petal_objetivos_moead_tche_greedy_multi_full.png[0m]8;;\
+      🖼️  Scatter MCDM MOEAD_TCHE (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_scatter_moead_tche_random_dense_full.png\ [36mmcdm_scatter_moead_tche_random_dense_full.png[0m]8;;\
+      🖼️  Radar MCDM MOEAD_TCHE (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_radar_objetivos_moead_tche_random_dense_full.png\ [36mmcdm_radar_objetivos_moead_tche_random_dense_full.png[0m]8;;\
+      🖼️  Petal MCDM MOEAD_TCHE (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_petal_objetivos_moead_tche_random_dense_full.png\ [36mmcdm_petal_objetivos_moead_tche_random_dense_full.png[0m]8;;\
+      🖼️  Scatter MCDM NSGA2 (greedy_multi): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_scatter_nsga2_greedy_multi_full.png\ [36mmcdm_scatter_nsga2_greedy_multi_full.png[0m]8;;\
+      🖼️  Radar MCDM NSGA2 (greedy_multi): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_radar_objetivos_nsga2_greedy_multi_full.png\ [36mmcdm_radar_objetivos_nsga2_greedy_multi_full.png[0m]8;;\
+      🖼️  Petal MCDM NSGA2 (greedy_multi): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_petal_objetivos_nsga2_greedy_multi_full.png\ [36mmcdm_petal_objetivos_nsga2_greedy_multi_full.png[0m]8;;\
+      🖼️  Scatter MCDM NSGA2 (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_scatter_nsga2_random_dense_full.png\ [36mmcdm_scatter_nsga2_random_dense_full.png[0m]8;;\
+      🖼️  Radar MCDM NSGA2 (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_radar_objetivos_nsga2_random_dense_full.png\ [36mmcdm_radar_objetivos_nsga2_random_dense_full.png[0m]8;;\
+      🖼️  Petal MCDM NSGA2 (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_petal_objetivos_nsga2_random_dense_full.png\ [36mmcdm_petal_objetivos_nsga2_random_dense_full.png[0m]8;;\
+      🖼️  Scatter MCDM NSGA3 (greedy_multi): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_scatter_nsga3_greedy_multi_full.png\ [36mmcdm_scatter_nsga3_greedy_multi_full.png[0m]8;;\
+      🖼️  Radar MCDM NSGA3 (greedy_multi): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_radar_objetivos_nsga3_greedy_multi_full.png\ [36mmcdm_radar_objetivos_nsga3_greedy_multi_full.png[0m]8;;\
+      🖼️  Petal MCDM NSGA3 (greedy_multi): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_petal_objetivos_nsga3_greedy_multi_full.png\ [36mmcdm_petal_objetivos_nsga3_greedy_multi_full.png[0m]8;;\
+      🖼️  Scatter MCDM NSGA3 (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_scatter_nsga3_random_dense_full.png\ [36mmcdm_scatter_nsga3_random_dense_full.png[0m]8;;\
+      🖼️  Radar MCDM NSGA3 (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_radar_objetivos_nsga3_random_dense_full.png\ [36mmcdm_radar_objetivos_nsga3_random_dense_full.png[0m]8;;\
+      🖼️  Petal MCDM NSGA3 (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_petal_objetivos_nsga3_random_dense_full.png\ [36mmcdm_petal_objetivos_nsga3_random_dense_full.png[0m]8;;\
+      🖼️  Scatter MCDM SPEA2 (greedy_multi): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_scatter_spea2_greedy_multi_full.png\ [36mmcdm_scatter_spea2_greedy_multi_full.png[0m]8;;\
+      🖼️  Radar MCDM SPEA2 (greedy_multi): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_radar_objetivos_spea2_greedy_multi_full.png\ [36mmcdm_radar_objetivos_spea2_greedy_multi_full.png[0m]8;;\
+      🖼️  Petal MCDM SPEA2 (greedy_multi): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_petal_objetivos_spea2_greedy_multi_full.png\ [36mmcdm_petal_objetivos_spea2_greedy_multi_full.png[0m]8;;\
+      🖼️  Scatter MCDM SPEA2 (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_scatter_spea2_random_dense_full.png\ [36mmcdm_scatter_spea2_random_dense_full.png[0m]8;;\
+      🖼️  Radar MCDM SPEA2 (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_radar_objetivos_spea2_random_dense_full.png\ [36mmcdm_radar_objetivos_spea2_random_dense_full.png[0m]8;;\
+      🖼️  Petal MCDM SPEA2 (random_dense): ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_petal_objetivos_spea2_random_dense_full.png\ [36mmcdm_petal_objetivos_spea2_random_dense_full.png[0m]8;;\
+      🖼️  CSV Recomendaciones MCDM: ]8;;file:///home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-random_dense/20260602T013117/2_comparativa/5_decision_mcdm/mcdm_recomendaciones_full.csv\ [36mmcdm_recomendaciones_full.csv[0m]8;;\
+
+========================================
+⏱️  TIEMPO TOTAL DE EJECUCIÓN: 0h 17m 43.12s
+========================================
+

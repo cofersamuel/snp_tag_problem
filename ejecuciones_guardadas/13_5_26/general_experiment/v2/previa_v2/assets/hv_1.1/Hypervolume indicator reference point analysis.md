@@ -1,0 +1,28 @@
+- Quantitative example based on the generated plots
+	- Let the Pareto front consist of three solutions being A at [0.2, 1.0], B at [0.5, 0.5] and C at [1.0, 0.2]
+	- Calculation with reference point [1.0, 1.0]
+		- The area contributed solely by A is (1.0 - 0.2) * (1.0 - 1.0) which equals 0
+		- The area contributed solely by C is (1.0 - 1.0) * (1.0 - 0.2) which equals 0
+		- Only the central solution B contributes a positive area of (1.0 - 0.5) * (1.0 - 0.5) which equals 0.25
+		- The extreme solutions vanish from the volume calculation completely
+	- Calculation with reference point [1.1, 1.1]
+		- The area contributed solely by A is (1.1 - 0.2) * (1.1 - 1.0) which equals 0.09
+		- The area contributed solely by C is (1.1 - 1.0) * (1.1 - 0.2) which equals 0.09
+		- The extreme solutions are now mathematically recognised and appropriately rewarded for their performance
+	- ![[Pasted image 20260515122630.png]]
+		- ![[gemini-code-1778840853422.py]]
+- Concept of hypervolume
+	- It measures the multidimensional space dominated by a set of solutions bounded by a specific reference point
+	- In a normalised minimisation problem the objective values are scaled strictly between 0 and 1
+	- The reference point must be placed at or beyond the nadir point to calculate the volume of dominated space
+- The mathematical problem with a 1.0 reference point
+	- If the reference point is placed exactly at the worst possible normalised value of 1.0 for all objectives extreme solutions are penalised
+	- An extreme solution is one that performs exceptionally well in one objective but extremely poorly achieving exactly 1.0 in another
+	- When calculating the volume contribution of this extreme solution the distance in its worst dimension becomes exactly zero
+	- Multiplying any other dimension by zero results in a total volume contribution of exactly zero for that specific solution
+	- This means the algorithm essentially ignores solutions located at the very edges of the Pareto front despite their excellence in one specific metric
+- The mathematical solution using a 1.1 reference point
+	- By extending the reference point slightly beyond the nadir point to 1.1 a mathematical buffer is created
+	- When evaluating the same extreme solution the distance in its worst dimension becomes 0.1 instead of zero
+	- This small positive distance ensures that the multiplication yields a positive volume contribution
+	- It guarantees that every single non dominated solution including those at the extreme edges is properly accounted for in the final quality assessment

@@ -1,0 +1,1161 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.12.1)  2 JUN 2026 19:02
+entering extended mode
+ restricted \write18 enabled.
+ file:line:error style messages enabled.
+ %&-line parsing enabled.
+**/home/cofer/Documents/University/TFG/snp_tag_tfg/ejecuciones_guardadas/30_04_2026/analisis/analisis30_4_26.tex
+(/home/cofer/Documents/University/TFG/snp_tag_tfg/ejecuciones_guardadas/30_04_2026/analisis/analisis30_4_26.tex
+LaTeX2e <2023-11-01> patch level 1
+L3 programming layer <2024-01-22>
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2023/05/17 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count187
+\c@section=\count188
+\c@subsection=\count189
+\c@subsubsection=\count190
+\c@paragraph=\count191
+\c@subparagraph=\count192
+\c@figure=\count193
+\c@table=\count194
+\abovecaptionskip=\skip48
+\belowcaptionskip=\skip49
+\bibindent=\dimen140
+) (/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2021/02/14 v1.3d Input encoding file
+\inpenc@prehook=\toks17
+\inpenc@posthook=\toks18
+) (/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+) (/usr/share/texlive/texmf-dist/tex/generic/babel/babel.sty
+Package: babel 2024/01/07 v24.1 The Babel package
+\babel@savecnt=\count195
+\U@D=\dimen141
+\l@unhyphenated=\language89
+ (/usr/share/texlive/texmf-dist/tex/generic/babel/txtbabel.def)
+\bbl@readstream=\read2
+\bbl@dirlevel=\count196
+ (/usr/share/texlive/texmf-dist/tex/generic/babel-spanish/spanish.ldf
+Language: spanish.ldf 2021/05/27 v5.0q Spanish support from the babel system
+\es@quottoks=\toks19
+\es@quotdepth=\count197
+Package babel Info: Making " an active character on input line 570.
+Package babel Info: Making . an active character on input line 675.
+Package babel Info: Making < an active character on input line 722.
+Package babel Info: Making > an active character on input line 722.
+)) (/usr/share/texlive/texmf-dist/tex/generic/babel/locale/es/babel-spanish.tex
+Package babel Info: Importing font and identification data for spanish
+(babel)             from babel-es.ini. Reported on input line 11.
+) (/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+ (/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks20
+) (/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2022/03/10 v1.4e Standard LaTeX Graphics (DPC,SPQR)
+ (/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2021/08/11 v1.11 sin cos tan (DPC)
+) (/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 107.
+ (/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2022/09/22 v1.2b Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen142
+\Gin@req@width=\dimen143
+) (/usr/share/texlive/texmf-dist/tex/latex/booktabs/booktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen144
+\lightrulewidth=\dimen145
+\cmidrulewidth=\dimen146
+\belowrulesep=\dimen147
+\belowbottomsep=\dimen148
+\aboverulesep=\dimen149
+\abovetopsep=\dimen150
+\cmidrulesep=\dimen151
+\cmidrulekern=\dimen152
+\defaultaddspace=\dimen153
+\@cmidla=\count198
+\@cmidlb=\count199
+\@aboverulesep=\dimen154
+\@belowrulesep=\dimen155
+\@thisruleclass=\count266
+\@lastruleclass=\count267
+\@thisrulewidth=\dimen156
+) (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2023/05/13 v2.17o AMS math features
+\@mathmargin=\skip50
+
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2021/08/26 v2.01 AMS text
+ (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks21
+\ex@=\dimen157
+)) (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen158
+) (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count268
+LaTeX Info: Redefining \frac on input line 234.
+\uproot@=\count269
+\leftroot@=\count270
+LaTeX Info: Redefining \overline on input line 399.
+LaTeX Info: Redefining \colon on input line 410.
+\classnum@=\count271
+\DOTSCASE@=\count272
+LaTeX Info: Redefining \ldots on input line 496.
+LaTeX Info: Redefining \dots on input line 499.
+LaTeX Info: Redefining \cdots on input line 620.
+\Mathstrutbox@=\box51
+\strutbox@=\box52
+LaTeX Info: Redefining \big on input line 722.
+LaTeX Info: Redefining \Big on input line 723.
+LaTeX Info: Redefining \bigg on input line 724.
+LaTeX Info: Redefining \Bigg on input line 725.
+\big@size=\dimen159
+LaTeX Font Info:    Redeclaring font encoding OML on input line 743.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
+\macc@depth=\count273
+LaTeX Info: Redefining \bmod on input line 905.
+LaTeX Info: Redefining \pmod on input line 910.
+LaTeX Info: Redefining \smash on input line 940.
+LaTeX Info: Redefining \relbar on input line 970.
+LaTeX Info: Redefining \Relbar on input line 971.
+\c@MaxMatrixCols=\count274
+\dotsspace@=\muskip16
+\c@parentequation=\count275
+\dspbrk@lvl=\count276
+\tag@help=\toks22
+\row@=\count277
+\column@=\count278
+\maxfields@=\count279
+\andhelp@=\toks23
+\eqnshift@=\dimen160
+\alignsep@=\dimen161
+\tagshift@=\dimen162
+\tagwidth@=\dimen163
+\totwidth@=\dimen164
+\lineht@=\dimen165
+\@envbody=\toks24
+\multlinegap=\skip51
+\multlinetaggap=\skip52
+\mathdisplay@stack=\toks25
+LaTeX Info: Redefining \[ on input line 2953.
+LaTeX Info: Redefining \] on input line 2954.
+) (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+ (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+)) (/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2024-01-20 v7.01h Hypertext links for LaTeX
+ (/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty
+Package: iftex 2022/02/03 v1.0f TeX engine tests
+) (/usr/share/texlive/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
+) (/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+) (/usr/share/texlive/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+ (/usr/share/texlive/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
+) (/usr/share/texlive/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO)
+ (/usr/share/texlive/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)) (/usr/share/texlive/texmf-dist/tex/latex/hycolor/hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+) (/usr/share/texlive/texmf-dist/tex/latex/auxhook/auxhook.sty
+Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
+) (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2023-11-26 v2.56 Cross-referencing by name of section
+ (/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+) (/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+ (/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
+))
+\c@section@level=\count280
+) (/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2020/10/05 v2.5k e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count281
+)
+\@linkdim=\dimen166
+\Hy@linkcounter=\count282
+\Hy@pagecounter=\count283
+ (/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2024-01-20 v7.01h Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+) (/usr/share/texlive/texmf-dist/tex/generic/intcalc/intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+\Hy@SavedSpaceFactor=\count284
+ (/usr/share/texlive/texmf-dist/tex/latex/hyperref/puenc.def
+File: puenc.def 2024-01-20 v7.01h Hyperref: PDF Unicode definition (HO)
+Now handling font encoding PU ...
+... no UTF-8 mapping file for font encoding PU
+)
+Package hyperref Info: Hyper figures OFF on input line 4179.
+Package hyperref Info: Link nesting OFF on input line 4184.
+Package hyperref Info: Hyper index ON on input line 4187.
+Package hyperref Info: Plain pages OFF on input line 4194.
+Package hyperref Info: Backreferencing OFF on input line 4199.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4446.
+\c@Hy@tempcnt=\count285
+ (/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip17
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4784.
+\XeTeXLinkMargin=\dimen167
+ (/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+ (/usr/share/texlive/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO)
+))
+\Fld@menulength=\count286
+\Field@Width=\dimen168
+\Fld@charsize=\dimen169
+Package hyperref Info: Hyper figures OFF on input line 6063.
+Package hyperref Info: Link nesting OFF on input line 6068.
+Package hyperref Info: Hyper index ON on input line 6071.
+Package hyperref Info: backreferencing OFF on input line 6078.
+Package hyperref Info: Link coloring OFF on input line 6083.
+Package hyperref Info: Link coloring with OCG OFF on input line 6088.
+Package hyperref Info: PDF/A mode OFF on input line 6093.
+ (/usr/share/texlive/texmf-dist/tex/latex/base/atbegshi-ltx.sty
+Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
+package with kernel methods
+)
+\Hy@abspage=\count287
+\c@Item=\count288
+\c@Hfootnote=\count289
+)
+Package hyperref Info: Driver (autodetected): hpdftex.
+ (/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2024-01-20 v7.01h Hyperref driver for pdfTeX
+ (/usr/share/texlive/texmf-dist/tex/latex/base/atveryend-ltx.sty
+Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend package
+with kernel methods
+)
+\Fld@listcount=\count290
+\c@bookmark@seq@number=\count291
+ (/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+Package: rerunfilecheck 2022-07-10 v1.10 Rerun checks for auxiliary files (HO)
+ (/usr/share/texlive/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 285.
+)
+\Hy@SectionHShift=\skip53
+) (/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2020/01/02 v5.9 Page Geometry
+ (/usr/share/texlive/texmf-dist/tex/generic/iftex/ifvtex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+)
+\Gm@cnth=\count292
+\Gm@cntv=\count293
+\c@Gm@tempcnt=\count294
+\Gm@bindingoffset=\dimen170
+\Gm@wd@mp=\dimen171
+\Gm@odd@mp=\dimen172
+\Gm@even@mp=\dimen173
+\Gm@layoutwidth=\dimen174
+\Gm@layoutheight=\dimen175
+\Gm@layouthoffset=\dimen176
+\Gm@layoutvoffset=\dimen177
+\Gm@dimlist=\toks26
+) (/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2023/08/05 v3.6o Customizing captions (AR)
+ (/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
+\caption@tempdima=\dimen178
+\captionmargin=\dimen179
+\caption@leftmargin=\dimen180
+\caption@rightmargin=\dimen181
+\caption@width=\dimen182
+\caption@indent=\dimen183
+\caption@parindent=\dimen184
+\caption@hangindent=\dimen185
+Package caption Info: Standard document class detected.
+)
+\c@caption@flags=\count295
+\c@continuedfloat=\count296
+Package caption Info: hyperref package is loaded.
+) (/usr/share/texlive/texmf-dist/tex/latex/caption/subcaption.sty
+Package: subcaption 2023/07/28 v1.6b Sub-captions (AR)
+Package caption Info: New subtype `subfigure' on input line 238.
+\c@subfigure=\count297
+Package caption Info: New subtype `subtable' on input line 238.
+\c@subtable=\count298
+) (/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty
+Package: longtable 2023-11-01 v4.19 Multi-page Table package (DPC)
+\LTleft=\skip54
+\LTright=\skip55
+\LTpre=\skip56
+\LTpost=\skip57
+\LTchunksize=\count299
+\LTcapwidth=\dimen186
+\LT@head=\box53
+\LT@firsthead=\box54
+\LT@foot=\box55
+\LT@lastfoot=\box56
+\LT@gbox=\box57
+\LT@cols=\count300
+\LT@rows=\count301
+\c@LT@tables=\count302
+\c@LT@chunks=\count303
+\LT@p@ftn=\toks27
+) (/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty
+Package: array 2023/10/16 v2.5g Tabular extension package (FMi)
+\col@sep=\dimen187
+\ar@mcellbox=\box58
+\extrarowheight=\dimen188
+\NC@list=\toks28
+\extratabsurround=\skip58
+\backup@length=\skip59
+\ar@cellbox=\box59
+) (/usr/share/texlive/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count304
+\float@exts=\toks29
+\float@box=\box60
+\@float@everytoks=\toks30
+\@floatcapt=\box61
+) (/usr/share/texlive/texmf-dist/tex/latex/titlesec/titlesec.sty
+Package: titlesec 2023/10/27 v2.16 Sectioning titles
+\ttl@box=\box62
+\beforetitleunit=\skip60
+\aftertitleunit=\skip61
+\ttl@plus=\dimen189
+\ttl@minus=\dimen190
+\ttl@toksa=\toks31
+\titlewidth=\dimen191
+\titlewidthlast=\dimen192
+\titlewidthfirst=\dimen193
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 51.
+ (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count305
+\l__pdf_internal_box=\box63
+) (./analisis30_4_26.aux)
+\openout1 = `analisis30_4_26.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Info: Redefining \. on input line 57.
+LaTeX Info: Redefining \% on input line 57.
+ (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count306
+\scratchdimen=\dimen194
+\scratchbox=\box64
+\nofMPsegments=\count307
+\nofMParguments=\count308
+\everyMPshowfont=\toks32
+\MPscratchCnt=\count309
+\MPscratchDim=\dimen195
+\MPnumerator=\count310
+\makeMPintoPDFobject=\count311
+\everyMPtoPDFconversion=\toks33
+) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
+ (/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
+)) (/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2022/01/06 v1.3d Standard LaTeX Color (DPC)
+ (/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package color Info: Driver file: pdftex.def on input line 149.
+ (/usr/share/texlive/texmf-dist/tex/latex/graphics/mathcolor.ltx))
+Package hyperref Info: Link coloring ON on input line 57.
+\@outlinefile=\write3
+\openout3 = `analisis30_4_26.out'.
+
+
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: a4paper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(42.67912pt, 512.14963pt, 42.67912pt)
+* v-part:(T,H,B)=(42.67912pt, 759.6886pt, 42.67912pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=512.14963pt
+* \textheight=759.6886pt
+* \oddsidemargin=-29.59087pt
+* \evensidemargin=-29.59087pt
+* \topmargin=-66.59087pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=10.0pt
+* \footskip=30.0pt
+* \marginparwidth=57.0pt
+* \marginparsep=11.0pt
+* \columnsep=10.0pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: float package is loaded.
+Package caption Info: longtable package is loaded.
+(/usr/share/texlive/texmf-dist/tex/latex/caption/ltcaption.sty
+Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
+)
+Package caption Info: End \AtBeginDocument code.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 60.
+ (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 60.
+ (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 65.
+ (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
+File: t1cmtt.fd 2023/04/13 v2.5m Standard LaTeX font definitions
+) [1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}]
+No file analisis30_4_26.toc.
+\tf@toc=\write4
+\openout4 = `analisis30_4_26.toc'.
+
+[2
+
+] [3
+
+]
+Overfull \hbox (10.45222pt too wide) in paragraph at lines 129--130
+[]\T1/cmr/m/n/10 Es al-ta-men-te pro-ba-ble que se ha-ya em-plea-do es-ta téc-ni-ca, ya que en ex-pe-ri-men-tos pre-vios (co-mo el del 25_04_2026),
+ []
+
+[4{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-ts1.enc}]
+<analisis_assets/moqa_2022/figures/moqa_fig_nsga2_random.jpeg, id=43, 2576.62625pt x 2236.355pt>
+File: analisis_assets/moqa_2022/figures/moqa_fig_nsga2_random.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_nsga2_random.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_nsga2_random.jpeg  used on input line 170.
+(pdftex.def)             Requested size: 230.46576pt x 200.00067pt.
+<analisis_assets/moqa_2022/figures/moqa_fig_nsga2_greedy.jpeg, id=44, 2576.62625pt x 2234.3475pt>
+File: analisis_assets/moqa_2022/figures/moqa_fig_nsga2_greedy.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_nsga2_greedy.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_nsga2_greedy.jpeg  used on input line 176.
+(pdftex.def)             Requested size: 230.46576pt x 199.82114pt.
+<analisis_assets/moqa_2022/figures/moqa_fig_spea2_random.jpeg, id=45, 2576.62625pt x 2243.38126pt>
+File: analisis_assets/moqa_2022/figures/moqa_fig_spea2_random.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_spea2_random.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_spea2_random.jpeg  used on input line 182.
+(pdftex.def)             Requested size: 230.46576pt x 200.62904pt.
+<analisis_assets/moqa_2022/figures/moqa_fig_spea2_greedy.jpeg, id=46, 2576.62625pt x 2173.11874pt>
+File: analisis_assets/moqa_2022/figures/moqa_fig_spea2_greedy.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_spea2_greedy.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_spea2_greedy.jpeg  used on input line 188.
+(pdftex.def)             Requested size: 230.46576pt x 194.34537pt.
+<analisis_assets/moqa_2022/figures/moqa_fig_nsga3_random.jpeg, id=47, 2576.62625pt x 2245.38875pt>
+File: analisis_assets/moqa_2022/figures/moqa_fig_nsga3_random.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_nsga3_random.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_nsga3_random.jpeg  used on input line 198.
+(pdftex.def)             Requested size: 230.46576pt x 200.80858pt.
+<analisis_assets/moqa_2022/figures/moqa_fig_nsga3_greedy.jpeg, id=48, 2576.62625pt x 2250.4075pt>
+File: analisis_assets/moqa_2022/figures/moqa_fig_nsga3_greedy.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_nsga3_greedy.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_nsga3_greedy.jpeg  used on input line 204.
+(pdftex.def)             Requested size: 230.46576pt x 201.25742pt.
+<analisis_assets/moqa_2022/figures/moqa_fig_moead_random.jpeg, id=49, 2576.62625pt x 2255.42625pt>
+File: analisis_assets/moqa_2022/figures/moqa_fig_moead_random.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_moead_random.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_moead_random.jpeg  used on input line 210.
+(pdftex.def)             Requested size: 230.46576pt x 201.70625pt.
+<analisis_assets/moqa_2022/figures/moqa_fig_moead_greedy.jpeg, id=50, 2355.80125pt x 2039.62pt>
+File: analisis_assets/moqa_2022/figures/moqa_fig_moead_greedy.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_moead_greedy.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_moead_greedy.jpeg  used on input line 216.
+(pdftex.def)             Requested size: 230.46576pt x 199.5235pt.
+ [5 <./analisis_assets/moqa_2022/figures/moqa_fig_nsga2_random.jpeg> <./analisis_assets/moqa_2022/figures/moqa_fig_nsga2_greedy.jpeg> <./analisis_assets/moqa_2022/figures/moqa_fig_spea2_random.jpeg> <./analisis_assets/moqa_2022/figures/moqa_fig_spea2_greedy.jpeg>]
+<analisis_assets/moqa_2022/figures/moqa_fig_convergencia_1.jpeg, id=59, 2121.9275pt x 2811.50375pt>
+File: analisis_assets/moqa_2022/figures/moqa_fig_convergencia_1.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_convergencia_1.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_convergencia_1.jpeg  used on input line 227.
+(pdftex.def)             Requested size: 245.82962pt x 325.69708pt.
+<analisis_assets/moqa_2022/figures/moqa_fig_convergencia_2.jpeg, id=60, 2576.62625pt x 2241.37375pt>
+File: analisis_assets/moqa_2022/figures/moqa_fig_convergencia_2.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_convergencia_2.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_convergencia_2.jpeg  used on input line 233.
+(pdftex.def)             Requested size: 245.82962pt x 213.82193pt.
+ [6 <./analisis_assets/moqa_2022/figures/moqa_fig_nsga3_random.jpeg> <./analisis_assets/moqa_2022/figures/moqa_fig_nsga3_greedy.jpeg> <./analisis_assets/moqa_2022/figures/moqa_fig_moead_random.jpeg> <./analisis_assets/moqa_2022/figures/moqa_fig_moead_greedy.jpeg>] [7 <./analisis_assets/moqa_2022/figures/moqa_fig_convergencia_1.jpeg> <./analisis_assets/moqa_2022/figures/moqa_fig_convergencia_2.jpeg>] [8] [9] [10]
+LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 421.
+ [11
+
+] [12] [13] [14]
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_global_full.png, id=126, 1289.5377pt x 991.5444pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_global_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_global_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_global_full.png  used on input line 583.
+(pdftex.def)             Requested size: 307.2929pt x 236.28099pt.
+ [15]
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_sparse_full.png, id=135, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_sparse_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_sparse_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_sparse_full.png  used on input line 595.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_dense_full.png, id=136, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_dense_full.png  used on input line 595.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_ting_full.png, id=137, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_ting_full.png  used on input line 595.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_hybrid_full.png, id=138, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_hybrid_full.png  used on input line 595.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_sparse_full.png, id=139, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_sparse_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_sparse_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_sparse_full.png  used on input line 596.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_dense_full.png, id=140, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_dense_full.png  used on input line 596.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_ting_full.png, id=141, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_ting_full.png  used on input line 596.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_hybrid_full.png, id=142, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_hybrid_full.png  used on input line 596.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_sparse_full.png, id=143, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_sparse_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_sparse_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_sparse_full.png  used on input line 597.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_dense_full.png, id=144, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_dense_full.png  used on input line 597.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_ting_full.png, id=145, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_ting_full.png  used on input line 597.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_hybrid_full.png, id=146, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_hybrid_full.png  used on input line 597.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 598--598
+[]|\T1/cmr/bx/n/10 MOEA/D
+ []
+
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_sparse_full.png, id=147, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_sparse_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_sparse_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_sparse_full.png  used on input line 598.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_dense_full.png, id=148, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_dense_full.png  used on input line 598.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_ting_full.png, id=149, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_ting_full.png  used on input line 598.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_hybrid_full.png, id=150, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_hybrid_full.png  used on input line 598.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 599--599
+[]|\T1/cmr/bx/n/10 MOEA/D
+ []
+
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_sparse_full.png, id=151, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_sparse_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_sparse_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_sparse_full.png  used on input line 599.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_dense_full.png, id=152, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_dense_full.png  used on input line 599.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_ting_full.png, id=153, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_ting_full.png  used on input line 599.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_hybrid_full.png, id=154, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_hybrid_full.png  used on input line 599.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 600--600
+[]|\T1/cmr/bx/n/10 MOEA/D
+ []
+
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_sparse_full.png, id=155, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_sparse_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_sparse_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_sparse_full.png  used on input line 600.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_dense_full.png, id=156, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_dense_full.png  used on input line 600.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_ting_full.png, id=157, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_ting_full.png  used on input line 600.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+<analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_hybrid_full.png, id=158, 998.0487pt x 849.8952pt>
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_hybrid_full.png  used on input line 600.
+(pdftex.def)             Requested size: 91.04872pt x 77.52473pt.
+[16 <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_global_full.png>]
+<analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_range_full.png, id=166, 999.0123pt x 708.0051pt>
+File: analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_range_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_range_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_range_full.png  used on input line 610.
+(pdftex.def)             Requested size: 204.85672pt x 145.1744pt.
+<analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_summin_full.png, id=167, 998.7714pt x 708.246pt>
+File: analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_summin_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_summin_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_summin_full.png  used on input line 615.
+(pdftex.def)             Requested size: 204.85672pt x 145.26701pt.
+<analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_minsum_full.png, id=168, 998.7714pt x 708.246pt>
+File: analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_minsum_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_minsum_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_minsum_full.png  used on input line 622.
+(pdftex.def)             Requested size: 204.85672pt x 145.26701pt.
+<analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_avghammingdistance_full.png, id=169, 992.0262pt x 708.246pt>
+File: analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_avghammingdistance_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_avghammingdistance_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_avghammingdistance_full.png  used on input line 627.
+(pdftex.def)             Requested size: 204.85672pt x 146.25044pt.
+<analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_hypervolume_full.png, id=170, 998.7714pt x 708.246pt>
+File: analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_hypervolume_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_hypervolume_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_hypervolume_full.png  used on input line 634.
+(pdftex.def)             Requested size: 204.85672pt x 145.26701pt.
+ [17 <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_sparse_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_dense_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_ting_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_hybrid_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_sparse_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_dense_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_ting_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_hybrid_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_sparse_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_dense_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_ting_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_hybrid_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_sparse_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_dense_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_ting_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_hybrid_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_sparse_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_dense_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_ting_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_hybrid_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_sparse_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_dense_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_ting_full.png> <./analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_hybrid_full.png>] [18 <./analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_range_full.png> <./analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_summin_full.png> <./analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_minsum_full.png> <./analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_avghammingdistance_full.png> <./analisis_assets/20260430T185224/2_comparativa/2_metricas_convergencia/convergencia_hypervolume_full.png>] [19] [20]
+<analisis_assets/20260430T185224/2_comparativa/4_rankings/estadistica/method/heatmap_nemenyi_full.png, id=229, 1015.3935pt x 840.5001pt>
+File: analisis_assets/20260430T185224/2_comparativa/4_rankings/estadistica/method/heatmap_nemenyi_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/4_rankings/estadistica/method/heatmap_nemenyi_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/4_rankings/estadistica/method/heatmap_nemenyi_full.png  used on input line 809.
+(pdftex.def)             Requested size: 245.82962pt x 203.48117pt.
+<analisis_assets/20260430T185224/2_comparativa/4_rankings/estadistica/init/heatmap_nemenyi_init_full.png, id=230, 935.1738pt x 783.8886pt>
+File: analisis_assets/20260430T185224/2_comparativa/4_rankings/estadistica/init/heatmap_nemenyi_init_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/4_rankings/estadistica/init/heatmap_nemenyi_init_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/4_rankings/estadistica/init/heatmap_nemenyi_init_full.png  used on input line 814.
+(pdftex.def)             Requested size: 245.82962pt x 206.05492pt.
+ [21 <./analisis_assets/20260430T185224/2_comparativa/4_rankings/estadistica/method/heatmap_nemenyi_full.png> <./analisis_assets/20260430T185224/2_comparativa/4_rankings/estadistica/init/heatmap_nemenyi_init_full.png>]
+<analisis_assets/20260430T185224/2_comparativa/4_rankings/heatmap_comparativa_full.png, id=241, 939.2691pt x 566.115pt>
+File: analisis_assets/20260430T185224/2_comparativa/4_rankings/heatmap_comparativa_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/4_rankings/heatmap_comparativa_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/4_rankings/heatmap_comparativa_full.png  used on input line 828.
+(pdftex.def)             Requested size: 307.2929pt x 185.21182pt.
+<analisis_assets/20260430T185224/2_comparativa/4_rankings/estadistica/method/rangos_promedio_full.png, id=242, 867.24pt x 433.62pt>
+File: analisis_assets/20260430T185224/2_comparativa/4_rankings/estadistica/method/rangos_promedio_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/4_rankings/estadistica/method/rangos_promedio_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/4_rankings/estadistica/method/rangos_promedio_full.png  used on input line 835.
+(pdftex.def)             Requested size: 307.2929pt x 153.64836pt.
+
+Overfull \hbox (0.96759pt too wide) in paragraph at lines 842--843
+[]\T1/cmr/bx/n/10 Mejores ini-cia-li-za-cio-nes: \T1/cmr/m/n/10 En ran-kings de con-ver-gen-cia (Ran-ge, Sum-Min y HV), \T1/cmtt/m/n/10 greedy_ting \T1/cmr/m/n/10 y \T1/cmtt/m/n/10 greedy_hybrid
+ []
+
+[22 <./analisis_assets/20260430T185224/2_comparativa/4_rankings/heatmap_comparativa_full.png> <./analisis_assets/20260430T185224/2_comparativa/4_rankings/estadistica/method/rangos_promedio_full.png>]
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_global_full.png, id=254, 1289.5377pt x 991.5444pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_global_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_global_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_global_full.png  used on input line 857.
+(pdftex.def)             Requested size: 307.2929pt x 236.28099pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_sparse_full.png, id=255, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_sparse_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_sparse_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_sparse_full.png  used on input line 869.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_dense_full.png, id=256, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_dense_full.png  used on input line 869.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_ting_full.png, id=257, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_ting_full.png  used on input line 869.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_hybrid_full.png, id=258, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_hybrid_full.png  used on input line 869.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_sparse_full.png, id=259, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_sparse_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_sparse_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_sparse_full.png  used on input line 870.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_dense_full.png, id=260, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_dense_full.png  used on input line 870.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_ting_full.png, id=261, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_ting_full.png  used on input line 870.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_hybrid_full.png, id=262, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_hybrid_full.png  used on input line 870.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_sparse_full.png, id=263, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_sparse_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_sparse_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_sparse_full.png  used on input line 871.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_dense_full.png, id=264, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_dense_full.png  used on input line 871.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_ting_full.png, id=265, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_ting_full.png  used on input line 871.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_hybrid_full.png, id=266, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_hybrid_full.png  used on input line 871.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 872--872
+[]|\T1/cmr/bx/n/10 MOEA/D
+ []
+
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_sparse_full.png, id=267, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_sparse_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_sparse_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_sparse_full.png  used on input line 872.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_dense_full.png, id=268, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_dense_full.png  used on input line 872.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_ting_full.png, id=269, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_ting_full.png  used on input line 872.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_hybrid_full.png, id=270, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_hybrid_full.png  used on input line 872.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 873--873
+[]|\T1/cmr/bx/n/10 MOEA/D
+ []
+
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_sparse_full.png, id=271, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_sparse_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_sparse_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_sparse_full.png  used on input line 873.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_dense_full.png, id=272, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_dense_full.png  used on input line 873.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_ting_full.png, id=273, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_ting_full.png  used on input line 873.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_hybrid_full.png, id=274, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_hybrid_full.png  used on input line 873.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 874--874
+[]|\T1/cmr/bx/n/10 MOEA/D
+ []
+
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_sparse_full.png, id=275, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_sparse_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_sparse_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_sparse_full.png  used on input line 874.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_dense_full.png, id=276, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_dense_full.png  used on input line 874.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_ting_full.png, id=277, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_ting_full.png  used on input line 874.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+<analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_hybrid_full.png, id=278, 998.5305pt x 849.8952pt>
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_hybrid_full.png  used on input line 874.
+(pdftex.def)             Requested size: 91.04872pt x 77.48582pt.
+[23 <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_global_full.png>]
+<analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_range_full.png, id=289, 999.0123pt x 708.0051pt>
+File: analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_range_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_range_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_range_full.png  used on input line 884.
+(pdftex.def)             Requested size: 204.85672pt x 145.1744pt.
+<analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_summin_full.png, id=290, 998.7714pt x 708.246pt>
+File: analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_summin_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_summin_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_summin_full.png  used on input line 889.
+(pdftex.def)             Requested size: 204.85672pt x 145.26701pt.
+<analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_minsum_full.png, id=291, 998.7714pt x 708.246pt>
+File: analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_minsum_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_minsum_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_minsum_full.png  used on input line 896.
+(pdftex.def)             Requested size: 204.85672pt x 145.26701pt.
+<analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_avghammingdistance_full.png, id=292, 999.0123pt x 708.246pt>
+File: analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_avghammingdistance_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_avghammingdistance_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_avghammingdistance_full.png  used on input line 901.
+(pdftex.def)             Requested size: 204.85672pt x 145.22379pt.
+<analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_hypervolume_full.png, id=293, 998.7714pt x 708.246pt>
+File: analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_hypervolume_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_hypervolume_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_hypervolume_full.png  used on input line 908.
+(pdftex.def)             Requested size: 204.85672pt x 145.26701pt.
+ [24 <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_sparse_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_dense_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_ting_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_hybrid_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_sparse_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_dense_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_ting_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_hybrid_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_sparse_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_dense_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_ting_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_hybrid_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_sparse_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_dense_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_ting_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_hybrid_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_sparse_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_dense_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_ting_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_hybrid_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_sparse_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_dense_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_ting_full.png> <./analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_hybrid_full.png>] [25 <./analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_range_full.png> <./analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_summin_full.png> <./analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_minsum_full.png> <./analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_avghammingdistance_full.png> <./analisis_assets/20260430T183144/2_comparativa/2_metricas_convergencia/convergencia_hypervolume_full.png>] [26] [27]
+<analisis_assets/20260430T183144/2_comparativa/4_rankings/estadistica/method/heatmap_nemenyi_full.png, id=351, 1015.3935pt x 840.5001pt>
+File: analisis_assets/20260430T183144/2_comparativa/4_rankings/estadistica/method/heatmap_nemenyi_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/4_rankings/estadistica/method/heatmap_nemenyi_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/4_rankings/estadistica/method/heatmap_nemenyi_full.png  used on input line 1083.
+(pdftex.def)             Requested size: 245.82962pt x 203.48117pt.
+<analisis_assets/20260430T183144/2_comparativa/4_rankings/estadistica/init/heatmap_nemenyi_init_full.png, id=352, 935.1738pt x 783.8886pt>
+File: analisis_assets/20260430T183144/2_comparativa/4_rankings/estadistica/init/heatmap_nemenyi_init_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/4_rankings/estadistica/init/heatmap_nemenyi_init_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/4_rankings/estadistica/init/heatmap_nemenyi_init_full.png  used on input line 1088.
+(pdftex.def)             Requested size: 245.82962pt x 206.05492pt.
+ [28 <./analisis_assets/20260430T183144/2_comparativa/4_rankings/estadistica/method/heatmap_nemenyi_full.png> <./analisis_assets/20260430T183144/2_comparativa/4_rankings/estadistica/init/heatmap_nemenyi_init_full.png>]
+<analisis_assets/20260430T183144/2_comparativa/4_rankings/heatmap_comparativa_full.png, id=363, 939.2691pt x 566.115pt>
+File: analisis_assets/20260430T183144/2_comparativa/4_rankings/heatmap_comparativa_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/4_rankings/heatmap_comparativa_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/4_rankings/heatmap_comparativa_full.png  used on input line 1102.
+(pdftex.def)             Requested size: 307.2929pt x 185.21182pt.
+<analisis_assets/20260430T183144/2_comparativa/4_rankings/estadistica/method/rangos_promedio_full.png, id=364, 867.24pt x 433.62pt>
+File: analisis_assets/20260430T183144/2_comparativa/4_rankings/estadistica/method/rangos_promedio_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/4_rankings/estadistica/method/rangos_promedio_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/4_rankings/estadistica/method/rangos_promedio_full.png  used on input line 1109.
+(pdftex.def)             Requested size: 307.2929pt x 153.64836pt.
+ [29 <./analisis_assets/20260430T183144/2_comparativa/4_rankings/heatmap_comparativa_full.png> <./analisis_assets/20260430T183144/2_comparativa/4_rankings/estadistica/method/rangos_promedio_full.png>] [30
+
+]
+File: analisis_assets/moqa_2022/figures/moqa_fig_nsga2_greedy.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_nsga2_greedy.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_nsga2_greedy.jpeg  used on input line 1171.
+(pdftex.def)             Requested size: 92.18318pt x 79.91481pt.
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_ting_full.png  used on input line 1172.
+(pdftex.def)             Requested size: 92.18318pt x 78.49736pt.
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_hybrid_full.png  used on input line 1173.
+(pdftex.def)             Requested size: 92.18318pt x 78.49736pt.
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_ting_full.png  used on input line 1174.
+(pdftex.def)             Requested size: 92.18318pt x 78.45845pt.
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_greedy_hybrid_full.png  used on input line 1175.
+(pdftex.def)             Requested size: 92.18318pt x 78.45845pt.
+File: analisis_assets/moqa_2022/figures/moqa_fig_nsga2_random.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_nsga2_random.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_nsga2_random.jpeg  used on input line 1189.
+(pdftex.def)             Requested size: 143.40126pt x 124.45016pt.
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_dense_full.png  used on input line 1190.
+(pdftex.def)             Requested size: 143.40126pt x 122.10988pt.
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga2_random_dense_full.png  used on input line 1191.
+(pdftex.def)             Requested size: 143.40126pt x 122.04504pt.
+ [31]
+File: analisis_assets/moqa_2022/figures/moqa_fig_spea2_greedy.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_spea2_greedy.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_spea2_greedy.jpeg  used on input line 1207.
+(pdftex.def)             Requested size: 92.18318pt x 77.72487pt.
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_ting_full.png  used on input line 1208.
+(pdftex.def)             Requested size: 92.18318pt x 78.49736pt.
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_hybrid_full.png  used on input line 1209.
+(pdftex.def)             Requested size: 92.18318pt x 78.49736pt.
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_ting_full.png  used on input line 1210.
+(pdftex.def)             Requested size: 92.18318pt x 78.45845pt.
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_greedy_hybrid_full.png  used on input line 1211.
+(pdftex.def)             Requested size: 92.18318pt x 78.45845pt.
+File: analisis_assets/moqa_2022/figures/moqa_fig_spea2_random.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_spea2_random.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_spea2_random.jpeg  used on input line 1225.
+(pdftex.def)             Requested size: 143.40126pt x 124.84117pt.
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_dense_full.png  used on input line 1226.
+(pdftex.def)             Requested size: 143.40126pt x 122.10988pt.
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_spea2_random_dense_full.png  used on input line 1227.
+(pdftex.def)             Requested size: 143.40126pt x 122.04504pt.
+File: analisis_assets/moqa_2022/figures/moqa_fig_nsga3_greedy.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_nsga3_greedy.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_nsga3_greedy.jpeg  used on input line 1243.
+(pdftex.def)             Requested size: 92.18318pt x 80.48923pt.
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_ting_full.png  used on input line 1244.
+(pdftex.def)             Requested size: 92.18318pt x 78.49736pt.
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_hybrid_full.png  used on input line 1245.
+(pdftex.def)             Requested size: 92.18318pt x 78.49736pt.
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_ting_full.png  used on input line 1246.
+(pdftex.def)             Requested size: 92.18318pt x 78.45845pt.
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_greedy_hybrid_full.png  used on input line 1247.
+(pdftex.def)             Requested size: 92.18318pt x 78.45845pt.
+File: analisis_assets/moqa_2022/figures/moqa_fig_nsga3_random.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_nsga3_random.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_nsga3_random.jpeg  used on input line 1261.
+(pdftex.def)             Requested size: 143.40126pt x 124.95288pt.
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_dense_full.png  used on input line 1262.
+(pdftex.def)             Requested size: 143.40126pt x 122.10988pt.
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_nsga3_random_dense_full.png  used on input line 1263.
+(pdftex.def)             Requested size: 143.40126pt x 122.04504pt.
+ [32]
+File: analisis_assets/moqa_2022/figures/moqa_fig_moead_greedy.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_moead_greedy.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_moead_greedy.jpeg  used on input line 1279.
+(pdftex.def)             Requested size: 92.18318pt x 79.79694pt.
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_ting_full.png  used on input line 1280.
+(pdftex.def)             Requested size: 92.18318pt x 78.49736pt.
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_hybrid_full.png  used on input line 1281.
+(pdftex.def)             Requested size: 92.18318pt x 78.49736pt.
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_ting_full.png  used on input line 1282.
+(pdftex.def)             Requested size: 92.18318pt x 78.45845pt.
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_greedy_hybrid_full.png  used on input line 1283.
+(pdftex.def)             Requested size: 92.18318pt x 78.45845pt.
+File: analisis_assets/moqa_2022/figures/moqa_fig_moead_random.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_moead_random.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_moead_random.jpeg  used on input line 1297.
+(pdftex.def)             Requested size: 143.40126pt x 125.51146pt.
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_dense_full.png  used on input line 1298.
+(pdftex.def)             Requested size: 143.40126pt x 122.10988pt.
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_pbi_random_dense_full.png  used on input line 1299.
+(pdftex.def)             Requested size: 143.40126pt x 122.04504pt.
+File: analisis_assets/moqa_2022/figures/moqa_fig_moead_greedy.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_moead_greedy.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_moead_greedy.jpeg  used on input line 1315.
+(pdftex.def)             Requested size: 92.18318pt x 79.79694pt.
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_ting_full.png  used on input line 1316.
+(pdftex.def)             Requested size: 92.18318pt x 78.49736pt.
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_hybrid_full.png  used on input line 1317.
+(pdftex.def)             Requested size: 92.18318pt x 78.49736pt.
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_ting_full.png  used on input line 1318.
+(pdftex.def)             Requested size: 92.18318pt x 78.45845pt.
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_greedy_hybrid_full.png  used on input line 1319.
+(pdftex.def)             Requested size: 92.18318pt x 78.45845pt.
+ [33]
+File: analisis_assets/moqa_2022/figures/moqa_fig_moead_random.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_moead_random.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_moead_random.jpeg  used on input line 1333.
+(pdftex.def)             Requested size: 143.40126pt x 125.51146pt.
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_dense_full.png  used on input line 1334.
+(pdftex.def)             Requested size: 143.40126pt x 122.10988pt.
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_tche_random_dense_full.png  used on input line 1335.
+(pdftex.def)             Requested size: 143.40126pt x 122.04504pt.
+File: analisis_assets/moqa_2022/figures/moqa_fig_moead_greedy.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_moead_greedy.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_moead_greedy.jpeg  used on input line 1351.
+(pdftex.def)             Requested size: 92.18318pt x 79.79694pt.
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_ting_full.png  used on input line 1352.
+(pdftex.def)             Requested size: 92.18318pt x 78.49736pt.
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_hybrid_full.png  used on input line 1353.
+(pdftex.def)             Requested size: 92.18318pt x 78.49736pt.
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_ting_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_ting_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_ting_full.png  used on input line 1354.
+(pdftex.def)             Requested size: 92.18318pt x 78.45845pt.
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_hybrid_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_hybrid_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_greedy_hybrid_full.png  used on input line 1355.
+(pdftex.def)             Requested size: 92.18318pt x 78.45845pt.
+File: analisis_assets/moqa_2022/figures/moqa_fig_moead_random.jpeg Graphic file (type jpg)
+<use analisis_assets/moqa_2022/figures/moqa_fig_moead_random.jpeg>
+Package pdftex.def Info: analisis_assets/moqa_2022/figures/moqa_fig_moead_random.jpeg  used on input line 1369.
+(pdftex.def)             Requested size: 143.40126pt x 125.51146pt.
+File: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T185224/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_dense_full.png  used on input line 1370.
+(pdftex.def)             Requested size: 143.40126pt x 122.10988pt.
+File: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_dense_full.png Graphic file (type png)
+<use analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_dense_full.png>
+Package pdftex.def Info: analisis_assets/20260430T183144/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_moead_ws_random_dense_full.png  used on input line 1371.
+(pdftex.def)             Requested size: 143.40126pt x 122.04504pt.
+ [34] [35] [36] [37] [38] [39] [40]
+LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <12> not available
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 1995.
+ [41
+
+] [42] [43] (./analisis30_4_26.aux
+LaTeX Info: Redefining \. on input line 11.
+LaTeX Info: Redefining \% on input line 11.
+)
+ ***********
+LaTeX2e <2023-11-01> patch level 1
+L3 programming layer <2024-01-22>
+ ***********
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `analisis30_4_26.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `analisis30_4_26.out':
+(rerunfilecheck)             Before: <no file>
+(rerunfilecheck)             After:  E2C9F6A7895045D632AEA76B720329DF;16074.
+ ) 
+Here is how much of TeX's memory you used:
+ 14624 strings out of 474222
+ 281510 string characters out of 5748733
+ 1951975 words of memory out of 5000000
+ 36512 multiletter control sequences out of 15000+600000
+ 577948 words of font info for 84 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 75i,14n,79p,1086b,597s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbi1000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx0700.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1440.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm0700.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm0900.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1728.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfti0800.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfti1000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1200.pfb>
+Output written on analisis30_4_26.pdf (43 pages, 72661135 bytes).
+PDF statistics:
+ 633 PDF objects out of 1000 (max. 8388607)
+ 390 compressed objects within 4 object streams
+ 178 named destinations out of 1000 (max. 500000)
+ 391 words of extra memory for PDF output out of 10000 (max. 10000000)
+

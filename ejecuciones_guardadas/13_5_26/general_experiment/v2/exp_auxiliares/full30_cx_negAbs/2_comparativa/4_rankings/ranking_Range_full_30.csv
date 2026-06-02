@@ -1,0 +1,5 @@
+algorithm,init,crossover,Range
+MOEAD_TCHE,greedy_multi,UX,0.21695546011915204
+MOEAD_TCHE,greedy_multi,HUX,0.21257515203394847
+MOEAD_TCHE,greedy_multi,2P,0.190252350275026
+MOEAD_TCHE,greedy_multi,1P,0.1676585052431209

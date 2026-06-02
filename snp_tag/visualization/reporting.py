@@ -17,37 +17,23 @@ from snp_tag.utils.terminal import imprimir_grafico_guardado, imprimir_subseccio
 def graficar_rendimiento_tiempo(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str, dpi=300):
     """Visualiza el tiempo de ejecución y su relación con el tamaño del frente."""
     df_plot = df_runs.copy()
-    df_plot['config'] = df_plot['algorithm'] + '-' + df_plot['init']
+    df_plot['config'] = df_plot['algorithm'] + '-' + df_plot['init'] + '-' + df_plot['crossover']
+    n_configs = df_plot['config'].nunique()
+    ancho_dinamico = max(12, n_configs * 0.35)
     
-    # 1. Boxplot Tiempo
-    plt.figure(figsize=(12, 6))
-    sns.boxplot(data=df_plot, x='config', y='time_seg', hue='config', palette='Set2', legend=False)
-    plt.title('Distribución del Tiempo de Ejecución por Configuración')
-    plt.xticks(rotation=35, ha='right')
-    plt.tight_layout()
-    ruta_t = os.path.join(dir_salida, f'boxplot_tiempo_{etiqueta_modo}.png')
-    plt.savefig(ruta_t, dpi=dpi)
-    imprimir_grafico_guardado(ruta_t, "Boxplot tiempo de ejecución")
+
     
     # 2. Media +- Std (Barplot)
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(ancho_dinamico, 6))
     sns.barplot(data=df_plot, x='config', y='time_seg', hue='config', palette='muted', legend=False, errorbar='sd', capsize=.2)
     plt.title('Media ± Desviación Estándar del Tiempo de Ejecución')
-    plt.xticks(rotation=35, ha='right')
+    plt.xticks(rotation=35, ha='right', rotation_mode='anchor')
     plt.tight_layout()
     ruta_std = os.path.join(dir_salida, f'media_std_tiempo_{etiqueta_modo}.png')
-    plt.savefig(ruta_std, dpi=dpi)
+    plt.savefig(ruta_std, dpi=dpi, bbox_inches='tight')
     imprimir_grafico_guardado(ruta_std, "Media ± std tiempo ejecución")
     
-    # 3. Tiempo vs Tamaño de Frente
-    if 'frente_size' in df_plot.columns:
-        plt.figure(figsize=(10, 6))
-        sns.scatterplot(data=df_plot, x='time_seg', y='frente_size', hue='config', palette='Set2')
-        plt.title('Relación entre Tiempo de Ejecución y Tamaño del Frente')
-        plt.tight_layout()
-        ruta_scatter = os.path.join(dir_salida, f'tiempo_vs_tamano_frente_{etiqueta_modo}.png')
-        plt.savefig(ruta_scatter, dpi=dpi)
-        imprimir_grafico_guardado(ruta_scatter, "Tiempo vs Tamaño de frente")
+
         
     plt.close('all')
 
@@ -57,8 +43,8 @@ def graficar_comparativa_objetivos(df_runs: pd.DataFrame, dir_salida: str, etiqu
     cols_met = ['Range', 'SumMin', 'MinSum', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'Hypervolume', 'IGD+', 'GD+']
     disponibles = [c for c in cols_met if c in df_runs.columns]
     
-    resumen = df_runs.groupby(['algorithm', 'init'])[disponibles].mean().reset_index()
-    resumen['method'] = resumen['algorithm'] + '-' + resumen['init']
+    resumen = df_runs.groupby(['algorithm', 'init', 'crossover'])[disponibles].mean().reset_index()
+    resumen['method'] = resumen['algorithm'] + '-' + resumen['init'] + '-' + resumen['crossover']
     
     heat_df_plot = resumen.set_index('method')[disponibles].copy()
     heat_norm_better = heat_df_plot.copy()
@@ -78,8 +64,12 @@ def graficar_comparativa_objetivos(df_runs: pd.DataFrame, dir_salida: str, etiqu
             # Para métricas donde menos es mejor, invertimos el rango [0, 1]
             heat_norm_better[col] = (c_max - heat_df_plot[col]) / c_range
     
+    n_configs = len(heat_df_plot)
+    alto_dinamico = max(8.0, n_configs * 0.35)
+    ancho_dinamico = max(14.0, len(disponibles) * 0.8)
+
     # 3. Graficado exacto
-    plt.figure(figsize=(14, 8))
+    plt.figure(figsize=(ancho_dinamico, alto_dinamico))
     ax = sns.heatmap(heat_norm_better, annot=heat_df_plot, fmt='.3f', cmap='RdYlGn', linewidths=0.5)
     
     # Personalizar la barra de color (leyenda)
@@ -103,37 +93,40 @@ def graficar_violin_metricas(df_runs: pd.DataFrame, dir_salida: str, etiqueta_mo
     if not disponibles:
         return []
     df_plot = df_runs.copy()
-    df_plot['config'] = df_plot['algorithm'] + '-' + df_plot['init']
+    df_plot['config'] = df_plot['algorithm'] + '-' + df_plot['init'] + '-' + df_plot['crossover']
+    n_configs = df_plot['config'].nunique()
+    ancho_dinamico = max(12.0, n_configs * 0.35)
     artefactos = []
     
     # 1. Panel General
     ncols = 3
     nrows = int(np.ceil(len(disponibles) / ncols))
-    fig, axes = plt.subplots(nrows, ncols, figsize=(6 * ncols, 5 * nrows))
+    ancho_panel = max(6.0, n_configs * 0.25) * ncols
+    fig, axes = plt.subplots(nrows, ncols, figsize=(ancho_panel, 5 * nrows))
     axes = np.atleast_1d(axes).ravel()
     for i, m in enumerate(disponibles):
         ax = axes[i]
         sns.violinplot(data=df_plot, x='config', y=m, ax=ax, inner="quart", palette="Pastel1", hue='config', legend=False)
         ax.set_title(f'Detalle Violin: {m}', fontsize=12, fontweight='bold')
-        ax.tick_params(axis='x', rotation=35)
+        plt.setp(ax.get_xticklabels(), rotation=35, ha='right', rotation_mode='anchor')
     for j in range(i + 1, len(axes)): axes[j].axis('off')
     fig.tight_layout()
     ruta_p = os.path.join(dir_salida, f'violin_panel_metricas_finales_{etiqueta_modo}.png')
-    fig.savefig(ruta_p, dpi=dpi)
+    fig.savefig(ruta_p, dpi=dpi, bbox_inches='tight')
     artefactos.append((ruta_p, "Panel de Distribución Violin"))
     if emitir_log:
         imprimir_grafico_guardado(ruta_p, "Panel de Distribución Violin")
 
     # 2. Individuales
     for m in disponibles:
-        plt.figure(figsize=(12, 6))
+        plt.figure(figsize=(ancho_dinamico, 6))
         sns.violinplot(data=df_plot, x='config', y=m, inner="quart", hue='config', palette="Pastel1", legend=False)
         sns.stripplot(data=df_plot, x='config', y=m, color="black", alpha=0.3, size=3)
         plt.title(f'Distribución Detallada: {m} (Violin Plot)')
-        plt.xticks(rotation=35, ha='right')
+        plt.xticks(rotation=35, ha='right', rotation_mode='anchor')
         plt.tight_layout()
         ruta_i = os.path.join(dir_salida, f'violin_metricas_{m}_{etiqueta_modo}.png')
-        plt.savefig(ruta_i, dpi=dpi)
+        plt.savefig(ruta_i, dpi=dpi, bbox_inches='tight')
         artefactos.append((ruta_i, f"Distribución {m} (Violin)"))
         if emitir_log:
             imprimir_grafico_guardado(ruta_i, f"Distribución {m} (Violin)")
@@ -148,36 +141,39 @@ def graficar_media_std_metricas(df_runs: pd.DataFrame, dir_salida: str, etiqueta
     if not disponibles:
         return []
     df_plot = df_runs.copy()
-    df_plot['config'] = df_plot['algorithm'] + '-' + df_plot['init']
+    df_plot['config'] = df_plot['algorithm'] + '-' + df_plot['init'] + '-' + df_plot['crossover']
+    n_configs = df_plot['config'].nunique()
+    ancho_dinamico = max(12.0, n_configs * 0.35)
     artefactos = []
 
     # 1. Panel General (Barplots)
     ncols = 3
     nrows = int(np.ceil(len(disponibles) / ncols))
-    fig, axes = plt.subplots(nrows, ncols, figsize=(6 * ncols, 5 * nrows))
+    ancho_panel = max(6.0, n_configs * 0.25) * ncols
+    fig, axes = plt.subplots(nrows, ncols, figsize=(ancho_panel, 5 * nrows))
     axes = np.atleast_1d(axes).ravel()
     for i, m in enumerate(disponibles):
         ax = axes[i]
         sns.barplot(data=df_plot, x='config', y=m, ax=ax, hue='config', palette='muted', legend=False, errorbar='sd', capsize=.2)
         ax.set_title(f'Media ± Std: {m}', fontsize=12, fontweight='bold')
-        ax.tick_params(axis='x', rotation=35)
+        plt.setp(ax.get_xticklabels(), rotation=35, ha='right', rotation_mode='anchor')
     for j in range(i + 1, len(axes)): axes[j].axis('off')
     fig.tight_layout()
     ruta_p = os.path.join(dir_salida, f'media_std_panel_metricas_finales_{etiqueta_modo}.png')
-    fig.savefig(ruta_p, dpi=dpi)
+    fig.savefig(ruta_p, dpi=dpi, bbox_inches='tight')
     artefactos.append((ruta_p, "Panel de Tendencia Central (Media ± Std)"))
     if emitir_log:
         imprimir_grafico_guardado(ruta_p, "Panel de Tendencia Central (Media ± Std)")
     
     # 2. Individuales (Barplots)
     for m in disponibles:
-        plt.figure(figsize=(12, 6))
+        plt.figure(figsize=(ancho_dinamico, 6))
         sns.barplot(data=df_plot, x='config', y=m, hue='config', palette='muted', legend=False, errorbar='sd', capsize=.2)
         plt.title(f'Media ± Desviación Estándar de {m}')
-        plt.xticks(rotation=35, ha='right')
+        plt.xticks(rotation=35, ha='right', rotation_mode='anchor')
         plt.tight_layout()
         ruta_i = os.path.join(dir_salida, f'media_std_metricas_{m}_{etiqueta_modo}.png')
-        plt.savefig(ruta_i, dpi=dpi)
+        plt.savefig(ruta_i, dpi=dpi, bbox_inches='tight')
         artefactos.append((ruta_i, f"Media ± std {m}"))
         if emitir_log:
             imprimir_grafico_guardado(ruta_i, f"Media ± std {m}")
@@ -193,20 +189,23 @@ def graficar_boxplot_metricas(df_runs: pd.DataFrame, dir_salida: str, etiqueta_m
         return []
     
     df_plot = df_runs.copy()
-    df_plot['config'] = df_plot['algorithm'] + '-' + df_plot['init']
+    df_plot['config'] = df_plot['algorithm'] + '-' + df_plot['init'] + '-' + df_plot['crossover']
+    n_configs = df_plot['config'].nunique()
+    ancho_dinamico = max(12.0, n_configs * 0.35)
     artefactos = []
     
     # 1. Panel General
     ncols = 3
     nrows = int(np.ceil(len(disponibles) / ncols))
-    fig, axes = plt.subplots(nrows, ncols, figsize=(6 * ncols, 5 * nrows))
+    ancho_panel = max(6.0, n_configs * 0.25) * ncols
+    fig, axes = plt.subplots(nrows, ncols, figsize=(ancho_panel, 5 * nrows))
     axes = np.atleast_1d(axes).ravel()
     for i, m in enumerate(disponibles):
         ax = axes[i]
         sns.boxplot(data=df_plot, x='config', y=m, ax=ax, palette='Set3', hue='config', legend=False)
         sns.stripplot(data=df_plot, x='config', y=m, ax=ax, color='black', alpha=0.3, size=4)
         ax.set_title(f'Distribución de {m}', fontsize=12, fontweight='bold')
-        ax.tick_params(axis='x', rotation=35)
+        plt.setp(ax.get_xticklabels(), rotation=35, ha='right', rotation_mode='anchor')
     for j in range(i + 1, len(axes)): axes[j].axis('off')
     fig.tight_layout()
     ruta_p = os.path.join(dir_salida, f'boxplots_metricas_finales_{etiqueta_modo}.png')
@@ -217,13 +216,13 @@ def graficar_boxplot_metricas(df_runs: pd.DataFrame, dir_salida: str, etiqueta_m
     
     # 2. Individuales
     for m in disponibles:
-        plt.figure(figsize=(10, 6))
+        plt.figure(figsize=(max(10.0, n_configs * 0.35), 6))
         sns.boxplot(data=df_plot, x='config', y=m, palette='Set3', hue='config', legend=False)
         plt.title(f'Distribución de {m} (Boxplot)')
-        plt.xticks(rotation=35, ha='right')
+        plt.xticks(rotation=35, ha='right', rotation_mode='anchor')
         plt.tight_layout()
         ruta_i = os.path.join(dir_salida, f'boxplot_metricas_{m}_{etiqueta_modo}.png')
-        plt.savefig(ruta_i, dpi=dpi)
+        plt.savefig(ruta_i, dpi=dpi, bbox_inches='tight')
         artefactos.append((ruta_i, f"Distribución {m} (Boxplot)"))
         if emitir_log:
             imprimir_grafico_guardado(ruta_i, f"Distribución {m} (Boxplot)")
@@ -247,7 +246,9 @@ def graficar_analisis_estadistico(df_runs, dir_salida, etiqueta_modo, col_group=
     espacios = " " * indent
     df_plot = df_runs.copy()
     if 'config' not in df_plot.columns:
-        df_plot['config'] = df_plot['algorithm'] + '-' + df_plot['init']
+        df_plot['config'] = df_plot['algorithm'] + '-' + df_plot['init'] + '-' + df_plot['crossover']
+    
+    n_configs = df_plot[col_group].nunique()
     
     # 1. Preparar datos
     metricas = ['Hypervolume', 'Range', 'MinSum', 'SumMin', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'IGD+', 'GD+']
@@ -293,9 +294,10 @@ def graficar_analisis_estadistico(df_runs, dir_salida, etiqueta_modo, col_group=
     resumen['AvgRank'] = avg_ranks
     resumen_sort = resumen.sort_values('AvgRank')
     
-    plt.figure(figsize=(12, 6))
+    ancho_dinamico = max(12.0, n_configs * 0.35)
+    plt.figure(figsize=(ancho_dinamico, 6))
     sns.barplot(data=resumen_sort, x=col_group, y='AvgRank', palette='viridis', hue=col_group, legend=False)
-    plt.xticks(rotation=45, ha='right')
+    plt.xticks(rotation=45, ha='right', rotation_mode='anchor')
     plt.title(f'Ranking Promedio - {titulo} (Menor es Mejor)')
     plt.ylabel('Rango Promedio')
     plt.xlabel(titulo)
@@ -305,7 +307,7 @@ def graficar_analisis_estadistico(df_runs, dir_salida, etiqueta_modo, col_group=
     sufijo = f"_{col_group}" if col_group != 'config' else ""
     nombre_barras = f'rangos_promedio{sufijo}_{etiqueta_modo}.png'
     ruta_barras = os.path.join(dir_salida, nombre_barras)
-    plt.savefig(ruta_barras, dpi=dpi)
+    plt.savefig(ruta_barras, dpi=dpi, bbox_inches='tight')
     
     print(f"{espacios}    ", end="")
     imprimir_grafico_guardado(ruta_barras, f"Gráfico de Rangos Promedio ({titulo})")
@@ -317,7 +319,8 @@ def graficar_analisis_estadistico(df_runs, dir_salida, etiqueta_modo, col_group=
         p_values_nemenyi.columns = resumen[col_group]
         p_values_nemenyi.index = resumen[col_group]
         
-        plt.figure(figsize=(14, 12))
+        tamano_hm = max(14.0, n_configs * 0.4)
+        plt.figure(figsize=(tamano_hm, tamano_hm))
         mask = np.triu(np.ones_like(p_values_nemenyi, dtype=bool))
         cmap = ListedColormap(['#228B22', '#90EE90', '#FFC1C1'])
         norm = BoundaryNorm([0, 0.01, 0.05, 1.0], cmap.N)
@@ -329,7 +332,7 @@ def graficar_analisis_estadistico(df_runs, dir_salida, etiqueta_modo, col_group=
         cbar = ax.collections[0].colorbar
         cbar.set_ticklabels(['p < 0.01', '0.01 ≤ p < 0.05', 'NS (p ≥ 0.05)'])
         
-        plt.xticks(rotation=45, ha='right')
+        plt.xticks(rotation=45, ha='right', rotation_mode='anchor')
         plt.suptitle(f'Diagrama Nemenyi - {titulo}', fontsize=16, y=0.98)
         plt.tight_layout()
         
@@ -361,7 +364,9 @@ def graficar_analisis_kruskal_dunn(df_runs, dir_salida, metrica_objetivo, etique
     espacios = " " * indent
     df_plot = df_runs.copy()
     if 'config' not in df_plot.columns:
-        df_plot['config'] = df_plot['algorithm'] + '-' + df_plot['init']
+        df_plot['config'] = df_plot['algorithm'] + '-' + df_plot['init'] + '-' + df_plot['crossover']
+    
+    n_configs = df_plot['config'].nunique()
     
     # 1. Agrupar datos
     grupos = []
@@ -388,7 +393,8 @@ def graficar_analisis_kruskal_dunn(df_runs, dir_salida, metrica_objetivo, etique
     if p_val < 0.05:
         p_dunn = sp.posthoc_dunn(df_plot, val_col=metrica_objetivo, group_col='config', p_adjust='bonferroni')
         
-        plt.figure(figsize=(14, 12))
+        tamano_hm = max(14.0, n_configs * 0.4)
+        plt.figure(figsize=(tamano_hm, tamano_hm))
         mask = np.triu(np.ones_like(p_dunn, dtype=bool))
         cmap = ListedColormap(['#228B22', '#90EE90', '#FFC1C1'])
         norm = BoundaryNorm([0, 0.01, 0.05, 1.0], cmap.N)
@@ -397,7 +403,7 @@ def graficar_analisis_kruskal_dunn(df_runs, dir_salida, metrica_objetivo, etique
                     linewidths=0.5, linecolor='white',
                     cbar_kws={"ticks": [0.005, 0.03, 0.5], "label": "Nivel de Significancia"})
         
-        plt.xticks(rotation=45, ha='right')
+        plt.xticks(rotation=45, ha='right', rotation_mode='anchor')
         plt.suptitle(f'Post-hoc de Dunn: {metrica_objetivo}', fontsize=16, y=0.98)
         plt.tight_layout()
         
@@ -419,7 +425,7 @@ def graficar_diagrama_diferencia_critica(df_runs, dir_salida, metrica_objetivo, 
     espacios = " " * indent
     df_plot = df_runs.copy()
     if 'config' not in df_plot.columns:
-        df_plot['config'] = df_plot['algorithm'] + '-' + df_plot['init']
+        df_plot['config'] = df_plot['algorithm'] + '-' + df_plot['init'] + '-' + df_plot['crossover']
     
     # 1. Calcular rangos por réplica
     configs = sorted(df_plot['config'].unique())
@@ -450,9 +456,9 @@ def graficar_diagrama_diferencia_critica(df_runs, dir_salida, metrica_objetivo, 
     plt.hlines(y=range(len(sorted_labels)), xmin=1, xmax=n_configs, colors='gray', linestyles='dotted', alpha=0.3)
     plt.plot(sorted_ranks, range(len(sorted_labels)), 'ro', markersize=8)
     
-    for i, (r, label) in enumerate(zip(sorted_ranks, sorted_labels)):
+    plt.yticks(range(len(sorted_labels)), sorted_labels, fontweight='bold')
+    for i, r in enumerate(sorted_ranks):
         plt.text(r, i + 0.2, f"{r:.2f}", ha='center', fontsize=9)
-        plt.text(0.8, i, label, ha='right', va='center', fontweight='bold')
     
     for i in range(len(sorted_ranks)):
         for j in range(i + 1, len(sorted_ranks)):

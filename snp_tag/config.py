@@ -38,6 +38,7 @@ CLAVES_TUNABLES_REQUERIDAS = (
     'max_k_holistic',
     'cap_tolerancia',
     'crossover_operadores_activos',
+    'paso_generacional_metricas',
 )
 
 
@@ -185,6 +186,7 @@ PARAMETROS_CONFIGURACION = {
         'high': {'tam_pob': 120, 'n_gen': 100, 'descendencia': 120, 'n_runs': 3},
         'full': {'tam_pob': 220, 'n_gen': 500, 'descendencia': 220, 'n_runs': 5},
         'full_20': {'tam_pob': 220, 'n_gen': 500, 'descendencia': 220, 'n_runs': 20},
+        'full_30': {'tam_pob': 220, 'n_gen': 500, 'descendencia': 220, 'n_runs': 30},
     },
 
     # Fuentes de datos permitidas al construir configuración.
@@ -284,6 +286,9 @@ class ConfiguracionExperimento:
     
     # DPI de los reportes gráficos
     report_plot_dpi: int = PARAMS_TUNABLES_DEFECTO['report_plot_dpi']
+    
+    # Paso para el cálculo de métricas generacionales (0 para deshabilitar)
+    paso_generacional_metricas: int = PARAMS_TUNABLES_DEFECTO.get('paso_generacional_metricas', 10)
     
     # Ruta al dataset histórico de Hinds et al. (2005) - Localizado dentro del paquete (snp_tag/data/datasets/)
     ruta_hinds2005: str = str(Path(__file__).parent / "data" / "datasets" / "hinds2005_1032.txt")
@@ -446,6 +451,26 @@ def construir_configuracion(modo: str = 'medium', data_source: str = 'hinds2005'
         if str(op).strip().upper() not in ['UX', 'HUX', '1P', '2P']:
             raise ValueError(f"Operador de cruce no soportado: {op}. Opciones: UX, HUX, 1P, 2P")
 
+    modo_normalizacion_res = resolver_modo_normalizacion(params.get('modo_normalizacion'))
+    modo_evaluacion_res = resolver_modo_evaluacion(params.get('modo_evaluacion'))
+
+    if modo_evaluacion_res == 'proportional' and modo_normalizacion_res == 'static_dataset_limits':
+        raise ValueError(
+            "Incompatibilidad detectada: El modo de evaluación 'proportional' reduce "
+            "los objetivos a un rango fraccional, pero 'static_dataset_limits' intenta "
+            "normalizar usando los límites absolutos del dataset. Esta combinación "
+            "aplastaría las métricas hacia cero. Por favor, usa 'static_proportional_limits' "
+            "como modo_normalizacion en tu user_config.ini cuando uses evaluación proporcional."
+        )
+    elif modo_evaluacion_res == 'absoluta' and modo_normalizacion_res == 'static_proportional_limits':
+        raise ValueError(
+            "Incompatibilidad detectada: El modo de normalización 'static_proportional_limits' "
+            "está diseñado estrictamente para objetivos proporcionales, pero estás "
+            "usando el modo de evaluación 'absoluta' (que utiliza el rango físico completo "
+            "del dataset). Por favor, cambia a 'static_dataset_limits' u otro modo "
+            "de normalización compatible en tu user_config.ini."
+        )
+
     return ConfiguracionExperimento(
         modo_ejecucion=modo,
         num_bloques=num_bloques,
@@ -470,13 +495,14 @@ def construir_configuracion(modo: str = 'medium', data_source: str = 'hinds2005'
         dif_min_pares_sintetico=int(params['dif_min_pares_sintetico']),
         intentos_max_sintetico=int(params['intentos_max_sintetico']),
         report_plot_dpi=int(params['report_plot_dpi']),
+        paso_generacional_metricas=int(params.get('paso_generacional_metricas', 10)),
         ratio_greedy_ting=ratio_greedy_ting,
         max_cobertura_objetivo=int(params.get('max_cobertura_objetivo', 5)),
         max_k_holistic=int(params.get('max_k_holistic', 5)),
         algoritmos_activos=algoritmos_activos,
         opciones_init=opciones_init,
-        modo_normalizacion=resolver_modo_normalizacion(params.get('modo_normalizacion')),
-        modo_evaluacion=resolver_modo_evaluacion(params.get('modo_evaluacion')),
+        modo_normalizacion=modo_normalizacion_res,
+        modo_evaluacion=modo_evaluacion_res,
         modo_semillas=resolver_modo_semillas(params.get('modo_semillas')),
         modo_transformacion_objetivos=resolver_modo_transformacion_objetivos(
             params.get('modo_transformacion_objetivos')

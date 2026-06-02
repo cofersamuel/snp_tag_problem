@@ -1,0 +1,5 @@
+algorithm,init,crossover,MinSum
+MOEAD_TCHE,greedy_multi,UX,1.8986382687659065
+MOEAD_TCHE,greedy_multi,HUX,1.899481353649595
+MOEAD_TCHE,greedy_multi,2P,1.9078266396135912
+MOEAD_TCHE,greedy_multi,1P,1.9200062795981565

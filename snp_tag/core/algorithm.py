@@ -42,6 +42,19 @@ class SPEA2SurvivalSeguro(SPEA2Survival):
     """
 
     def _do(self, problem, pop, *args, n_survive=None, **kwargs):
+        """
+        Realiza el proceso de supervivencia de SPEA2.
+
+        Args:
+            problem: Problema de optimización.
+            pop: Población de soluciones.
+            *args: Argumentos adicionales.
+            n_survive (int): Número de individuos a sobrevivir.
+            **kwargs: Argumentos adicionales.
+
+        Returns:
+            np.ndarray: Población superviviente.
+        """
         F = pop.get("F").astype(float, copy=False)
 
         M = Dominator().calc_domination_matrix(F)

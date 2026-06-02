@@ -1,0 +1,5 @@
+algorithm,init,crossover,Average Ranking Overall
+MOEAD_TCHE,greedy_multi,HUX,1.5555555555555556
+MOEAD_TCHE,greedy_multi,UX,2.111111111111111
+MOEAD_TCHE,greedy_multi,2P,2.6666666666666665
+MOEAD_TCHE,greedy_multi,1P,3.6666666666666665

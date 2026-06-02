@@ -159,11 +159,11 @@ def _tarea_sintesis_estadistica(tipo_tarea, df_final, dir_salida, etiqueta_modo,
         artefactos = []
     return {'tarea': tipo_tarea, 'artefactos': artefactos}
 
-def inicializar_configuracion(modo='medium', data_source='hinds2005'):
+def inicializar_configuracion(modo='medium', data_source='hinds2005', overrides=None):
     """
     Configura los parámetros iniciales del experimento.
     """
-    return construir_configuracion(modo=modo, data_source=data_source)
+    return construir_configuracion(modo=modo, data_source=data_source, overrides=overrides)
 
 def informar_configuracion(cfg: ConfiguracionExperimento):
     """Muestra un resumen jerárquico y condicional de user_config.ini en la terminal."""
@@ -219,6 +219,7 @@ def informar_configuracion(cfg: ConfiguracionExperimento):
     # [Reporting]
     print(f"      • [Sistema]")
     print(f"          - report_plot_dpi: {cfg.report_plot_dpi}")
+    print(f"          - paso_generacional_metricas: {cfg.paso_generacional_metricas}")
     
     # [Resumen de Objetivos]
     suffix = " Prop." if cfg.modo_evaluacion == 'proportional' else ""
@@ -681,9 +682,6 @@ def ejecutar_pipeline_report_only(args):
     """Ejecuta únicamente la fase de reportes usando CSVs preexistentes en snp_tag/input."""
     inicio_total = time.time()
 
-    cfg = inicializar_configuracion(modo=args.mode, data_source=args.data_source)
-    informar_configuracion(cfg)
-
     ruta_input = Path(__file__).parent / 'input'
 
     imprimir_subseccion("Carga de CSVs para Report-Only", icono="📥")
@@ -691,11 +689,38 @@ def ejecutar_pipeline_report_only(args):
         ruta_input
     )
 
+    overrides = None
+    candidato_ini = None
     if modo_detectado:
-        cfg.modo_ejecucion = str(modo_detectado)
-        print(f"      • Modo inferido desde CSV detallado: {cfg.modo_ejecucion}")
+        candidato_ini_modo = ruta_input / f"user_config_{modo_detectado}.ini"
+        if candidato_ini_modo.exists():
+            candidato_ini = candidato_ini_modo
+    
+    if candidato_ini is None:
+        candidatos = list(ruta_input.glob("user_config*.ini"))
+        if candidatos:
+            candidato_ini = max(candidatos, key=lambda p: p.stat().st_mtime)
 
-    ruta_base, carpetas = crear_arbol_directorios_dataset(cfg, cfg.origen_datos)
+    if candidato_ini:
+        print(f"      • Configuración cargada desde input: {candidato_ini.name}")
+        from snp_tag.config import cargar_params_tunables_desde_ini
+        try:
+            overrides = cargar_params_tunables_desde_ini(candidato_ini)
+        except Exception as e:
+            print(f"      • ⚠️ Error cargando config de input, usando por defecto: {e}")
+    else:
+        print("      • ⚠️ No se encontró user_config en input, usando por defecto.")
+
+    cfg = inicializar_configuracion(modo=args.mode, data_source=args.data_source, overrides=overrides)
+
+    # Inyectar el modo de evaluación correcto en metrics.py ya que se evaluó estáticamente al importar
+    import snp_tag.engine.metrics
+    from snp_tag.config import resolver_modo_evaluacion
+    snp_tag.engine.metrics._MODO_EVALUACION_GLOBAL = resolver_modo_evaluacion(cfg.modo_evaluacion)
+
+    informar_configuracion(cfg)
+
+    ruta_base, carpetas = crear_arbol_directorios_dataset(cfg, cfg.origen_datos, is_report_only=True)
     cfg.carpetas = carpetas
 
     print(f"      • Carpeta de salida report-only: {ruta_base}")
@@ -809,12 +834,18 @@ def ejecutar_pipeline(args):
     
     print(f"\n    • Iniciando métricas generacionales: {len(resultados)} ejecuciones con historial")
     t0_gen = time.time()
-    df_gen = construir_metricas_generacionales(
-        resultados, ideal_g, nadir_g, n_snps_total=cfg.n_snps,
-        modo_normalizacion=cfg.modo_normalizacion,
-        hamming_pares=dvals,
-        modo_transformacion_objetivos=cfg.modo_transformacion_objetivos,
-    )
+    
+    if getattr(cfg, 'paso_generacional_metricas', 10) == 0:
+        print("      • ⚠️ Cálculo de métricas generacionales deshabilitado (paso = 0).")
+        df_gen = pd.DataFrame()
+    else:
+        df_gen = construir_metricas_generacionales(
+            resultados, ideal_g, nadir_g, n_snps_total=cfg.n_snps,
+            modo_normalizacion=cfg.modo_normalizacion,
+            hamming_pares=dvals,
+            modo_transformacion_objetivos=cfg.modo_transformacion_objetivos,
+            paso_generacional_metricas=cfg.paso_generacional_metricas,
+        )
     print(f"      • Métricas generacionales completadas: {len(resultados)} ejecuciones en {time.time() - t0_gen:.1f}s")
 
     df_fronts_total = _construir_df_fronts_desde_resultados(
@@ -834,6 +865,12 @@ def ejecutar_pipeline(args):
     ruta_fronts_csv = os.path.join(cfg.carpetas['ejecuciones'], f"frentes_pareto_{cfg.modo_ejecucion}.csv")
     df_fronts_total.to_csv(ruta_fronts_csv, index=False)
     imprimir_grafico_guardado(ruta_fronts_csv, "Soluciones de frentes finales (CSV)")
+    
+    ruta_config_exp = os.path.join(cfg.carpetas['ejecuciones'], f"user_config_{cfg.modo_ejecucion}.ini")
+    from snp_tag.config import RUTA_USER_CONFIG
+    if RUTA_USER_CONFIG.exists():
+        shutil.copyfile(RUTA_USER_CONFIG, ruta_config_exp)
+        imprimir_grafico_guardado(ruta_config_exp, "Configuración del experimento (INI)")
     
     imprimir_subseccion("Puntos Críticos del Espacio de Objetivos", icono="📍")
     imprimir_metadato("Punto Ideal Empírico (mejor)", str(ideal_g))

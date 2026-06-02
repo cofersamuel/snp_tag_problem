@@ -179,10 +179,28 @@ def _ordenar_con_desempate_aleatorio(grupos_puntuacion, rng):
 class MuestreoAleatorioDisperso(Sampling):
     """Genera soluciones binarias con baja densidad de activos."""
     def __init__(self, prob: float = 0.05, semilla=42):
+        """
+        Inicializa el muestreo aleatorio disperso.
+
+        Args:
+            prob (float): Probabilidad de que un SNP sea seleccionado.
+            semilla (int): Semilla para el generador de números aleatorios.
+        """
         super().__init__()
         self.prob = prob
         self.rng = np.random.default_rng(semilla)
     def _do(self, problem, n_samples, **kwargs):
+        """
+        Genera una población de soluciones aleatorias dispersas.
+
+        Args:
+            problem: Problema de optimización.
+            n_samples (int): Número de soluciones a generar.
+            **kwargs: Argumentos adicionales.
+
+        Returns:
+            np.ndarray: Población de soluciones binarias.
+        """
         X = self.rng.random((n_samples, problem.n_var)) < self.prob
         vacíos = ~X.any(axis=1)
         if vacíos.any():
@@ -249,6 +267,15 @@ class MuestreoGreedyMultiCobertura(Sampling):
     de cobertura desde 1 hasta max_cobertura_objetivo entre los individuos.
     """
     def __init__(self, H, pair_idx, max_cobertura_objetivo=5, semilla=42):
+        """
+        Inicializa el muestreo voraz de cobertura múltiple.
+
+        Args:
+            H (np.ndarray): Matriz de haplotipos.
+            pair_idx (np.ndarray): Índices de pares de haplotipos.
+            max_cobertura_objetivo (int): Cobertura máxima objetivo.
+            semilla (int): Semilla para el generador de números aleatorios.
+        """
         super().__init__()
         self.H = H
         self.pair_idx = pair_idx
@@ -256,6 +283,17 @@ class MuestreoGreedyMultiCobertura(Sampling):
         self.rng = np.random.default_rng(semilla)
 
     def _do(self, problem, n_samples, **kwargs):
+        """
+        Genera una población de soluciones voraces de cobertura múltiple.
+
+        Args:
+            problem: Problema de optimización.
+            n_samples (int): Número de soluciones a generar.
+            **kwargs: Argumentos adicionales.
+
+        Returns:
+            np.ndarray: Población de soluciones binarias.
+        """
         X = np.zeros((n_samples, problem.n_var), dtype=bool)
         
         # Distribución lineal de los objetivos de cobertura en la población.
@@ -273,6 +311,15 @@ class MuestreoGreedyTing(Sampling):
     Inicializacion mixta inspirada en Ting (GreedyInit + Greedy_init + Unique_init).
     """
     def __init__(self, H, pair_idx, ratio_greedy=0.5, semilla=42):
+        """
+        Inicializa el muestreo voraz de cobertura múltiple.
+
+        Args:
+            H (np.ndarray): Matriz de haplotipos.
+            pair_idx (np.ndarray): Índices de pares de haplotipos.
+            max_cobertura_objetivo (int): Cobertura máxima objetivo.
+            semilla (int): Semilla para el generador de números aleatorios.
+        """
         super().__init__()
         self.H = H
         self.pair_idx = pair_idx
@@ -288,6 +335,17 @@ class MuestreoGreedyTing(Sampling):
         self.semilla_densa[self.orden_ting] = True
 
     def _do(self, problem, n_samples, **kwargs):
+        """
+        Genera una población de soluciones voraces de cobertura múltiple.
+
+        Args:
+            problem: Problema de optimización.
+            n_samples (int): Número de soluciones a generar.
+            **kwargs: Argumentos adicionales.
+
+        Returns:
+            np.ndarray: Población de soluciones binarias.
+        """
         n_samples = int(n_samples)
         X = np.zeros((n_samples, problem.n_var), dtype=bool)
 
