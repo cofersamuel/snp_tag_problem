@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.12.1)  2 JUN 2026 19:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.12.1)  2 JUN 2026 19:41
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -576,27 +576,31 @@ File: t1cmtt.fd 2023/04/13 v2.5m Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
 (Font)              Font shape `T1/cmtt/m/n' tried instead on input line 79.
- [3]
+ [3
+
+]
 <assets/hv_1.1/hypervolume_comparison_es.png, id=139, 1011.78pt x 433.62pt>
 File: assets/hv_1.1/hypervolume_comparison_es.png Graphic file (type png)
 <use assets/hv_1.1/hypervolume_comparison_es.png>
 Package pdftex.def Info: assets/hv_1.1/hypervolume_comparison_es.png  used on i
-nput line 115.
+nput line 116.
 (pdftex.def)             Requested size: 460.93153pt x 197.54222pt.
- [4 <./assets/hv_1.1/hypervolume_comparison_es.png>] [5] [6]
+ [4
+
+ <./assets/hv_1.1/hypervolume_comparison_es.png>] [5] [6]
 <assets/ev_mode/frentes_pareto_global_abs.png, id=170, 1291.4649pt x 993.7125pt
 >
 File: assets/ev_mode/frentes_pareto_global_abs.png Graphic file (type png)
 <use assets/ev_mode/frentes_pareto_global_abs.png>
 Package pdftex.def Info: assets/ev_mode/frentes_pareto_global_abs.png  used on 
-input line 263.
+input line 264.
 (pdftex.def)             Requested size: 368.74835pt x 283.72653pt.
 <assets/ev_mode/frentes_pareto_global_prop.png, id=171, 1291.7058pt x 993.7125p
 t>
 File: assets/ev_mode/frentes_pareto_global_prop.png Graphic file (type png)
 <use assets/ev_mode/frentes_pareto_global_prop.png>
 Package pdftex.def Info: assets/ev_mode/frentes_pareto_global_prop.png  used on
- input line 272.
+ input line 273.
 (pdftex.def)             Requested size: 368.74835pt x 283.68105pt.
  [7] [8 <./assets/ev_mode/frentes_pareto_global_abs.png> <./assets/ev_mode/fren
 tes_pareto_global_prop.png>] [9]
@@ -608,7 +612,7 @@ v/heatmap_dunn_hypervolume_full_30.png Graphic file (type png)
 /heatmap_dunn_hypervolume_full_30.png>
 Package pdftex.def Info: ../exp_auxiliares/full30_cx_negAbs/2_comparativa/4_ran
 kings/estadistica_hv/heatmap_dunn_hypervolume_full_30.png  used on input line 3
-49.
+50.
 (pdftex.def)             Requested size: 245.82962pt x 260.87358pt.
 <../exp_auxiliares/full30_cx_negProp/2_comparativa/4_rankings/estadistica_hv/he
 atmap_dunn_hypervolume_full_30.png, id=195, 936.1374pt x 993.4716pt>
@@ -618,7 +622,7 @@ hv/heatmap_dunn_hypervolume_full_30.png Graphic file (type png)
 v/heatmap_dunn_hypervolume_full_30.png>
 Package pdftex.def Info: ../exp_auxiliares/full30_cx_negProp/2_comparativa/4_ra
 nkings/estadistica_hv/heatmap_dunn_hypervolume_full_30.png  used on input line 
-356.
+357.
 (pdftex.def)             Requested size: 245.82962pt x 260.87358pt.
 
 [10] [11{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-ts1.enc} <../exp_au
@@ -633,7 +637,7 @@ v/heatmap_dunn_hypervolume_full_20.png Graphic file (type png)
 /heatmap_dunn_hypervolume_full_20.png>
 Package pdftex.def Info: ../exp_auxiliares/full20_cx_negAbs/2_comparativa/4_ran
 kings/estadistica_hv/heatmap_dunn_hypervolume_full_20.png  used on input line 4
-91.
+92.
 (pdftex.def)             Requested size: 245.82962pt x 260.87358pt.
 File: ../exp_auxiliares/full30_cx_negAbs/2_comparativa/4_rankings/estadistica_h
 v/heatmap_dunn_hypervolume_full_30.png Graphic file (type png)
@@ -641,7 +645,7 @@ v/heatmap_dunn_hypervolume_full_30.png Graphic file (type png)
 /heatmap_dunn_hypervolume_full_30.png>
 Package pdftex.def Info: ../exp_auxiliares/full30_cx_negAbs/2_comparativa/4_ran
 kings/estadistica_hv/heatmap_dunn_hypervolume_full_30.png  used on input line 4
-98.
+99.
 (pdftex.def)             Requested size: 245.82962pt x 260.87358pt.
 <../exp_auxiliares/full20_cx_negAbs/2_comparativa/4_rankings/estadistica_hv/hea
 tmap_dunn_avgtolerancerate_full_20.png, id=226, 936.1374pt x 993.4716pt>
@@ -651,7 +655,7 @@ v/heatmap_dunn_avgtolerancerate_full_20.png Graphic file (type png)
 /heatmap_dunn_avgtolerancerate_full_20.png>
 Package pdftex.def Info: ../exp_auxiliares/full20_cx_negAbs/2_comparativa/4_ran
 kings/estadistica_hv/heatmap_dunn_avgtolerancerate_full_20.png  used on input l
-ine 517.
+ine 518.
 (pdftex.def)             Requested size: 245.82962pt x 260.87358pt.
 <../exp_auxiliares/full30_cx_negAbs/2_comparativa/4_rankings/estadistica_hv/hea
 tmap_dunn_avgtolerancerate_full_30.png, id=227, 936.1374pt x 993.4716pt>
@@ -661,14 +665,16 @@ v/heatmap_dunn_avgtolerancerate_full_30.png Graphic file (type png)
 /heatmap_dunn_avgtolerancerate_full_30.png>
 Package pdftex.def Info: ../exp_auxiliares/full30_cx_negAbs/2_comparativa/4_ran
 kings/estadistica_hv/heatmap_dunn_avgtolerancerate_full_30.png  used on input l
-ine 524.
+ine 525.
 (pdftex.def)             Requested size: 245.82962pt x 260.87358pt.
 
 [14 <../exp_auxiliares/full20_cx_negAbs/2_comparativa/4_rankings/estadistica_hv
 /heatmap_dunn_hypervolume_full_20.png>] [15 <../exp_auxiliares/full20_cx_negAbs
 /2_comparativa/4_rankings/estadistica_hv/heatmap_dunn_avgtolerancerate_full_20.
 png> <../exp_auxiliares/full30_cx_negAbs/2_comparativa/4_rankings/estadistica_h
-v/heatmap_dunn_avgtolerancerate_full_30.png>] [16] (./previa_v2.aux
+v/heatmap_dunn_avgtolerancerate_full_30.png>] [16
+
+] (./previa_v2.aux
 LaTeX Info: Redefining \. on input line 12.
 LaTeX Info: Redefining \% on input line 12.
 )
@@ -682,7 +688,7 @@ Package rerunfilecheck Info: File `previa_v2.out' has not changed.
 Here is how much of TeX's memory you used:
  14613 strings out of 474222
  233126 string characters out of 5748733
- 1944975 words of memory out of 5000000
+ 1942975 words of memory out of 5000000
  36595 multiletter control sequences out of 15000+600000
  577643 words of font info for 83 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -705,7 +711,7 @@ uper/sfrm0900.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1000.pfb></
 usr/share/texmf/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf/font
 s/type1/public/cm-super/sfti0900.pfb></usr/share/texmf/fonts/type1/public/cm-su
 per/sfti1000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1000.pfb>
-Output written on previa_v2.pdf (16 pages, 7206301 bytes).
+Output written on previa_v2.pdf (16 pages, 7206187 bytes).
 PDF statistics:
  360 PDF objects out of 1000 (max. 8388607)
  277 compressed objects within 3 object streams
