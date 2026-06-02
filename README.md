@@ -221,6 +221,8 @@ El motor permite alterar la naturaleza matemática de las funciones objetivo a t
 
 En este modo, las métricas biológicas se calculan de forma **proporcional** a la compacidad (tamaño $k$) de la solución. Además, se introduce el parámetro `cap_tolerancia` para acotar la recompensa por redundancia excesiva, evitando que soluciones sobredimensionadas dominen el frente por pura fuerza bruta.
 
+> **Nota sobre decodificación real**: Al evaluar en modo proporcional, el sistema escala de forma inversa la cobertura mínima y el promedio de Hamming real por la fracción de SNPs activos para preservar la interpretabilidad biológica de los resultados físicos del panel.
+
 Las fórmulas resultantes para los objetivos en modo proporcional son:
 
 * **Tolerancia Proporcional ($f_2^{prop}$):** 
@@ -318,6 +320,7 @@ modo_normalizacion = static_proportional_limits ; (per_algorithm, global_all_pai
 
 [Reporting]
 report_plot_dpi = 300 ; DPI de las figuras
+paso_generacional_metricas = 10 ; Calcular métricas cada N generaciones (0 para deshabilitar)
 ```
 
 <details>
