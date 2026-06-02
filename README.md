@@ -9,7 +9,7 @@ Este repositorio contiene la implementación de un pipeline modular basado en al
    * Enfoque evolutivo multiobjetivo.
 2. **[Marco Experimental](#sección-2-marco-experimental)**
    * Datasets (Hinds et al. y Sintéticos).
-   * **Preprocesamiento de Datos (Filtrado de SNPs).**
+   * Preprocesamiento de Datos (Filtrado de SNPs).
    * Suite de diagnóstico y caracterización de datos.
    * Objetivos de optimización
    * Algoritmos e Inicializaciones
