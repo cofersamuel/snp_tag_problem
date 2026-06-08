@@ -10,14 +10,31 @@ import os
 import numpy as np
 import pandas as pd
 import json
+from typing import Tuple, List, Dict
+from snp_tag.utils.logger import logger
+
 from snp_tag.config import ConfiguracionExperimento
 from snp_tag.utils.terminal import imprimir_estado, imprimir_grafico_guardado
 from snp_tag.utils.filesystem import crear_arbol_directorios_dataset
 
 
-def filtrar_snps_monomorficos(H: np.ndarray):
+def filtrar_snps_monomorficos(H: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Filtra SNPs monomórficos con el criterio de Ting: 0 < suma_columna < n_haplotipos.
+    Filtra SNPs monomórficos del bloque haplotípico.
+
+    Utiliza el criterio de Ting (0 < suma_columna < n_haplotipos) para
+    identificar y eliminar aquellos SNPs que no presentan variación alélica.
+
+    Parámetros:
+    -----------
+    H : np.ndarray
+        Matriz haplotípica binaria de dimensiones (n_haplotipos, n_snps).
+
+    Retorna:
+    --------
+    Tuple[np.ndarray, np.ndarray]
+        - H_filtrado: Matriz haplotípica filtrada sin columnas monomórficas.
+        - indices_utiles: Índices originales de los SNPs polimórficos preservados.
     """
     if H.size == 0:
         return H, np.array([], dtype=int)
@@ -28,22 +45,43 @@ def filtrar_snps_monomorficos(H: np.ndarray):
     indices_utiles = np.where(mascara_polimorficos)[0].astype(int)
     return H[:, mascara_polimorficos], indices_utiles
 
-def generar_bloque_haplotipico_ld(n_haplotipos=40, n_snps=1200, tam_bloque=50, 
-                                 prob_flip=0.02, semilla=42, 
+def generar_bloque_haplotipico_ld(n_haplotipos: int = 40, n_snps: int = 1200, tam_bloque: int = 50, 
+                                 prob_flip: float = 0.02, semilla: int = 42, 
                                  dif_min_pares: int = 0, intentos_max: int = 1000,
-                                 ancho_transicion: int = 7):
+                                 ancho_transicion: int = 7) -> Tuple[np.ndarray, int, int]:
     """
-    Genera una matriz binaria (Haplotipo x SNP) con estructura de bloques LD
-    realista. Cada SNP se genera copiando su predecesor inmediato (modelo de
-    cadena), con probabilidad de flip que crece con la distancia al inicio del
-    bloque (decaimiento intra-bloque) y zonas de transición graduales entre
-    bloques donde la probabilidad sube a ~0.5.
+    Genera una matriz binaria (Haplotipo x SNP) con estructura de bloques LD realista.
 
-    Parámetros
-    ----------
+    Cada SNP se genera copiando su predecesor inmediato (modelo de cadena),
+    con probabilidad de flip que crece con la distancia al inicio del bloque 
+    (decaimiento intra-bloque) y zonas de transición graduales entre bloques 
+    donde la probabilidad sube a ~0.5.
+
+    Parámetros:
+    -----------
+    n_haplotipos : int
+        Número de haplotipos a generar. Por defecto 40.
+    n_snps : int
+        Número total de SNPs a generar. Por defecto 1200.
+    tam_bloque : int
+        Tamaño base de cada bloque genómico simulado. Por defecto 50.
+    prob_flip : float
+        Probabilidad base de mutación/recombinación. Por defecto 0.02.
+    semilla : int
+        Semilla para la generación pseudoaleatoria. Por defecto 42.
+    dif_min_pares : int
+        Diferencia mínima obligatoria (distancia Hamming) entre cualquier par de haplotipos.
+    intentos_max : int
+        Número máximo de intentos para resolver colisiones.
     ancho_transicion : int
-        Número de posiciones a cada lado de una frontera de bloque donde
-        prob_flip se interpola hacia 0.5. Por defecto 7 (zona total ~14 SNPs).
+        Número de posiciones en las fronteras de bloque donde prob_flip se interpola hacia 0.5.
+
+    Retorna:
+    --------
+    Tuple[np.ndarray, int, int]
+        - H: Matriz binaria generada (n_haplotipos, n_snps).
+        - intentos: Número de reintentos empleados.
+        - min_actual: Distancia Hamming mínima final alcanzada.
     """
     rng = np.random.default_rng(semilla)
     n_bloques = int(np.ceil(n_snps / tam_bloque))
@@ -136,10 +174,22 @@ def generar_bloque_haplotipico_ld(n_haplotipos=40, n_snps=1200, tam_bloque=50,
 
     return H, intentos, min_actual
 
-def cargar_bloque_hinds2005(ruta_fichero: str):
+def cargar_bloque_hinds2005(ruta_fichero: str) -> Tuple[np.ndarray, List[str], np.ndarray, List[str]]:
     """
-    Carga el bloque haplotípico histórico de Hinds et al. (2005) desde el formato Ting 2010.
-    Dimensiones: 48 patrones x 1032 SNPs.
+    Carga el bloque haplotípico histórico de Hinds et al. (2005).
+
+    Parámetros:
+    -----------
+    ruta_fichero : str
+        Ruta al fichero de texto que contiene la matriz haplotípica en formato Ting 2010.
+
+    Retorna:
+    --------
+    Tuple[np.ndarray, List[str], np.ndarray, List[str]]
+        - H_filtrado: Matriz procesada (solo SNPs polimórficos).
+        - snp_ids: Lista de identificadores de cada SNP (columnas).
+        - posiciones_snp: Array con las posiciones absolutas de los SNPs preservados.
+        - haplotipo_ids: Lista de identificadores para los haplotipos (filas).
     """
     if not os.path.exists(ruta_fichero):
         raise FileNotFoundError(f"Dataset de Hinds 2005 no hallado en: '{ruta_fichero}'")
@@ -160,16 +210,32 @@ def cargar_bloque_hinds2005(ruta_fichero: str):
     haplotipo_ids = [f"patron_{i}" for i in range(n_patrones)]
     
     ruta_rel = os.path.relpath(ruta_fichero)
-    print(
+    logger.info(
         "       \033[92m✅  Hinds 2005 cargado y filtrado: "
         f"{n_patrones} patrones alelicos × {n_snps} SNPs polimórficos "
-        f"(de {n_snps_entrada} originales) desde '{ruta_rel}'\033[0m"
+        f"(de {n_snps_entrada} originales)\033[0m"
     )
     return H_filtrado, snp_ids, posiciones_snp, haplotipo_ids
 
-def exportar_dataset(H, snp_ids, posiciones_snp, haplotipo_ids, carpetas, modo_etiqueta):
+def exportar_dataset(H: np.ndarray, snp_ids: List[str], posiciones_snp: np.ndarray, 
+                     haplotipo_ids: List[str], carpetas: Dict[str, str], modo_etiqueta: str) -> None:
     """
-    Sincroniza la matriz haplotípica y sus metadatos en archivos CSV.
+    Sincroniza la matriz haplotípica y sus metadatos almacenándolos en disco (formato CSV).
+
+    Parámetros:
+    -----------
+    H : np.ndarray
+        Matriz haplotípica (n_haplotipos, n_snps).
+    snp_ids : List[str]
+        Lista de identificadores de columnas (SNPs).
+    posiciones_snp : np.ndarray
+        Array con las posiciones genómicas de los SNPs.
+    haplotipo_ids : List[str]
+        Lista de identificadores de filas (Haplotipos).
+    carpetas : Dict[str, str]
+        Diccionario con las rutas absolutas de salida.
+    modo_etiqueta : str
+        Etiqueta del experimento usada en los nombres de archivo.
     """
     df = pd.DataFrame(H, index=haplotipo_ids, columns=snp_ids)
     ruta_csv = os.path.join(carpetas['datos'], f'matriz_haplotipos_seleccionada_{modo_etiqueta}.csv')
@@ -179,13 +245,26 @@ def exportar_dataset(H, snp_ids, posiciones_snp, haplotipo_ids, carpetas, modo_e
     ruta_meta = os.path.join(carpetas['datos'], f'metadatos_snps_seleccionados_{modo_etiqueta}.csv')
     df_meta.to_csv(ruta_meta, index=False)
     
-    print(f"       \033[92m✅  Dataset exportado: {len(snp_ids)} SNPs x {len(haplotipo_ids)} haplotipos\033[0m")
+    logger.info(f"       \033[92m✅  Dataset exportado: {len(snp_ids)} SNPs x {len(haplotipo_ids)} haplotipos\033[0m")
     imprimir_grafico_guardado(ruta_csv, "Matriz de haplotipos (CSV)")
     imprimir_grafico_guardado(ruta_meta, "Metadatos de SNPs (CSV)")
 
-def cargar_dataset_objetivo(cfg: ConfiguracionExperimento):
+def cargar_dataset_objetivo(cfg: ConfiguracionExperimento) -> Tuple[np.ndarray, List[str], np.ndarray, List[str]]:
     """
-    Orquesta la carga o generación del dataset según la configuración global.
+    Orquesta la carga o generación del dataset según la configuración global proporcionada.
+
+    Parámetros:
+    -----------
+    cfg : ConfiguracionExperimento
+        Objeto central de configuración del pipeline.
+
+    Retorna:
+    --------
+    Tuple[np.ndarray, List[str], np.ndarray, List[str]]
+        - H: Matriz haplotípica procesada y filtrada.
+        - snp_ids: Lista de identificadores de columnas.
+        - posiciones_snp: Posiciones de los marcadores genéticos.
+        - haplotipo_ids: Lista de identificadores de filas.
     """
     if cfg.origen_datos == "synthetic":
         H, intentos, min_logrado = generar_bloque_haplotipico_ld(
@@ -200,10 +279,9 @@ def cargar_dataset_objetivo(cfg: ConfiguracionExperimento):
         posiciones_snp = idx_utiles.copy()
         haplotipo_ids = [f"hap_{i}" for i in range(cfg.n_haplotipos)]
 
-        print(
-            "       \033[92m✅  Synthetic filtrado: "
-            f"{H.shape[0]} haplotipos × {H.shape[1]} SNPs polimórficos "
-            f"(de {n_snps_entrada} originales)\033[0m"
+        logger.info(
+            f"       \033[92m✅  Dataset híbrido generado: {len(snp_ids)} SNPs "
+            f"( {n_snps_entrada} sintéticos ) x {len(haplotipo_ids)} haplotipos\033[0m"
         )
         
         # Gestión de directorios: solo crear si no fueron configurados por el orquestador

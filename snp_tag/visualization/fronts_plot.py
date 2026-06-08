@@ -16,11 +16,23 @@ from matplotlib.lines import Line2D
 import statsmodels.api as sm
 import warnings
 
-from snp_tag.engine.metrics import decodificar_objetivos_reales
+from snp_tag.engine.metrics_logic import decodificar_objetivos_reales
 
 
 def _normalizar_columnas_frentes(df_base: pd.DataFrame) -> pd.DataFrame:
-    """Normaliza alias de columnas de frentes al esquema canónico actual."""
+    """
+    Normaliza alias de columnas de frentes al esquema canónico actual.
+    
+    Parámetros:
+    -----------
+    df_base : pd.DataFrame
+        DataFrame con los resultados brutos de frentes de Pareto.
+
+    Retorna:
+    --------
+    pd.DataFrame
+        DataFrame con las columnas renombradas para su consistencia interna.
+    """
     if df_base is None or df_base.empty:
         return df_base
 
@@ -36,7 +48,21 @@ def _normalizar_columnas_frentes(df_base: pd.DataFrame) -> pd.DataFrame:
 
 
 def _anexar_objetivos_reales(df_base: pd.DataFrame, modo_transformacion_objetivos: str = 'neg') -> pd.DataFrame:
-    """Añade columnas en escala física para visualización consistente entre modos."""
+    """
+    Añade columnas en escala física para visualización consistente entre modos.
+    
+    Parámetros:
+    -----------
+    df_base : pd.DataFrame
+        DataFrame de entrada conteniendo los frentes de Pareto transformados.
+    modo_transformacion_objetivos : str
+        Modo en el que los objetivos fueron manipulados ('neg' o 'inv').
+
+    Retorna:
+    --------
+    pd.DataFrame
+        DataFrame extendido con las métricas en su espacio de decisión físico original.
+    """
     df_base = _normalizar_columnas_frentes(df_base)
     requeridas = ['f1_compactness', 'f2_transformed_tolerance', 'f3_transformed_hamming_avg', 'f4_balance_var']
     faltantes = [c for c in requeridas if c not in df_base.columns]
@@ -57,6 +83,19 @@ def _anexar_objetivos_reales(df_base: pd.DataFrame, modo_transformacion_objetivo
     return df[df['min_cobertura'] >= 1.0].copy()
 
 def _anexar_crossover(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Sintetiza una columna compuesta combinando inicialización y cruce.
+
+    Parámetros:
+    -----------
+    df : pd.DataFrame
+        DataFrame base a extender.
+
+    Retorna:
+    --------
+    pd.DataFrame
+        DataFrame modificado con la nueva columna 'init_cross'.
+    """
     df_out = df.copy()
     if 'crossover' in df_out.columns:
         df_out['init_cross'] = df_out['init'] + '+' + df_out['crossover']
@@ -76,7 +115,35 @@ def graficar_frentes_pareto(df_datos: pd.DataFrame, nombre_algoritmo: str,
                             modo_transformacion_objetivos: str = 'neg') -> List[Tuple[str, str]]:
     """
     Representa el frente de Pareto mediante cuatro proyecciones 2D entre objetivos.
-    Permite estandarizar los límites de los ejes si se proporciona 'limites_ejes'.
+
+    Genera una figura 2x2 para cada inicialización de un algoritmo específico, 
+    proyectando las diferentes métricas conflictivas entre sí.
+
+    Parámetros:
+    -----------
+    df_datos : pd.DataFrame
+        DataFrame con los puntos del frente de Pareto.
+    nombre_algoritmo : str
+        Nombre del algoritmo a filtrar (e.g. 'NSGA3').
+    nombre_init : Optional[str]
+        Filtro específico para la inicialización. Si es None, itera sobre todas.
+    carpetas : Optional[Dict[str, str]]
+        Diccionario con las rutas absolutas para exportar las gráficas.
+    etiqueta_modo : Optional[str]
+        Sufijo identificador del experimento.
+    dpi : int
+        Calidad de salida para la gráfica (por defecto 300).
+    emitir_log : bool
+        Si se imprime confirmación por terminal.
+    limites_ejes : Optional[Dict[str, Tuple[float, float]]]
+        Limites estandarizados globales para cada objetivo.
+    modo_transformacion_objetivos : str
+        Modo de conversión de los objetivos ('neg', 'inv').
+
+    Retorna:
+    --------
+    List[Tuple[str, str]]
+        Lista de artefactos (ruta absoluta, descripción descriptiva) generados.
     """
     df_algo = df_datos[df_datos['algorithm'].str.upper() == nombre_algoritmo.upper()].copy()
     if df_algo.empty:
@@ -165,10 +232,35 @@ def graficar_frentes_pareto(df_datos: pd.DataFrame, nombre_algoritmo: str,
 
     return artefactos
 
-def graficar_correlacion_objetivos_pareto(df_total: pd.DataFrame, carpetas: Dict, etiqueta_modo: str,
+def graficar_correlacion_objetivos_pareto(df_total: pd.DataFrame, carpetas: Dict[str, str], etiqueta_modo: str,
                                           dpi: int = 300, emitir_log: bool = True,
                                           modo_transformacion_objetivos: str = 'neg') -> List[Tuple[str, str]]:
-    """Genera un heatmap de la correlación de objetivos en los frentes de Pareto (Réplica Legacy)."""
+    """
+    Genera un heatmap de la correlación de objetivos en los frentes de Pareto.
+
+    Calcula y muestra la correlación de Pearson entre los diferentes objetivos reales
+    para determinar la naturaleza conflictiva de cada par métrico.
+
+    Parámetros:
+    -----------
+    df_total : pd.DataFrame
+        DataFrame de entrada conteniendo todos los frentes de Pareto combinados.
+    carpetas : Dict[str, str]
+        Diccionario con las rutas de exportación.
+    etiqueta_modo : str
+        Etiqueta base del experimento.
+    dpi : int
+        Calidad de salida (por defecto 300).
+    emitir_log : bool
+        Si se notifica la creación de la imagen por consola.
+    modo_transformacion_objetivos : str
+        Modo utilizado para transformar los objetivos originales en el espacio numérico.
+
+    Retorna:
+    --------
+    List[Tuple[str, str]]
+        Lista de tuplas con las rutas y descripciones de los artefactos visuales.
+    """
     if df_total.empty:
         return []
     
@@ -198,10 +290,34 @@ def graficar_correlacion_objetivos_pareto(df_total: pd.DataFrame, carpetas: Dict
     plt.close()
     return [(ruta, "Correlación objetivos Pareto (Valores Reales)")]
 
-def graficar_coordenadas_paralelas_pareto(df_total: pd.DataFrame, seed: int, carpetas: Dict, etiqueta_modo: str,
+def graficar_coordenadas_paralelas_pareto(df_total: pd.DataFrame, seed: int, carpetas: Dict[str, str], etiqueta_modo: str,
                                           dpi: int = 300, emitir_log: bool = True,
                                           modo_transformacion_objetivos: str = 'neg') -> List[Tuple[str, str]]:
-    """Representa frentes en coordenadas paralelas normalizadas, por cada (algo, init) (Réplica Legacy)."""
+    """
+    Representa frentes en coordenadas paralelas normalizadas, segmentando por configuración.
+
+    Parámetros:
+    -----------
+    df_total : pd.DataFrame
+        Conjunto de datos global con los frentes de Pareto.
+    seed : int
+        Semilla de aleatoriedad para muestreo (máx 60 muestras por plot para legibilidad).
+    carpetas : Dict[str, str]
+        Mapeo de directorios.
+    etiqueta_modo : str
+        Sufijo del experimento.
+    dpi : int
+        Resolución de la figura exportada.
+    emitir_log : bool
+        Registro en terminal de la exportación.
+    modo_transformacion_objetivos : str
+        Indica la función inversa a aplicar.
+
+    Retorna:
+    --------
+    List[Tuple[str, str]]
+        Tuplas de ruta y descripción de la imagen exportada.
+    """
     if df_total.empty:
         return []
     
@@ -298,14 +414,44 @@ def graficar_frentes_pareto_agregados(df_datos: pd.DataFrame, titulo_gen: str,
                                      nombre_archivo: str,
                                      hue_col: str = 'init',
                                      style_col: Optional[str] = None,
-                                     carpetas: Optional[Dict] = None,
+                                     carpetas: Optional[Dict[str, str]] = None,
                                      dpi: int = 300,
                                      emitir_log: bool = True,
                                      limites_ejes: Optional[Dict[str, Tuple[float, float]]] = None,
                                      modo_transformacion_objetivos: str = 'neg') -> List[Tuple[str, str]]:
     """
-    Genera un único gráfico de Pareto agregado (2x2) combinando múltiples configuraciones.
-    Diferencia las categorías mediante colores (hue).
+    Genera un gráfico de Pareto agregado (2x2) combinando múltiples configuraciones en simultáneo.
+
+    Diferencia visualmente las categorías y grupos algorítmicos mediante colores 
+    (hue) y opcionalmente marcadores (style).
+
+    Parámetros:
+    -----------
+    df_datos : pd.DataFrame
+        Dataset consolidado con las soluciones del Pareto global.
+    titulo_gen : str
+        Título general que encabezará la gráfica 2x2.
+    nombre_archivo : str
+        Nombre base para la exportación de la figura.
+    hue_col : str
+        Columna usada para codificar los colores de los puntos (por defecto 'init').
+    style_col : Optional[str]
+        Columna opcional usada para diferenciar los marcadores geométricos de los puntos.
+    carpetas : Optional[Dict[str, str]]
+        Diccionario con rutas de salida para los directorios del proyecto.
+    dpi : int
+        Resolución de la figura.
+    emitir_log : bool
+        Indica si debe reportarse la exportación por terminal.
+    limites_ejes : Optional[Dict[str, Tuple[float, float]]]
+        Tuplas de contención visual para mantener consistencia en los ejes (min, max) de cada métrica.
+    modo_transformacion_objetivos : str
+        Modificador interno utilizado durante la optimización numérica.
+
+    Retorna:
+    --------
+    List[Tuple[str, str]]
+        Arreglo de pares ruta y descripción técnica de la exportación agregada.
     """
     if df_datos.empty:
         return []

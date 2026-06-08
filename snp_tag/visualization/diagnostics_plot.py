@@ -9,12 +9,26 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import os
-from typing import Optional
-from scipy.stats import cumfreq
-from snp_tag.data.diagnostics import detectar_bloques_ld
+from typing import Optional, Dict, Any
+
+from snp_tag.engine.diagnostics_logic import detectar_bloques_ld
 from snp_tag.utils.terminal import imprimir_grafico_guardado
 
-def graficar_mapa_calor_haplotipos(H, carpetas, etiqueta_modo, dpi=200):
+def graficar_mapa_calor_haplotipos(H: np.ndarray, carpetas: Dict[str, str], etiqueta_modo: str, dpi: int = 200) -> None:
+    """
+    Genera un mapa de calor visualizando la matriz binaria haplotípica completa.
+
+    Parámetros:
+    -----------
+    H : np.ndarray
+        Matriz haplotípica binaria (filas=haplotipos, columnas=SNPs).
+    carpetas : Dict[str, str]
+        Diccionario con las rutas de los directorios de salida.
+    etiqueta_modo : str
+        Sufijo identificador del modo de ejecución.
+    dpi : int
+        Resolución de la imagen generada (por defecto 200).
+    """
     sns.set_theme(style='whitegrid')
     plt.figure(figsize=(16, 5))
     sns.heatmap(H, cmap='gray', vmin=0, vmax=1, cbar_kws={'label': 'Alelo (0/1)'})
@@ -27,7 +41,21 @@ def graficar_mapa_calor_haplotipos(H, carpetas, etiqueta_modo, dpi=200):
     imprimir_grafico_guardado(ruta, "Mapa de calor de haplotipos")
     plt.close()
 
-def graficar_histograma_hamming(dvals, carpetas, etiqueta_modo, dpi=200):
+def graficar_histograma_hamming(dvals: np.ndarray, carpetas: Dict[str, str], etiqueta_modo: str, dpi: int = 200) -> None:
+    """
+    Genera un histograma de la distribución de distancias Hamming por pares.
+
+    Parámetros:
+    -----------
+    dvals : np.ndarray
+        Array unidimensional de distancias Hamming calculadas.
+    carpetas : Dict[str, str]
+        Diccionario con las rutas de los directorios de salida.
+    etiqueta_modo : str
+        Sufijo identificador del modo de ejecución.
+    dpi : int
+        Resolución de la imagen generada.
+    """
     plt.figure(figsize=(10, 6))
     sns.histplot(dvals, kde=True, color='purple', bins=20)
     plt.title('Distribución de Distancias de Hamming entre Pares')
@@ -39,7 +67,21 @@ def graficar_histograma_hamming(dvals, carpetas, etiqueta_modo, dpi=200):
     imprimir_grafico_guardado(ruta, "Distribución de distancias de Hamming")
     plt.close()
 
-def graficar_variabilidad_snps(H, carpetas, etiqueta_modo, dpi=200):
+def graficar_variabilidad_snps(H: np.ndarray, carpetas: Dict[str, str], etiqueta_modo: str, dpi: int = 200) -> None:
+    """
+    Grafica la variabilidad (desviación estándar) de cada SNP en el bloque.
+
+    Parámetros:
+    -----------
+    H : np.ndarray
+        Matriz haplotípica binaria.
+    carpetas : Dict[str, str]
+        Diccionario con las rutas de salida.
+    etiqueta_modo : str
+        Sufijo identificador del experimento.
+    dpi : int
+        Resolución de la imagen generada.
+    """
     desvios = H.std(axis=0)
     plt.figure(figsize=(16, 4))
     plt.plot(desvios, color='teal', linewidth=1)
@@ -53,7 +95,21 @@ def graficar_variabilidad_snps(H, carpetas, etiqueta_modo, dpi=200):
     imprimir_grafico_guardado(ruta, "Variabilidad por SNP")
     plt.close()
 
-def graficar_conteo_alelos(H, carpetas, etiqueta_modo, dpi=200):
+def graficar_conteo_alelos(H: np.ndarray, carpetas: Dict[str, str], etiqueta_modo: str, dpi: int = 200) -> None:
+    """
+    Representa un diagrama de barras con el conteo de alelos "1" por cada haplotipo.
+
+    Parámetros:
+    -----------
+    H : np.ndarray
+        Matriz haplotípica binaria.
+    carpetas : Dict[str, str]
+        Diccionario con rutas de salida.
+    etiqueta_modo : str
+        Sufijo identificador.
+    dpi : int
+        Resolución de la imagen generada.
+    """
     conteos = H.sum(axis=1)
     plt.figure(figsize=(12, 5))
     sns.barplot(x=list(range(len(conteos))), y=conteos, color='salmon')
@@ -66,7 +122,21 @@ def graficar_conteo_alelos(H, carpetas, etiqueta_modo, dpi=200):
     imprimir_grafico_guardado(ruta, "Alelos dominantes por haplotipo")
     plt.close()
 
-def graficar_histograma_alelico(H, carpetas, etiqueta_modo, dpi=200):
+def graficar_histograma_alelico(H: np.ndarray, carpetas: Dict[str, str], etiqueta_modo: str, dpi: int = 200) -> None:
+    """
+    Genera un histograma de la distribución de las frecuencias alélicas (aproximación MAF).
+
+    Parámetros:
+    -----------
+    H : np.ndarray
+        Matriz haplotípica binaria.
+    carpetas : Dict[str, str]
+        Diccionario con rutas de salida.
+    etiqueta_modo : str
+        Sufijo identificador.
+    dpi : int
+        Resolución de la imagen generada.
+    """
     freqs = H.mean(axis=0)
     plt.figure(figsize=(10, 6))
     sns.histplot(freqs, bins=30, kde=True, color='green')
@@ -79,7 +149,28 @@ def graficar_histograma_alelico(H, carpetas, etiqueta_modo, dpi=200):
     imprimir_grafico_guardado(ruta, "Distribución de frecuencia alélica")
     plt.close()
 
-def graficar_ld_detallado(corr_full, corrs, carpetas, etiqueta_modo, dpi=200):
+def graficar_ld_detallado(corr_full: np.ndarray, corrs: np.ndarray, carpetas: Dict[str, str], etiqueta_modo: str, dpi: int = 200) -> Dict[str, str]:
+    """
+    Genera un conjunto de tres gráficos (Heatmap, Histograma y CDF) sobre el LD.
+
+    Parámetros:
+    -----------
+    corr_full : np.ndarray
+        Matriz bidimensional simétrica de correlaciones de Pearson (|r|).
+    corrs : np.ndarray
+        Vector unidimensional de coeficientes del triángulo superior.
+    carpetas : Dict[str, str]
+        Diccionario con rutas de salida.
+    etiqueta_modo : str
+        Sufijo identificador.
+    dpi : int
+        Resolución de la imagen generada.
+
+    Retorna:
+    --------
+    Dict[str, str]
+        Diccionario con las rutas de las tres imágenes creadas.
+    """
     # 1. Heatmap
     plt.figure(figsize=(12, 10))
     sns.heatmap(np.abs(corr_full), cmap='vlag', center=0, cbar_kws={'label': 'Correlación'})
@@ -118,14 +209,25 @@ def graficar_ld_detallado(corr_full, corrs, carpetas, etiqueta_modo, dpi=200):
         'cdf': ruta_cdf
     }
 
-def graficar_bloques_ld(H, carpetas, etiqueta_modo, dpi=200, cfg=None):
+def graficar_bloques_ld(H: np.ndarray, carpetas: Dict[str, str], etiqueta_modo: str, dpi: int = 200, cfg: Optional[Any] = None) -> None:
     """
-    Visualiza los bloques de ligamiento sobre la matriz haplotípica.
+    Visualiza los bloques de ligamiento (LD) sobre la matriz haplotípica y la renderiza.
 
-    Para datos sintéticos (cfg.origen_datos == 'synthetic'), los segmentos se
-    reconstruyen directamente desde cfg.num_bloques, que es la fuente autoritativa
-    de la estructura LD impuesta durante la generación. Para datos reales (hinds2005)
-    se sigue usando el detector estadístico basado en hotspots de recombinación.
+    Para datos sintéticos, los segmentos se reconstruyen directamente desde `cfg.num_bloques`.
+    Para datos reales (Hinds), se usa la detección estadística basada en hotspots.
+
+    Parámetros:
+    -----------
+    H : np.ndarray
+        Matriz haplotípica binaria (n_haplotipos, n_snps).
+    carpetas : Dict[str, str]
+        Diccionario con las rutas de directorios de salida.
+    etiqueta_modo : str
+        Sufijo identificador del experimento.
+    dpi : int
+        Resolución de la imagen exportada.
+    cfg : Optional[Any]
+        Configuración global (instancia de ConfiguracionExperimento) opcional.
     """
     # Seleccionar estrategia de segmentación según el origen del dataset
     if cfg is not None and getattr(cfg, 'origen_datos', None) == 'synthetic':

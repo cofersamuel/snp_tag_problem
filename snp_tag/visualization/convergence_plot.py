@@ -14,27 +14,33 @@ from typing import Optional, Dict, List, Tuple
 
 def graficar_evolucion_generacional(df_gen: pd.DataFrame, dir_salida: Optional[str] = None, 
                                    etiqueta_modo: Optional[str] = None, 
-                                   figsize=(14, 10), dpi=300,
+                                   figsize: Tuple[int, int] = (14, 10), dpi: int = 300,
                                    emitir_log: bool = True) -> List[Tuple[str, str]]:
     """
-    Genera una figura por métrica con subplots por algoritmo.
-    En cada subplot se muestran únicamente las inicializaciones del algoritmo,
-    evitando solapamiento entre algoritmos.
+    Genera una figura por métrica con subplots por algoritmo para analizar la convergencia.
+
+    Parámetros:
+    -----------
+    df_gen : pd.DataFrame
+        Dataset consolidado con las métricas inter-generacionales por iteración.
+    dir_salida : Optional[str]
+        Directorio absoluto destino para exportación.
+    etiqueta_modo : Optional[str]
+        Sufijo identificador del experimento.
+    figsize : Tuple[int, int]
+        Dimensiones de la figura (ancho, alto).
+    dpi : int
+        Calidad visual.
+    emitir_log : bool
+        Logs por terminal tras la exportación.
+
+    Retorna:
+    --------
+    List[Tuple[str, str]]
+        Tuplas de la ruta generada y el título de la figura.
     """
-    metricas = [
-        # Pareto Front Geometric Metrics
-        ('Range', 'Rango (Range): Diversidad Geométrica'),
-        ('MinSum', 'MinSum: Convergencia Central'),
-        ('SumMin', 'SumMin: Convergencia Marginal'),
-        # Domain-Specific (Physical SNP Metrics)
-        ('MaxToleranceRate', 'Tasa de Tolerancia Máxima'),
-        ('AvgToleranceRate', 'Tasa de Tolerancia Promedio'),
-        ('AvgHammingDistance', 'Distancia Hamming Promedio'),
-        # Performance Indicators (Convergence & Spread)
-        ('Hypervolume', 'Hipervolumen (HV)'),
-        ('IGD+', 'Distancia Generacional Invertida Plus (IGD+)'),
-        ('GD+', 'Distancia Generacional Plus (GD+)')
-    ]
+    from snp_tag.constants import METRICS_DISPLAY_NAMES
+    metricas = list(METRICS_DISPLAY_NAMES.items())
 
     cols_base = {'algorithm', 'init', 'generation'}
     if df_gen.empty or not cols_base.issubset(df_gen.columns):
@@ -67,9 +73,9 @@ def graficar_evolucion_generacional(df_gen: pd.DataFrame, dir_salida: Optional[s
 
     g_min, g_max = float(df_plot['generation'].min()), float(df_plot['generation'].max())
 
-    algoritmos_preferidos = ['NSGA2', 'NSGA3', 'SPEA2', 'MOEAD_TCHE', 'MOEAD_PBI', 'MOEAD_WS']
+    from snp_tag.constants import PREFERRED_ALGORITHMS_ORDER
     algoritmos_presentes = sorted(df_plot['algorithm'].dropna().unique().tolist())
-    algoritmos_ordenados = [a for a in algoritmos_preferidos if a in algoritmos_presentes]
+    algoritmos_ordenados = [a for a in PREFERRED_ALGORITHMS_ORDER if a in algoritmos_presentes]
     algoritmos_ordenados.extend([a for a in algoritmos_presentes if a not in algoritmos_ordenados])
     if not algoritmos_ordenados:
         return []

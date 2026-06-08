@@ -22,11 +22,7 @@ import matplotlib.patches as mpatches
 import os
 from typing import List, Tuple, Optional, Dict
 
-from pymoo.decomposition.asf import ASF
-from pymoo.mcdm.pseudo_weights import PseudoWeights
-from pymoo.mcdm.high_tradeoff import HighTradeoffPoints
-
-from snp_tag.engine.metrics import decodificar_objetivos_reales
+from snp_tag.engine.mcdm_logic import decodificar_y_filtrar, normalizar_minimizacion, evaluar_estrategias_mcdm
 from snp_tag.utils.terminal import imprimir_grafico_guardado
 
 
@@ -43,9 +39,6 @@ _ETIQUETAS_EJES = {
     'Balance': 'Varianza (Balance)',
 }
 
-# Objetivos donde mayor es mejor (se invierten para normalización a minimización)
-_HIGHER_IS_BETTER = {1, 2}  # Tolerancia, Hamming
-
 # Proyecciones 2D canónicas (consistentes con fronts.py)
 _PROYECCIONES = [
     ('Compacidad', 'Tolerancia', '(a) Compacidad vs. Tolerancia'),
@@ -59,79 +52,22 @@ _MIN_SOLUCIONES = 5
 
 
 # ---------------------------------------------------------------------------
-# Helpers internos
-# ---------------------------------------------------------------------------
-
-def _decodificar_y_filtrar(df_fronts: pd.DataFrame,
-                           modo_transformacion: str) -> Tuple[pd.DataFrame, np.ndarray]:
-    """
-    Decodifica objetivos a escala real y filtra soluciones factibles.
-
-    Returns:
-        (df_factible, F_real)  donde F_real tiene columnas
-        [Compacidad, Tolerancia, Hamming, Balance].
-    """
-    cols_F = [
-        'f1_compactness', 'f2_transformed_tolerance',
-        'f3_transformed_hamming_avg', 'f4_balance_var',
-    ]
-    F_raw = df_fronts[cols_F].to_numpy(dtype=float)
-
-    reales = decodificar_objetivos_reales(F_raw, modo_transformacion)
-    F_real = np.column_stack([
-        reales['compacidad'],
-        reales['tolerancia_real'],
-        reales['hamming_prom_real'],
-        reales['balance_var'],
-    ])
-
-    mask = reales['min_cobertura'] >= 1.0 - 1e-9
-    return df_fronts[mask].reset_index(drop=True), F_real[mask]
-
-
-def _normalizar_minimizacion(F_real: np.ndarray) -> np.ndarray:
-    """
-    Normaliza objetivos a [0, 1] orientados a minimización.
-
-    Compacidad (col 0): menor es mejor  → normalización directa.
-    Tolerancia (col 1): mayor es mejor  → se invierte.
-    Hamming    (col 2): mayor es mejor  → se invierte.
-    Balance    (col 3): menor es mejor  → normalización directa.
-    """
-    F_norm = F_real.copy()
-    for j in range(F_norm.shape[1]):
-        fmin, fmax = F_norm[:, j].min(), F_norm[:, j].max()
-        rango = fmax - fmin
-        if rango > 0:
-            F_norm[:, j] = (F_norm[:, j] - fmin) / rango
-        else:
-            F_norm[:, j] = 0.0
-
-    # Invertir objetivos de maximización
-    for j in _HIGHER_IS_BETTER:
-        F_norm[:, j] = 1.0 - F_norm[:, j]
-
-    return F_norm
-
-
-def _detectar_knee_points(F_norm: np.ndarray) -> np.ndarray:
-    """Detecta puntos de alto trade-off."""
-    try:
-        dm = HighTradeoffPoints()
-        indices = dm(F_norm)
-        if indices is None:
-            return np.array([], dtype=int)
-        return np.asarray(indices, dtype=int)
-    except Exception:
-        return np.array([], dtype=int)
-
-
-# ---------------------------------------------------------------------------
 # Visualización y Terminal
 # ---------------------------------------------------------------------------
 
 def _imprimir_caja_info(titulo: str, lineas: List[str], espacios: str = "      ") -> None:
-    """Imprime una caja ASCII con información formateada para la terminal."""
+    """
+    Imprime una caja ASCII con información formateada para la terminal.
+
+    Parámetros:
+    -----------
+    titulo : str
+        Título de la caja.
+    lineas : List[str]
+        Cuerpo de texto a iterar.
+    espacios : str
+        Prefijo para sangría.
+    """
     # Ancho total fijo para asegurar alineación perfecta (caracteres totales)
     ancho_total = 72
     
@@ -163,8 +99,21 @@ def _graficar_scatter_mcdm(
     dpi: int = 300,
 ) -> None:
     """
-    Genera un panel 2×2 con las selecciones MCDM destacadas.
-    destacados: { 'Nombre_Criterio': (indices, color, marker, label) }
+    Genera un panel 2×2 resaltando las selecciones MCDM en las proyecciones del Pareto.
+
+    Parámetros:
+    -----------
+    F_real : np.ndarray
+        Matriz con los frentes objetivos decodificados.
+    destacados : Dict[str, Tuple[np.ndarray, str, str, str]]
+        Diccionario que especifica para cada criterio MCDM sus parámetros gráficos:
+        (índices, código hexadecimal de color, marcador, y etiqueta textual).
+    titulo_global : str
+        Texto para el encabezado del panel superior.
+    ruta_salida : str
+        Ubicación destino del renderizado.
+    dpi : int
+        Calidad visual.
     """
     fig, axes = plt.subplots(2, 2, figsize=(16, 14))
     fig.suptitle(titulo_global, fontsize=18, weight='bold')
@@ -218,7 +167,22 @@ def _graficar_radar_pseudo_pesos(
     ruta_salida: str,
     dpi: int = 300
 ) -> None:
-    """Radar chart comparando los pesos implícitos con las preferencias del usuario."""
+    """
+    Genera un gráfico tipo radar (araña) comparando Pseudo-Pesos vs las expectativas.
+
+    Parámetros:
+    -----------
+    valores_pw : np.ndarray
+        Vector de pseudo-pesos extraídos para la mejor solución.
+    pesos_obj : np.ndarray
+        Vector con los pesos preferidos o esperados (Reference Weights).
+    titulo : str
+        Encabezado gráfico.
+    ruta_salida : str
+        Destino absoluto de escritura en disco.
+    dpi : int
+        Resolución de la exportación.
+    """
     etiquetas = _NOMBRES_OBJETIVOS
     angles = np.linspace(0, 2 * np.pi, len(etiquetas), endpoint=False).tolist()
     
@@ -349,8 +313,32 @@ def analizar_decision_mcdm(
     emitir_log: bool = True,
 ) -> List[Tuple[str, str]]:
     """
-    Ejecuta el análisis MCDM (Compromise, Pseudo-Weights, Knee Points).
-    Produce análisis global y per-configuración.
+    Ejecuta el análisis MCDM combinando Compromise Programming, Pseudo-Weights y Knee Points.
+
+    Produce reportes visuales en formato Scatter-Plots e individuales (Radar).
+    Sirve como capa superior para resumir qué combinaciones logran el mejor balance.
+
+    Parámetros:
+    -----------
+    df_fronts : pd.DataFrame
+        Dataset convergido y estabilizado de Pareto.
+    dir_salida : str
+        Mapeo de la carpeta objetivo para el guardado.
+    etiqueta_modo : str
+        Modificador que previene colisiones al exportar (e.g., 'eval_proporcional').
+    modo_transformacion_objetivos : str
+        Inverso que determina cómo traducir a escala física.
+    pesos_usuario : Optional[np.ndarray]
+        Vector probabilístico de preferencia del tomador de decisiones.
+    dpi : int
+        Calidad exportada.
+    emitir_log : bool
+        Bypass para desactivar la escritura de terminal.
+
+    Retorna:
+    --------
+    List[Tuple[str, str]]
+        Tuplas de las rutas exportadas y sus metadatos.
     """
     artefactos = []
 
@@ -373,20 +361,17 @@ def analizar_decision_mcdm(
     # =======================================================================
     # 1. ANÁLISIS AGREGADO (GLOBAL)
     # =======================================================================
-    df_feas, F_real = _decodificar_y_filtrar(df_fronts, modo_transformacion_objetivos)
+    df_feas, F_real = decodificar_y_filtrar(df_fronts, modo_transformacion_objetivos)
 
     if len(F_real) < _MIN_SOLUCIONES:
         if emitir_log:
             print(f"{espacios}• ⚠️  MCDM agregado omitido: sólo {len(F_real)} soluciones factibles.")
         return artefactos
 
-    F_norm = _normalizar_minimizacion(F_real)
+    F_norm = normalizar_minimizacion(F_real)
     
     # Extraer selecciones
-    I_asf = np.array([ASF().do(F_norm, weights=pesos_usuario).argmin()])
-    I_pw_val, pw_mat = PseudoWeights(pesos_usuario).do(F_norm, return_pseudo_weights=True)
-    I_pw = np.array([I_pw_val])
-    I_knee = _detectar_knee_points(F_norm)
+    I_asf, I_pw, pw_mat, I_knee = evaluar_estrategias_mcdm(F_norm, pesos_usuario)
     
     if emitir_log:
         print(f"{espacios}• Soluciones en frente agregado: {len(F_real)}")
@@ -513,19 +498,16 @@ def analizar_decision_mcdm(
             cfg_str = f"{algo} ({init})"
             file_cfg_str = f"{algo.lower()}_{init}"
 
-            df_cfg_feas, F_cfg_real = _decodificar_y_filtrar(df_cfg, modo_transformacion_objetivos)
+            df_cfg_feas, F_cfg_real = decodificar_y_filtrar(df_cfg, modo_transformacion_objetivos)
 
             if len(F_cfg_real) < _MIN_SOLUCIONES:
                 if emitir_log:
                     print(f"{espacios}    [{cfg_str}] omitido ({len(F_cfg_real)} soluciones factibles)")
                 continue
 
-            F_cfg_norm = _normalizar_minimizacion(F_cfg_real)
+            F_cfg_norm = normalizar_minimizacion(F_cfg_real)
             
-            I_cfg_asf = np.array([ASF().do(F_cfg_norm, weights=pesos_usuario).argmin()])
-            I_cfg_pw, _ = PseudoWeights(pesos_usuario).do(F_cfg_norm, return_pseudo_weights=True)
-            I_cfg_pw = np.array([I_cfg_pw])
-            I_cfg_knee = _detectar_knee_points(F_cfg_norm)
+            I_cfg_asf, I_cfg_pw, _, I_cfg_knee = evaluar_estrategias_mcdm(F_cfg_norm, pesos_usuario)
 
             destacados_cfg = {
                 'Knee': (I_cfg_knee, '#e41a1c', 'D', 'Knee Point'),

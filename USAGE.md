@@ -9,7 +9,7 @@ pip install -r requirements.txt
 Ejecución del pipeline desde la línea de comandos (ejemplo):
 
 ```bash
-python -m snp_tag.main --mode fast --data-source synthetic
+python -m snp_tag.cli --mode fast --data-source synthetic
 ```
 
 Opciones:

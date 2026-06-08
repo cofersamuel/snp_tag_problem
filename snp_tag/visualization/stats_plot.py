@@ -10,12 +10,25 @@ import seaborn as sns
 import numpy as np
 import os
 import pandas as pd
-from typing import List, Tuple
+from typing import List, Tuple, Optional, Any
 from matplotlib.colors import ListedColormap, BoundaryNorm
 from snp_tag.utils.terminal import imprimir_grafico_guardado, imprimir_subseccion
 
-def graficar_rendimiento_tiempo(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str, dpi=300):
-    """Visualiza el tiempo de ejecución y su relación con el tamaño del frente."""
+def graficar_rendimiento_tiempo(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str, dpi: int = 300) -> None:
+    """
+    Visualiza el tiempo de ejecución promedio por cada configuración algorítmica.
+
+    Parámetros:
+    -----------
+    df_runs : pd.DataFrame
+        Dataset con los tiempos de ejecución de cada iteración independiente.
+    dir_salida : str
+        Directorio destino para exportar la figura.
+    etiqueta_modo : str
+        Sufijo identificador del experimento.
+    dpi : int
+        Resolución de la imagen generada.
+    """
     df_plot = df_runs.copy()
     df_plot['config'] = df_plot['algorithm'] + '-' + df_plot['init'] + '-' + df_plot['crossover']
     n_configs = df_plot['config'].nunique()
@@ -37,8 +50,21 @@ def graficar_rendimiento_tiempo(df_runs: pd.DataFrame, dir_salida: str, etiqueta
         
     plt.close('all')
 
-def graficar_comparativa_objetivos(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str, dpi=300):
-    """Genera un heatmap comparativo de las métricas (Réplica Legacy: Rojo=Peor, Verde=Mejor)."""
+def graficar_comparativa_objetivos(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str, dpi: int = 300) -> None:
+    """
+    Genera un heatmap comparativo de rendimiento escalado entre todas las métricas.
+
+    Parámetros:
+    -----------
+    df_runs : pd.DataFrame
+        Dataset consolidado con las métricas finales.
+    dir_salida : str
+        Ruta de exportación.
+    etiqueta_modo : str
+        Sufijo identificador.
+    dpi : int
+        Calidad de imagen.
+    """
     # 1. Agregación y preparación
     cols_met = ['Range', 'SumMin', 'MinSum', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'Hypervolume', 'IGD+', 'GD+']
     disponibles = [c for c in cols_met if c in df_runs.columns]
@@ -86,8 +112,28 @@ def graficar_comparativa_objetivos(df_runs: pd.DataFrame, dir_salida: str, etiqu
     plt.close()
 
 def graficar_violin_metricas(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str,
-                             dpi=300, emitir_log: bool = True) -> List[Tuple[str, str]]:
-    """Genera panel general y diagramas de violín individuales para las métricas primarias."""
+                             dpi: int = 300, emitir_log: bool = True) -> List[Tuple[str, str]]:
+    """
+    Genera diagramas de violín para representar las distribuciones de rendimiento.
+
+    Parámetros:
+    -----------
+    df_runs : pd.DataFrame
+        Dataset con métricas finales.
+    dir_salida : str
+        Directorio base de guardado.
+    etiqueta_modo : str
+        Sufijo del archivo.
+    dpi : int
+        Resolución del gráfico.
+    emitir_log : bool
+        Indica si se reporta la generación en la consola.
+
+    Retorna:
+    --------
+    List[Tuple[str, str]]
+        Rutas y descripciones de las imágenes exportadas.
+    """
     metricas = ['Range', 'SumMin', 'MinSum', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'Hypervolume', 'IGD+', 'GD+']
     disponibles = [m for m in metricas if m in df_runs.columns]
     if not disponibles:
@@ -134,8 +180,28 @@ def graficar_violin_metricas(df_runs: pd.DataFrame, dir_salida: str, etiqueta_mo
     return artefactos
 
 def graficar_media_std_metricas(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str,
-                                dpi=300, emitir_log: bool = True) -> List[Tuple[str, str]]:
-    """Genera panel general y pointplots (media +- std) individuales."""
+                                dpi: int = 300, emitir_log: bool = True) -> List[Tuple[str, str]]:
+    """
+    Genera diagramas de barras con intervalos de confianza de desviación estándar.
+
+    Parámetros:
+    -----------
+    df_runs : pd.DataFrame
+        Dataset con métricas finales.
+    dir_salida : str
+        Directorio destino.
+    etiqueta_modo : str
+        Sufijo de nomenclatura.
+    dpi : int
+        Resolución visual.
+    emitir_log : bool
+        Manejo de registros por consola.
+
+    Retorna:
+    --------
+    List[Tuple[str, str]]
+        Lista de recursos de imagen exportados.
+    """
     metricas = ['Range', 'SumMin', 'MinSum', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'Hypervolume', 'IGD+', 'GD+']
     disponibles = [m for m in metricas if m in df_runs.columns]
     if not disponibles:
@@ -181,8 +247,28 @@ def graficar_media_std_metricas(df_runs: pd.DataFrame, dir_salida: str, etiqueta
     return artefactos
 
 def graficar_boxplot_metricas(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str,
-                              dpi=300, emitir_log: bool = True) -> List[Tuple[str, str]]:
-    """Genera panel general y diagramas de caja individuales para las métricas finales."""
+                              dpi: int = 300, emitir_log: bool = True) -> List[Tuple[str, str]]:
+    """
+    Genera diagramas de caja para evaluar la dispersión intercuartil.
+
+    Parámetros:
+    -----------
+    df_runs : pd.DataFrame
+        Dataset estadístico.
+    dir_salida : str
+        Destino en disco.
+    etiqueta_modo : str
+        Clave identificadora.
+    dpi : int
+        Nitidez de salida.
+    emitir_log : bool
+        Logs por terminal.
+
+    Retorna:
+    --------
+    List[Tuple[str, str]]
+        Detalles de los gráficos exportados.
+    """
     metricas = ['Range', 'SumMin', 'MinSum', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'Hypervolume', 'IGD+', 'GD+']
     disponibles = [m for m in metricas if m in df_runs.columns]
     if not disponibles:
@@ -230,19 +316,32 @@ def graficar_boxplot_metricas(df_runs: pd.DataFrame, dir_salida: str, etiqueta_m
     return artefactos
 
 
-def graficar_analisis_estadistico(df_runs, dir_salida, etiqueta_modo, col_group='config', dpi=300, indent=9):
+def graficar_analisis_estadistico(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str, col_group: str = 'config', dpi: int = 300, indent: int = 9) -> Optional[np.ndarray]:
     """
-    Realiza el análisis estadístico de Friedman + Nemenyi para una dimensión específica.
-    Retorna el ranking promedio.
+    Ejecuta el test de Friedman y Nemenyi, exportando su gráfico de diferencias críticas.
+
+    Parámetros:
+    -----------
+    df_runs : pd.DataFrame
+        Datos observacionales.
+    dir_salida : str
+        Ruta para guardar el plot de CD.
+    etiqueta_modo : str
+        Modo de corrida.
+    col_group : str
+        Columna mediante la cual agrupar variables categóricas (def. 'config').
+    dpi : int
+        Calidad del archivo de salida.
+    indent : int
+        Nivel de sangría para consola.
+
+    Retorna:
+    --------
+    Optional[np.ndarray]
+        Vector con rankings medios por algoritmo si fue exitoso, o None en fallo.
     """
     if df_runs.empty: return None
     
-    import scipy.stats as ss
-    try:
-        import scikit_posthocs as sp
-    except ImportError:
-        return None
-
     espacios = " " * indent
     df_plot = df_runs.copy()
     if 'config' not in df_plot.columns:
@@ -250,12 +349,9 @@ def graficar_analisis_estadistico(df_runs, dir_salida, etiqueta_modo, col_group=
     
     n_configs = df_plot[col_group].nunique()
     
-    # 1. Preparar datos
-    metricas = ['Hypervolume', 'Range', 'MinSum', 'SumMin', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'IGD+', 'GD+']
-    higher_is_better = ['Hypervolume', 'Range', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance']
-    disponibles = [m for m in metricas if m in df_plot.columns]
-    
-    if not disponibles: return None
+    from snp_tag.engine.stats_logic import prepare_rank_matrix, compute_friedman_nemenyi
+    rank_matrix, resumen = prepare_rank_matrix(df_plot, col_group)
+    if rank_matrix is None: return None
     
     titulos = {
         'config': 'Método (Algoritmo + Inicialización)',
@@ -263,61 +359,24 @@ def graficar_analisis_estadistico(df_runs, dir_salida, etiqueta_modo, col_group=
         'init': 'Inicialización'
     }
     titulo = titulos.get(col_group, col_group)
-    
-    # Media por grupo
-    resumen = df_plot.groupby(col_group)[disponibles].mean().reset_index()
-    
-    rank_matrix = []
-    for m in disponibles:
-        asce = False if m in higher_is_better else True
-        rank_matrix.append(resumen[m].rank(ascending=asce).values)
-    rank_matrix = np.array(rank_matrix) # (metrics, groups)
     n_groups = rank_matrix.shape[1]
     
-    # 2. Test de Friedman
+    stat, p_value, p_values_nemenyi, avg_ranks = compute_friedman_nemenyi(rank_matrix, resumen, col_group)
+    resumen['AvgRank'] = avg_ranks
+    
     sub_line = "─" * (len(titulo) + 24)
     if n_groups < 3:
         print(f"\n{espacios}📊  \033[1mTEST ESTADÍSTICO ({titulo})\033[0m")
         print(f"{espacios}{sub_line}")
         print(f"{espacios}    ⚠️  Test de Friedman omitido: se requieren al menos 3 grupos, pero solo hay {n_groups}.\n")
-        p_value = 1.0
     else:
-        stat, p_value = ss.friedmanchisquare(*rank_matrix.T)
         print(f"\n{espacios}📊  \033[1mTEST DE FRIEDMAN ({titulo})\033[0m")
         print(f"{espacios}{sub_line}")
         print(f"{espacios}    Estadístico: {stat:.4f}")
         print(f"{espacios}    P-valor: {p_value:.4e}")
         print(f"{espacios}    Significativo (p < 0.05): {'Sí' if p_value < 0.05 else 'No'}\n")
     
-    # 3. Gráfico de Rangos Promedio (Siempre se genera)
-    avg_ranks = np.mean(rank_matrix, axis=0)
-    resumen['AvgRank'] = avg_ranks
-    resumen_sort = resumen.sort_values('AvgRank')
-    
-    ancho_dinamico = max(12.0, n_configs * 0.35)
-    plt.figure(figsize=(ancho_dinamico, 6))
-    sns.barplot(data=resumen_sort, x=col_group, y='AvgRank', palette='viridis', hue=col_group, legend=False)
-    plt.xticks(rotation=45, ha='right', rotation_mode='anchor')
-    plt.title(f'Ranking Promedio - {titulo} (Menor es Mejor)')
-    plt.ylabel('Rango Promedio')
-    plt.xlabel(titulo)
-    plt.tight_layout()
-    
-    # Organizar directorios
-    sufijo = f"_{col_group}" if col_group != 'config' else ""
-    nombre_barras = f'rangos_promedio{sufijo}_{etiqueta_modo}.png'
-    ruta_barras = os.path.join(dir_salida, nombre_barras)
-    plt.savefig(ruta_barras, dpi=dpi, bbox_inches='tight')
-    
-    print(f"{espacios}    ", end="")
-    imprimir_grafico_guardado(ruta_barras, f"Gráfico de Rangos Promedio ({titulo})")
-    plt.close()
-
-    # 4. Post-hoc de Nemenyi
-    if p_value < 0.05:
-        p_values_nemenyi = sp.posthoc_nemenyi_friedman(rank_matrix)
-        p_values_nemenyi.columns = resumen[col_group]
-        p_values_nemenyi.index = resumen[col_group]
+    if p_values_nemenyi is not None:
         
         tamano_hm = max(14.0, n_configs * 0.4)
         plt.figure(figsize=(tamano_hm, tamano_hm))
@@ -336,6 +395,7 @@ def graficar_analisis_estadistico(df_runs, dir_salida, etiqueta_modo, col_group=
         plt.suptitle(f'Diagrama Nemenyi - {titulo}', fontsize=16, y=0.98)
         plt.tight_layout()
         
+        sufijo = f"_{col_group}" if col_group != 'config' else ""
         nombre_heatmap = f'heatmap_nemenyi{sufijo}_{etiqueta_modo}.png'
         ruta_heatmap = os.path.join(dir_salida, nombre_heatmap)
         plt.savefig(ruta_heatmap, dpi=dpi, bbox_inches='tight')
@@ -343,24 +403,36 @@ def graficar_analisis_estadistico(df_runs, dir_salida, etiqueta_modo, col_group=
         print(f"{espacios}    ", end="")
         imprimir_grafico_guardado(ruta_heatmap, f"Heatmap de Significancia Nemenyi ({titulo})")
         plt.close()
+    elif p_value < 0.05:
+        pass
     else:
-        print(f"{espacios}    • ⚠️  Test de Friedman no significativo para {titulo}. Omitiendo post-hoc.")
+        if n_groups >= 3:
+            print(f"{espacios}    • ⚠️  Test de Friedman no significativo para {titulo}. Omitiendo post-hoc.")
 
     return resumen[[col_group, 'AvgRank']]
 
 
-def graficar_analisis_kruskal_dunn(df_runs, dir_salida, metrica_objetivo, etiqueta_modo, dpi=300, indent=9):
+def graficar_analisis_kruskal_dunn(df_runs: pd.DataFrame, dir_salida: str, metrica_objetivo: str, etiqueta_modo: str, dpi: int = 300, indent: int = 9) -> None:
     """
-    Realiza Kruskal-Wallis + Dunn para una métrica específica.
+    Evalúa contrastes no paramétricos multivariables y exporta un heatmap de los p-values.
+
+    Parámetros:
+    -----------
+    df_runs : pd.DataFrame
+        Histórico de rendimiento por ejecución.
+    dir_salida : str
+        Carpeta destino.
+    metrica_objetivo : str
+        Nombre del indicador de rendimiento evaluado.
+    etiqueta_modo : str
+        Distintivo del modo.
+    dpi : int
+        Puntos por pulgada.
+    indent : int
+        Espacios de margen en terminal.
     """
     if df_runs.empty or metrica_objetivo not in df_runs.columns: return
     
-    import scipy.stats as ss
-    try:
-        import scikit_posthocs as sp
-    except ImportError:
-        return
-
     espacios = " " * indent
     df_plot = df_runs.copy()
     if 'config' not in df_plot.columns:
@@ -368,30 +440,23 @@ def graficar_analisis_kruskal_dunn(df_runs, dir_salida, metrica_objetivo, etique
     
     n_configs = df_plot['config'].nunique()
     
-    # 1. Agrupar datos
-    grupos = []
-    nombres = sorted(df_plot['config'].unique())
-    for n in nombres:
-        grupos.append(df_plot[df_plot['config'] == n][metrica_objetivo].values)
+    from snp_tag.engine.stats_logic import compute_kruskal_dunn
+    stat, p_val, p_dunn = compute_kruskal_dunn(df_plot, metrica_objetivo, 'config')
     
     sub_line = "─" * (len(metrica_objetivo) + 28)
-    if len(grupos) < 2:
+    if stat is None:
         print(f"\n{espacios}📊  \033[1mVALIDACIÓN ESTADÍSTICA ({metrica_objetivo})\033[0m")
         print(f"{espacios}{sub_line}")
         print(f"{espacios}    ⚠️  Kruskal-Wallis omitido: se requieren al menos 2 grupos.\n")
         return
 
-    # 2. Kruskal-Wallis
-    stat, p_val = ss.kruskal(*grupos)
-    
     print(f"\n{espacios}📊  \033[1mVALIDACIÓN ESTADÍSTICA ({metrica_objetivo})\033[0m")
     print(f"{espacios}{sub_line}")
     print(f"{espacios}    Estadístico H (Kruskal-Wallis): {stat:.4f}")
     print(f"{espacios}    P-valor: {p_val:.4e}")
     print(f"{espacios}    Significativo (p < 0.05): {'Sí' if p_val < 0.05 else 'No'}\n")
     
-    if p_val < 0.05:
-        p_dunn = sp.posthoc_dunn(df_plot, val_col=metrica_objetivo, group_col='config', p_adjust='bonferroni')
+    if p_dunn is not None:
         
         tamano_hm = max(14.0, n_configs * 0.4)
         plt.figure(figsize=(tamano_hm, tamano_hm))
@@ -415,65 +480,4 @@ def graficar_analisis_kruskal_dunn(df_runs, dir_salida, metrica_objetivo, etique
         plt.close()
 
 
-def graficar_diagrama_diferencia_critica(df_runs, dir_salida, metrica_objetivo, etiqueta_modo, dpi=300, indent=9):
-    """
-    Genera un diagrama de Diferencia Crítica (CD) para una métrica específica.
-    """
-    if metrica_objetivo not in df_runs.columns: return
-    
-    import scipy.stats as ss
-    espacios = " " * indent
-    df_plot = df_runs.copy()
-    if 'config' not in df_plot.columns:
-        df_plot['config'] = df_plot['algorithm'] + '-' + df_plot['init'] + '-' + df_plot['crossover']
-    
-    # 1. Calcular rangos por réplica
-    configs = sorted(df_plot['config'].unique())
-    replicas = sorted(df_plot['run'].unique())
-    higher_is_better = ['Hypervolume', 'Range', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance']
-    asce = False if metrica_objetivo in higher_is_better else True
-    
-    ranks = []
-    for r in replicas:
-        slice_r = df_plot[df_plot['run'] == r].set_index('config')[metrica_objetivo]
-        if len(slice_r) == len(configs):
-            ranks.append(slice_r.rank(ascending=asce).values)
-    
-    if not ranks: return
-    
-    avg_ranks = np.mean(ranks, axis=0)
-    n_configs = len(configs)
-    n_replicas = len(replicas)
-    
-    q_alpha = 3.2 
-    cd = q_alpha * np.sqrt((n_configs * (n_configs + 1)) / (6 * n_replicas))
-    
-    plt.figure(figsize=(12, n_configs * 0.4 + 2))
-    order = np.argsort(avg_ranks)
-    sorted_ranks = avg_ranks[order]
-    sorted_labels = [configs[i] for i in order]
-    
-    plt.hlines(y=range(len(sorted_labels)), xmin=1, xmax=n_configs, colors='gray', linestyles='dotted', alpha=0.3)
-    plt.plot(sorted_ranks, range(len(sorted_labels)), 'ro', markersize=8)
-    
-    plt.yticks(range(len(sorted_labels)), sorted_labels, fontweight='bold')
-    for i, r in enumerate(sorted_ranks):
-        plt.text(r, i + 0.2, f"{r:.2f}", ha='center', fontsize=9)
-    
-    for i in range(len(sorted_ranks)):
-        for j in range(i + 1, len(sorted_ranks)):
-            if (sorted_ranks[j] - sorted_ranks[i]) <= cd:
-                plt.plot([sorted_ranks[i], sorted_ranks[j]], [i - 0.1, i - 0.1], color='blue', linewidth=3, alpha=0.5)
 
-    plt.title(f'Diagrama CD - {metrica_objetivo}', fontsize=14, pad=20)
-    plt.xlabel('Rango Promedio')
-    plt.xlim(0.5, n_configs + 0.5)
-    plt.gca().invert_yaxis()
-    plt.tight_layout()
-    
-    ruta_cd = os.path.join(dir_salida, f"diagrama_cd_{metrica_objetivo.lower()}_{etiqueta_modo}.png")
-    plt.savefig(ruta_cd, dpi=dpi, bbox_inches='tight')
-    
-    print(f"{espacios}    ", end="")
-    imprimir_grafico_guardado(ruta_cd, f"Diagrama de Diferencia Crítica (CD)")
-    plt.close()

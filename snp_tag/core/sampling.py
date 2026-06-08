@@ -8,7 +8,7 @@ métodos aleatorios dispersos y construcciones heurísticas tipo Greedy.
 import numpy as np
 from pymoo.core.sampling import Sampling
 from snp_tag.core.problem import calcular_distinguibilidad_snps
-from snp_tag.data.diagnostics import detectar_bloques_ld
+from snp_tag.engine.diagnostics_logic import detectar_bloques_ld
 
 def _construir_tabla_cobertura(H, pair_idx):
     """

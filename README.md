@@ -82,14 +82,12 @@ El análisis de similitud genotípica revela una diversidad equilibrada, con dis
 ![Distribución de Distancias de Hamming (Hinds)](readme_assets/histograma_hamming_full.png)
 *Figura 3: Histograma de distancias de Hamming, reflejando la complejidad de la variación inter-haplotípica.*
 
-##### Procedencia y Adquisición (Arqueología de Datos)
+##### Procedencia y Adquisición
 
 La obtención del dataset de Hinds et al. (2005) fue un proceso de "arqueología de datos" para asegurar la replicación exacta de los experimentos de Moqa et al. (2022):
 
 1. **Identificación de la Fuente Original**: El artículo de Moqa et al. (2022) cita el dataset original, pero la metodología específica de uso del bloque de 1032 SNPs proviene de Ting et al. (2010), el artículo precursor.
 2. **Rastreo del Artículo de Ting (2010)**: Se localizó el software y los datos originales depositados en el sitio web del laboratorio de los autores en la Universidad Nacional Chung Cheng (CCU) de Taiwán.
-   ![Evidencia de la procedencia de los datos](readme_assets/image.png)
-   *Figura 4: Captura de pantalla del sitio oficial de Ting et al. (2010). Fuentes:* [[Artículo Académico]](https://academic.oup.com/bioinformatics/article/26/11/1446/203000?login=false) | [[Repositorio CCU]](http://cilab.cs.ccu.edu.tw/service_dl.html)
 3. **Localización y Descarga**: Se accedió a un servidor activo (`cilab.cs.ccu.edu.tw`) que contenía el archivo `Code_MoTagSNPsSel.zip`. Dentro de este paquete se recuperó el fichero `input.txt`.
 4. **Verificación de los Datos**: Se confirmó que el fichero cumplía con las especificaciones exactas: 48 filas por 1032 columnas en formato de texto binario plano, validado explícitamente por el README de Ting como el bloque utilizado en los estudios de referencia.
 5. **Integración en el Proyecto**: Los datos se integran como `snp_tag/data/datasets/hinds2005_1032.txt`, y se cargan mediante `cargar_bloque_hinds2005`, que interpreta este formato binario (diferente de estándares HapMap).
@@ -369,10 +367,10 @@ pip install -r requirements.txt
 
 ### Interfaz de Línea de Comandos (CLI)
 
-El sistema se ejecuta como un paquete modular a través del punto de entrada `snp_tag.main`. La ejecución se puede personalizar mediante argumentos de línea de comandos:
+El sistema se ejecuta como un paquete modular a través de su punto de entrada unificado. La ejecución se puede personalizar mediante argumentos de línea de comandos:
 
 ```bash
-python -m snp_tag.main --mode [MODO] --data-source [FUENTE]
+python -m snp_tag --mode [MODO] --data-source [FUENTE] [--report-only-csv]
 ```
 
 **Argumentos Disponibles:**
@@ -383,9 +381,11 @@ python -m snp_tag.main --mode [MODO] --data-source [FUENTE]
   * `high`: Perfil intermedio entre `medium` y `full`.
   * `full`: Búsqueda exhaustiva de alta precisión para el frente de Pareto.
   * `full_20`: Búsqueda exhaustiva con 20 réplicas por configuración para robustez estadística.
+  * `full_30`: Búsqueda exhaustiva con 30 réplicas independientes para validación de datos.
 * `--data-source` (`-d`): Especifica el dataset objetivo.
   * `hinds2005`: Utiliza el dataset biológico real de Hinds et al. (1032 SNPs).
   * `synthetic`: Genera un dataset sintético basado en los parámetros de simulación.
+* `--report-only-csv`: Activa el modo de generación exclusiva de reportes a partir de archivos CSV existentes en el directorio `snp_tag/input/`.
 * **Interfaz de Línea de Comandos (CLI)**: El sistema ofrece un dashboard dinámico en terminal que reporta el progreso en tiempo real. Además, utiliza secuencias **OSC 8** para generar hipervínculos clicables directamente en la terminal, permitiendo abrir los reportes CSV y figuras PDF de forma instantánea al finalizar el experimento.
 
 ### Estructura del Código
@@ -393,15 +393,19 @@ python -m snp_tag.main --mode [MODO] --data-source [FUENTE]
 El paquete `snp_tag` está organizado de forma modular para facilitar su mantenimiento y extensión:
 
 * **`core/`**: Definiciones fundamentales del problema de optimización (clase `TSSPProblem`), envolturas de algoritmos y estrategias de muestreo inicial.
-* **`data/`**: Gestión de datasets (`loader.py`) y suite de diagnóstico de datos genómicos (`diagnostics.py`). Contiene los benchmarks biológicos.
-* **`engine/`**: Núcleo de ejecución del motor evolutivo (`runner.py`) y cálculo de métricas de rendimiento y convergencia (`metrics.py`).
-* **`visualization/`**: Módulos para la generación de frentes de Pareto, curvas de convergencia y el sistema de reporte automatizado (`reporting.py`).
-* **`utils/`**: Funciones auxiliares para la gestión del sistema de archivos, el entorno de ejecución y la interfaz de terminal.
-* **`main.py`**: Punto de entrada de la aplicación que orquestra el flujo completo desde la carga de datos hasta la síntesis de resultados.
-* **`config.py`**: Parámetros globales de configuración, gestión de constantes y estados del entorno de simulación.
+* **`data/`**: Gestión de datasets (`loader.py`). Contiene los benchmarks biológicos.
+* **`engine/`**: Núcleo de la lógica de procesamiento y evaluación del motor evolutivo (`diagnostics_logic.py`, `mcdm_logic.py`, `metrics_logic.py`, `stats_logic.py`).
+* **`visualization/`**: Módulos dedicados exclusivamente a la generación de visualizaciones de cada componente (`convergence_plot.py`, `diagnostics_plot.py`, `fronts_plot.py`, `mcdm_plot.py`, `stats_plot.py`).
+* **`pipelines/`**: Contiene los flujos de ejecución específicos del ciclo de vida del experimento (ej. de reporte, ejecución evolutiva).
+* **`utils/`**: Funciones auxiliares para la gestión del sistema de archivos, entorno, logs (`logger.py`) y terminal.
+* **`__main__.py`**: Punto de entrada modular de la aplicación (`python -m snp_tag`).
+* **`orchestrator.py`**: Componente central encargado de orquestar y coordinar los diferentes pipelines de ejecución.
+* **`constants.py`**: Centralización de constantes estructurales y variables del proyecto.
+* **`config.py`**: Parámetros globales y estados del entorno de simulación.
 
-Fuera del paquete principal, el repositorio gestiona la persistencia de resultados históricos:
+Fuera del paquete principal, el repositorio gestiona la automatización y la persistencia de resultados históricos:
 
+* **`automation/`**: Scripts y configuraciones para la ejecución desatendida y remota de experimentos de larga duración.
 * **`ejecuciones_guardadas/`**: Almacén jerárquico de experimentos. Se organiza por fechas y contiene los datos brutos (`experimentos/`), visualizaciones de alta resolución y los **reportes técnicos en LaTeX** (`analisis/`) que generan la documentación final del TFG en formato PDF.
 
 ---

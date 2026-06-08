@@ -508,3 +508,72 @@ def construir_configuracion(modo: str = 'medium', data_source: str = 'hinds2005'
             params.get('modo_transformacion_objetivos')
         ),
     )
+
+def informar_configuracion(cfg: ConfiguracionExperimento) -> None:
+    """Muestra un resumen jerárquico y condicional de user_config.ini en la terminal."""
+    from snp_tag.utils.terminal import imprimir_encabezado
+    from snp_tag.utils.logger import logger
+    imprimir_encabezado("CONFIGURACIÓN (user_config.ini)")
+    
+    # [General]
+    logger.info(f"      • [General]")
+    logger.info(f"          - dir_salida_base: {cfg.dir_salida_base}")
+    
+    # [Dataset]
+    logger.info(f"      • [Dataset]")
+    logger.info(f"          - origen_datos: {cfg.origen_datos}")
+    if cfg.origen_datos == 'synthetic':
+        logger.info(f"          - n_snps: {cfg.n_snps}")
+        logger.info(f"          - num_bloques: {cfg.num_bloques}")
+        logger.info(f"          - prob_flip_sintetico: {cfg.prob_flip_sintetico}")
+        logger.info(f"          - dif_min_pares_sintetico: {cfg.dif_min_pares_sintetico}")
+        logger.info(f"          - intentos_max_sintetico: {cfg.intentos_max_sintetico}")
+    
+    # [Objetivos]
+    logger.info(f"      • [Objetivos]")
+    logger.info(f"          - transform: {cfg.modo_transformacion_objetivos}")
+    logger.info(f"          - eval: {cfg.modo_evaluacion}")
+    logger.info(f"          - cap_tolerancia: {cfg.cap_tolerancia}")
+    
+    # [Algoritmos - General]
+    logger.info(f"      • [Algoritmos]")
+    logger.info(f"          - semilla_maestra: {cfg.semilla_maestra}")
+    logger.info(f"          - modo_semillas: {cfg.modo_semillas}")
+    logger.info(f"          - normalizacion: {cfg.modo_normalizacion}")
+    logger.info(f"          - pc: {cfg.pc}")
+    logger.info(f"          - pm: {cfg.pm:.6f}")
+    logger.info(f"          - cruces: {', '.join(cfg.crossover_operadores_activos)}")
+    logger.info(f"          - algoritmos: {', '.join(cfg.algoritmos_activos)}")
+    logger.info(f"          - inits: {', '.join(cfg.opciones_init)}")
+    
+    # [Algoritmos - Específicos] (Condicional)
+    moead_activos = [a for a in cfg.algoritmos_activos if 'MOEAD' in a]
+    if 'greedy_ting' in cfg.opciones_init or 'greedy_multi' in cfg.opciones_init or 'greedy_holistic' in cfg.opciones_init or moead_activos:
+        logger.info(f"      • [Parámetros Específicos de Método]")
+        if 'greedy_ting' in cfg.opciones_init or 'greedy_multi' in cfg.opciones_init or 'greedy_holistic' in cfg.opciones_init:
+            logger.info(f"          - [Greedy]")
+            if 'greedy_ting' in cfg.opciones_init:
+                logger.info(f"              - ratio_greedy_ting: {cfg.ratio_greedy_ting}")
+            if 'greedy_multi' in cfg.opciones_init:
+                logger.info(f"              - max_cobertura_objetivo: {cfg.max_cobertura_objetivo}")
+            if 'greedy_holistic' in cfg.opciones_init:
+                logger.info(f"              - max_k_holistic: {cfg.max_k_holistic}")
+        if moead_activos:
+            logger.info(f"          - [MOEA/D]")
+            logger.info(f"              - moead_vecinos: {cfg.vecinos_moead}")
+            logger.info(f"              - moead_prob_vecindad: {cfg.prob_vecindad_moead}")
+            if 'MOEAD_PBI' in cfg.algoritmos_activos:
+                logger.info(f"              - moead_theta_pbi: {cfg.theta_moead_pbi}")
+
+    # [Reporting]
+    logger.info(f"      • [Gráficos]")
+    logger.info(f"          - report_plot_dpi: {cfg.report_plot_dpi}")
+    logger.info(f"          - paso_generacional_metricas: {cfg.paso_generacional_metricas}")
+    
+    # [Resumen de Objetivos]
+    suffix = " Prop." if cfg.modo_evaluacion == 'proportional' else ""
+    logger.info("      • Objetivos de optimización:")
+    logger.info(f"          - f1 (Compacidad): Minimizar")
+    logger.info(f"          - f2 (Tolerancia{suffix}): Maximizar")
+    logger.info(f"          - f3 (Hamming Medio{suffix}): Maximizar")
+    logger.info(f"          - f4 (Disimilitud{suffix}): Minimizar")

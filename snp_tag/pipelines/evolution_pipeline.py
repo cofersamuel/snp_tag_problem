@@ -19,6 +19,7 @@ from snp_tag.config import ConfiguracionExperimento
 from snp_tag.core.problem import ProblemaTagSNP, evaluar_poblacion_vectorizado
 from snp_tag.core.algorithm import fabricar_algoritmo
 from snp_tag.utils.terminal import imprimir_subseccion, imprimir_estado
+from snp_tag.utils.logger import logger
 from snp_tag.utils.runtime import calcular_max_workers_paralelo
 
 @dataclass
@@ -36,14 +37,14 @@ class ResultadoEjecucion:
 
 class CallbackLigero(Callback):
     """Callback optimizado para capturar el historial de objetivos sin saturar la memoria."""
-    def __init__(self, H, pair_idx, modo_transformacion_objetivos='neg', modo_evaluacion='absoluta', cap_tolerancia=3.0):
+    def __init__(self, H: np.ndarray, pair_idx: np.ndarray, modo_transformacion_objetivos: str = 'neg', modo_evaluacion: str = 'absoluta', cap_tolerancia: float = 3.0):
         super().__init__()
         self._modo_transformacion_objetivos = str(modo_transformacion_objetivos or 'neg')
         self._modo_evaluacion = str(modo_evaluacion or 'absoluta')
         self._cap_tolerancia = float(cap_tolerancia)
-        self.historial_F = []
+        self.historial_F: List[np.ndarray] = []
 
-    def notify(self, algoritmo):
+    def notify(self, algoritmo: Any) -> None:
         pop = algoritmo.pop
         if pop is None: return
         try:
@@ -64,7 +65,20 @@ class CallbackLigero(Callback):
         self.historial_F.append(F_gen[:, :4].copy())
 
 def _ejecutar_replica_individual(args: Dict[str, Any]) -> ResultadoEjecucion:
-    """Punto de entrada para procesos hijos (multiprocessing)."""
+    """
+    Punto de entrada para procesos hijos (multiprocessing).
+
+    Parámetros:
+    -----------
+    args : Dict[str, Any]
+        Diccionario conteniendo los parámetros requeridos para inicializar y
+        ejecutar un algoritmo MOEA/D o NSGA-II individual.
+
+    Retorna:
+    --------
+    ResultadoEjecucion
+        Objeto instanciado con los históricos y resultados finales.
+    """
     nombre_algo = args['algo']
     nombre_init = args['init']
     nombre_crossover = args['crossover']
@@ -110,9 +124,23 @@ def _ejecutar_replica_individual(args: Dict[str, Any]) -> ResultadoEjecucion:
         X_final=Xf, F_final=Ff, historial_F=cb.historial_F
     )
 
-def ejecutar_suite_completa(H, pair_idx, cfg: ConfiguracionExperimento):
+def ejecutar_suite_completa(H: np.ndarray, pair_idx: np.ndarray, cfg: ConfiguracionExperimento) -> List[ResultadoEjecucion]:
     """
     Ejecuta el conjunto total de experimentos en paralelo.
+
+    Parámetros:
+    -----------
+    H : np.ndarray
+        Matriz binaria haplotípica.
+    pair_idx : np.ndarray
+        Índices de pares LD.
+    cfg : ConfiguracionExperimento
+        Objeto con la configuración global del experimento.
+
+    Retorna:
+    --------
+    List[ResultadoEjecucion]
+        Lista plana con todos los resultados individuales de cada réplica.
     """
     def _offset_estable(algo: str, init: str, cross: str) -> int:
         clave = f"{algo}::{init}::{cross}".encode('utf-8')
@@ -141,10 +169,10 @@ def ejecutar_suite_completa(H, pair_idx, cfg: ConfiguracionExperimento):
 
     imprimir_subseccion("Fase Evolutiva", icono="🧬")
     total = len(trabajos)
-    print(f"    • Iniciando {total} experimentos en modo paralelo seguro")
+    logger.info(f"    • Iniciando {total} experimentos en modo paralelo seguro")
     
     max_workers = calcular_max_workers_paralelo()
-    print(f"      • Paralelizando con hasta {max_workers} procesos en paralelo")
+    logger.info(f"      • Paralelizando con hasta {max_workers} procesos en paralelo")
     
     resultados_dict = {}
     completados = 0
@@ -157,10 +185,10 @@ def ejecutar_suite_completa(H, pair_idx, cfg: ConfiguracionExperimento):
             try:
                 rr = future.result()
                 completados += 1
-                print(f"      • [Progreso: {completados:>{ancho}}/{total}] | [{rr.algoritmo}-{rr.inicializacion}-{rr.crossover}] ejecución {rr.replica}/{cfg.n_ejecuciones} ({rr.tiempo_seg:.1f} s)")
+                logger.info(f"      • [Progreso: {completados:>{ancho}}/{total}] | [{rr.algoritmo}-{rr.inicializacion}-{rr.crossover}] ejecución {rr.replica}/{cfg.n_ejecuciones} ({rr.tiempo_seg:.1f} s)")
                 resultados_dict[(rr.algoritmo, rr.inicializacion, rr.crossover, rr.replica)] = rr
             except Exception as e:
-                print(f"      • ⚠️  Error en [{t['algo']}-{t['init']}-{t['crossover']}] ejecución {t['replica']}: {e}")
+                logger.error(f"      • ⚠️  Error en [{t['algo']}-{t['init']}-{t['crossover']}] ejecución {t['replica']}: {e}")
 
     # Reordenar para consistencia
     lista_final = []

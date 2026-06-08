@@ -9,10 +9,26 @@ from pathlib import Path
 from datetime import datetime
 from snp_tag.config import ConfiguracionExperimento
 
-def crear_arbol_directorios_dataset(cfg: ConfiguracionExperimento, tipo_dataset: str, is_report_only: bool = False):
+from typing import Tuple, Dict
+
+def crear_arbol_directorios_dataset(cfg: ConfiguracionExperimento, tipo_dataset: str, is_report_only_csv: bool = False) -> Tuple[str, Dict[str, str]]:
     """
     Crea un árbol de directorios específico para un dataset y devuelve la ruta base y el diccionario de carpetas.
     Prioriza snp_tag/results como raíz de resultados.
+
+    Parámetros:
+    -----------
+    cfg : ConfiguracionExperimento
+        Configuración global.
+    tipo_dataset : str
+        Nombre o identificador del dataset.
+    is_report_only_csv : bool
+        Flag que indica si la ejecución genera sólo reportes CSV.
+
+    Retorna:
+    --------
+    Tuple[str, Dict[str, str]]
+        Ruta base y diccionario de descriptores de carpeta.
     """
     ts = datetime.now().strftime('%Y%m%dT%H%M%S')
     
@@ -26,7 +42,7 @@ def crear_arbol_directorios_dataset(cfg: ConfiguracionExperimento, tipo_dataset:
     # Localizar la carpeta results dentro del paquete
     ruta_base_paquete = Path(__file__).parent.parent / "results"
     
-    if is_report_only:
+    if is_report_only_csv:
         ruta_base = ruta_base_paquete / "report_only_csv" / cfg.modo_ejecucion / tipo_dataset / etiqueta_inits / ts
     else:
         ruta_base = ruta_base_paquete / cfg.modo_ejecucion / tipo_dataset / etiqueta_inits / ts
@@ -50,7 +66,6 @@ def crear_arbol_directorios_dataset(cfg: ConfiguracionExperimento, tipo_dataset:
         'sintesis_violines': sintesis_root / '1_violines',
         'sintesis_barras': sintesis_root / '2_barras',
         'rankings': comparativa_root / '4_rankings',
-        'estadistica_hv': comparativa_root / '4_rankings' / 'estadistica_hv',
         'decision_mcdm': comparativa_root / '5_decision_mcdm',
     }
 
