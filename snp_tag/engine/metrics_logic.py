@@ -16,6 +16,7 @@ from collections import defaultdict
 from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 from pymoo.indicators.igd_plus import IGDPlus
 from pymoo.indicators.gd_plus import GDPlus
+from pymoo.indicators.hv import HV
 
 from snp_tag.config import resolver_modo_normalizacion, cargar_params_tunables_desde_ini, resolver_modo_evaluacion
 
@@ -48,7 +49,8 @@ def decodificar_objetivos_reales(
         hamming_prom_real = -F[:, 2]
 
     if _MODO_EVALUACION_GLOBAL == 'proportional':
-        min_cobertura = min_cobertura * F[:, 0]
+        # Solo la distancia Hamming necesita deshacerse (sigue dividida por k en la evaluación).
+        # La tolerancia ya se almacena en valor absoluto; no requiere multiplicar por k.
         hamming_prom_real = hamming_prom_real * F[:, 0]
         
     tolerancia_real = min_cobertura - 1.0
@@ -149,7 +151,8 @@ def obtener_referencias_estaticas_dataset(
 
     is_prop = (modo_normalizacion == 'static_proportional_limits')
     if is_prop:
-        max_tol = 1.0
+        # La tolerancia ya no es proporcional (no se divide por k), por lo que
+        # se conserva su límite absoluto calculado arriba.
         max_ham = 1.0
         max_var = 0.25
 
@@ -206,19 +209,29 @@ def calcular_metricas_crudas(F_crudo, n_snps_total: int = 1032, modo_transformac
         'avg_h_norm': float(np.nanmean(hamming_prom_real)) / max(1, n_snps_total)
     }
 
+# Decorador de caché que almacena hasta 8 retornos para evitar instanciar repetidamente el indicador para las mismas dimensiones
 @lru_cache(maxsize=8)
+# Función auxiliar que inicializa (o recupera de caché) el objeto calculador de hipervolumen según la cantidad de objetivos
 def _obtener_indicador_hv(n_obj: int):
-    from pymoo.indicators.hv import HV
+    # Genera un vector NumPy unidimensional de unos, forzado a coma flotante, y lo escala por 1.1 (punto de referencia)
     punto_ref = np.ones(int(n_obj), dtype=float) * 1.1
+    # Instancia y devuelve el indicador HV de la biblioteca pymoo usando el punto de referencia dinámico recién calculado
     return HV(ref_point=punto_ref)
 
+# Función principal que recibe un frente de Pareto ya normalizado para computar el valor numérico de su hipervolumen
 def calcular_hipervolumen(F_norm):
     """
     Calcula el Hipervolumen (HV) respecto al punto de referencia [1.1, ..., 1.1].
     """
+    # Verifica de forma segura si el frente proporcionado es un objeto nulo o si carece de filas (soluciones)
     if F_norm is None or len(F_norm) == 0:
+        # Retorna NaN (Not a Number) porque es matemáticamente imposible calcular volumen sin puntos
         return np.nan
+    
+    # Extrae la cantidad de columnas (objetivos) de F_norm e invoca la función cacheada para obtener el indicador
     hv = _obtener_indicador_hv(int(F_norm.shape[1]))
+    
+    # Llama al objeto indicador evaluando F_norm y fuerza explícitamente el retorno a un tipo flotante nativo de Python
     return float(hv(F_norm))
 
 

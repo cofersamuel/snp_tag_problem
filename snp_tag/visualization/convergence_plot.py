@@ -14,15 +14,18 @@ from typing import Optional, Dict, List, Tuple
 
 def graficar_evolucion_generacional(df_gen: pd.DataFrame, dir_salida: Optional[str] = None, 
                                    etiqueta_modo: Optional[str] = None, 
-                                   figsize: Tuple[int, int] = (14, 10), dpi: int = 300,
+                                   figsize: Tuple[int, int] = (16, 12), dpi: int = 300,
                                    emitir_log: bool = True) -> List[Tuple[str, str]]:
     """
-    Genera una figura por métrica con subplots por algoritmo para analizar la convergencia.
+    Genera una figura de convergencia por cada algoritmo, con subgráficas (3x3)
+    para cada métrica. Muestra la evolución completa de cada configuración
+    (Init + Crossover).
 
     Parámetros:
     -----------
     df_gen : pd.DataFrame
-        Dataset consolidado con las métricas inter-generacionales por iteración.
+        Dataset consolidado con las métricas inter-generacionales por iteración
+        (típicamente filtrado al *run* mediano).
     dir_salida : Optional[str]
         Directorio absoluto destino para exportación.
     etiqueta_modo : Optional[str]
@@ -42,12 +45,12 @@ def graficar_evolucion_generacional(df_gen: pd.DataFrame, dir_salida: Optional[s
     from snp_tag.constants import METRICS_DISPLAY_NAMES
     metricas = list(METRICS_DISPLAY_NAMES.items())
 
-    cols_base = {'algorithm', 'init', 'generation'}
+    cols_base = {'algorithm', 'init', 'crossover', 'generation'}
     if df_gen.empty or not cols_base.issubset(df_gen.columns):
         return []
 
     df_plot = df_gen.copy()
-    df_plot = df_plot.dropna(subset=['algorithm', 'init', 'generation'])
+    df_plot = df_plot.dropna(subset=['algorithm', 'init', 'crossover', 'generation'])
     if df_plot.empty:
         return []
 
@@ -58,8 +61,12 @@ def graficar_evolucion_generacional(df_gen: pd.DataFrame, dir_salida: Optional[s
 
     df_plot['algorithm'] = df_plot['algorithm'].astype(str)
     df_plot['init'] = df_plot['init'].astype(str)
+    df_plot['crossover'] = df_plot['crossover'].astype(str)
+    
+    # Crear la columna del método combinando las características
+    df_plot['metodo'] = df_plot['algorithm'] + "+" + df_plot['init'] + "+" + df_plot['crossover']
 
-    # Estandarización de ejes Y globales por métrica (misma escala para todas las curvas de la métrica)
+    # Estandarización de ejes Y globales por métrica (misma escala para todas las curvas de la métrica en todos los algoritmos)
     limites_y = {}
     for m_col, _ in metricas:
         if m_col not in df_plot.columns:
@@ -82,61 +89,77 @@ def graficar_evolucion_generacional(df_gen: pd.DataFrame, dir_salida: Optional[s
 
     sns.set_theme(style='whitegrid')
     artefactos = []
-    for m_col, titulo in metricas:
-        if m_col not in df_plot.columns:
+    
+    for algoritmo in algoritmos_ordenados:
+        sub_algo = df_plot[df_plot['algorithm'] == algoritmo].copy()
+        if sub_algo.empty:
             continue
-
-        sub = df_plot[['generation', 'algorithm', 'init', m_col]].copy()
-        sub[m_col] = pd.to_numeric(sub[m_col], errors='coerce')
-        sub = sub.dropna(subset=[m_col])
-        if sub.empty:
-            continue
-
-        n_alg = len(algoritmos_ordenados)
-        ncols = 2 if n_alg > 1 else 1
-        nrows = int(math.ceil(n_alg / ncols))
-        fig, axes = plt.subplots(nrows, ncols, figsize=figsize)
-        axes = axes.ravel() if hasattr(axes, 'ravel') else [axes]
-
-        for idx, algoritmo in enumerate(algoritmos_ordenados):
+            
+        fig, axes = plt.subplots(3, 3, figsize=figsize)
+        axes = axes.ravel()
+        
+        for idx, (m_col, titulo) in enumerate(metricas):
             ax = axes[idx]
-            sub_algo = sub[sub['algorithm'] == algoritmo]
-            if sub_algo.empty:
+            if m_col not in sub_algo.columns:
                 ax.axis('off')
                 continue
-
+                
+            datos_metric = sub_algo[['generation', 'metodo', m_col]].copy()
+            datos_metric[m_col] = pd.to_numeric(datos_metric[m_col], errors='coerce')
+            datos_metric = datos_metric.dropna(subset=[m_col])
+            
+            if datos_metric.empty:
+                ax.axis('off')
+                continue
+                
+            # Ya no se usa estimator='mean' pues los datos ya están filtrados por el run mediano
             sns.lineplot(
-                data=sub_algo,
+                data=datos_metric,
                 x='generation',
                 y=m_col,
-                hue='init',
+                hue='metodo',
+                style='metodo',
                 ax=ax,
-                estimator='mean',
-                errorbar=None,
                 linewidth=2,
             )
 
             if m_col in limites_y:
                 ax.set_ylim(limites_y[m_col])
             ax.set_xlim(g_min, g_max)
-            ax.set_title(f'{algoritmo}', fontsize=12, fontweight='bold')
+            ax.set_title(titulo, fontsize=12, fontweight='bold')
             ax.set_xlabel('Generación')
             ax.set_ylabel('Valor')
-            ax.legend(title='Inicialización', loc='best')
+            
+            # Quitar leyenda individual de cada subplot para evitar solapamientos
+            legend = ax.get_legend()
+            if legend is not None:
+                legend.remove()
 
-        for j in range(n_alg, len(axes)):
+        # Ocultar ejes vacíos si hay menos de 9 métricas
+        for j in range(len(metricas), len(axes)):
             axes[j].axis('off')
 
-        fig.suptitle(f'Convergencia Generacional | {titulo}', fontsize=14, fontweight='bold')
+        # Buscar la primera leyenda disponible para usarla como global
+        handles, labels = [], []
+        for ax in axes:
+            if hasattr(ax, 'get_legend_handles_labels') and ax.get_legend_handles_labels()[0]:
+                handles, labels = ax.get_legend_handles_labels()
+                break
+                
+        if handles and labels:
+            fig.legend(handles, labels, loc='center right', title='Configuración', 
+                       bbox_to_anchor=(1.18, 0.5), fontsize=10, title_fontsize=12)
+
+        fig.suptitle(f'Convergencia Generacional | {algoritmo}', fontsize=16, fontweight='bold')
         fig.tight_layout(rect=[0, 0, 1, 0.96])
 
         if dir_salida and etiqueta_modo:
-            ruta = os.path.join(dir_salida, f'convergencia_{m_col.lower()}_{etiqueta_modo}.png')
+            ruta = os.path.join(dir_salida, f'convergencia_{algoritmo.lower()}_{etiqueta_modo}.png')
             fig.savefig(ruta, dpi=dpi, bbox_inches='tight')
-            artefactos.append((ruta, f"Convergencia por métrica ({m_col}) con subplots por algoritmo"))
+            artefactos.append((ruta, f"Convergencia por métrica - {algoritmo}"))
             if emitir_log:
                 from snp_tag.utils.terminal import imprimir_grafico_guardado
-                imprimir_grafico_guardado(ruta, f"Convergencia por métrica ({m_col}) con subplots por algoritmo")
+                imprimir_grafico_guardado(ruta, f"Convergencia por métrica - {algoritmo}")
         plt.close(fig)
 
     return artefactos

@@ -90,7 +90,9 @@ def evaluar_poblacion_vectorizado(
     
     if modo_evaluacion == 'proportional':
         # NORMALIZACIÓN PROPORCIONAL (Ting et al.)
-        tolerancia_eval = cobertura_efectiva / k
+        # La tolerancia se mantiene en valor absoluto para coincidir con la implementación original de Ting,
+        # donde la cobertura mínima no se divide por k.
+        tolerancia_eval = cobertura_efectiva
         hamming_med = D.mean(axis=1) / k
         varianza = D.var(axis=1) / (k ** 2)
     else:
@@ -158,10 +160,10 @@ class ProblemaTagSNP(Problem):
         if self.modo_evaluacion == 'proportional':
             self._escala_f4 = 0.25 # La varianza de una proporción no pasa de 0.25
             if self.modo_transformacion_objetivos == 'inverse':
-                self._escala_f2 = 1.0
+                self._escala_f2 = max(1.0, float(self.cap_tolerancia))
                 self._escala_f3 = 10.0 # Nadir empírico seguro para inverse
             else: # 'neg'
-                self._escala_f2 = 1.0 # La proporción máxima es 1.0
+                self._escala_f2 = max(1.0, float(self.cap_tolerancia)) # Tolerancia absoluta (no dividida por k)
                 self._escala_f3 = 1.0 # La proporción máxima es 1.0, |-1.0| = 1.0
         else:
             if self.modo_transformacion_objetivos == 'inverse':

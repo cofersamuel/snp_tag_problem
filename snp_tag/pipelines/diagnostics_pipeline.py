@@ -44,23 +44,32 @@ def ejecutar_pipeline_diagnostico(cfg: ConfiguracionExperimento) -> Tuple[np.nda
     logger.info(f"      • N_SNPS={len(snp_ids)} | N_PATRONES={len(hap_ids)} | FICHERO={fichero_rel}")
     
     imprimir_subseccion("Visualización de la Estructura de Haplotipos", icono="🧬")
-    graficar_mapa_calor_haplotipos(H, cfg.carpetas, cfg.modo_ejecucion)
-    graficar_bloques_ld(H, cfg.carpetas, cfg.modo_ejecucion, cfg=cfg)
+    if 'diagnostico_datos' in cfg.graficas_activas:
+        graficar_mapa_calor_haplotipos(H, cfg.carpetas, cfg.modo_ejecucion)
+        graficar_bloques_ld(H, cfg.carpetas, cfg.modo_ejecucion, cfg=cfg)
+    else:
+        logger.info("      • ⚠️  Gráficas de estructura de haplotipos omitidas (user_config.ini).")
     
     imprimir_subseccion("Análisis de Variabilidad y Frecuencia Alélica", icono="📈")
-    graficar_histograma_alelico(H, cfg.carpetas, cfg.modo_ejecucion)
-    graficar_variabilidad_snps(H, cfg.carpetas, cfg.modo_ejecucion)
-    graficar_conteo_alelos(H, cfg.carpetas, cfg.modo_ejecucion)
+    if 'diagnostico_datos' in cfg.graficas_activas:
+        graficar_histograma_alelico(H, cfg.carpetas, cfg.modo_ejecucion)
+        graficar_variabilidad_snps(H, cfg.carpetas, cfg.modo_ejecucion)
+        graficar_conteo_alelos(H, cfg.carpetas, cfg.modo_ejecucion)
+    else:
+        logger.info("      • ⚠️  Gráficas de variabilidad omitidas (user_config.ini).")
     
     dvals, p33, p66, top_sim, top_dist = analizar_similitud_genotipica(H)
-    graficar_histograma_hamming(dvals, cfg.carpetas, cfg.modo_ejecucion)
+    if 'diagnostico_datos' in cfg.graficas_activas:
+        graficar_histograma_hamming(dvals, cfg.carpetas, cfg.modo_ejecucion)
     
     # LD y Veredicto
     media_ld, corrs, corr_full = calcular_ld_completo(H)
     segmentos = detectar_bloques_ld(H) 
     
     # Generar gráficos LD y capturar rutas
-    rutas_ld = graficar_ld_detallado(corr_full, corrs, cfg.carpetas, cfg.modo_ejecucion)
+    rutas_ld = []
+    if 'diagnostico_datos' in cfg.graficas_activas:
+        rutas_ld = graficar_ld_detallado(corr_full, corrs, cfg.carpetas, cfg.modo_ejecucion)
     
     # Ejecutar reporte de diagnóstico con enlaces integrados
     ejecutar_diagnostico_ld(H, cfg, rutas_ld=rutas_ld)

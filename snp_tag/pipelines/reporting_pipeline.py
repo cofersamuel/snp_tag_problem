@@ -202,6 +202,27 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
     if df_fronts_total is None:
         df_fronts_total = pd.DataFrame()
 
+    # --- SELECCIÓN DEL RUN MEDIANO ---
+    df_fronts_mediano = pd.DataFrame()
+    df_gen_mediano = pd.DataFrame()
+    if not df_final.empty:
+        median_runs = []
+        for (algo, init, cx), group in df_final.groupby(['algorithm', 'init', 'crossover']):
+            group_sorted = group.sort_values(by='Hypervolume')
+            median_idx = len(group_sorted) // 2
+            median_run = group_sorted.iloc[median_idx]['run']
+            median_runs.append({'algorithm': algo, 'init': init, 'crossover': cx, 'run': median_run})
+        
+        df_median_runs = pd.DataFrame(median_runs)
+        
+        if not df_fronts_total.empty:
+            df_fronts_mediano = pd.merge(df_fronts_total, df_median_runs, on=['algorithm', 'init', 'crossover', 'run'], how='inner')
+        if df_gen is not None and not df_gen.empty:
+            df_gen_mediano = pd.merge(df_gen, df_median_runs, on=['algorithm', 'init', 'crossover', 'run'], how='inner')
+    else:
+        df_fronts_mediano = df_fronts_total.copy()
+        df_gen_mediano = df_gen.copy() if df_gen is not None else pd.DataFrame()
+
     # Frentes de Pareto
     imprimir_subseccion("Distribución y Correlación de Frentes de Pareto", icono="🔍")
     t0_frentes = time.time()
@@ -211,14 +232,14 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
         'f3_transformed_hamming_avg', 'f4_balance_var'
     }
 
-    if df_fronts_total.empty:
+    if df_fronts_mediano.empty:
         logger.warning("      • ⚠️  Pareto omitido: no hay datos de frentes disponibles (CSV frentes ausente/vacío).")
-    elif not cols_fronts.issubset(set(df_fronts_total.columns)):
-        faltantes = sorted(cols_fronts - set(df_fronts_total.columns))
+    elif not cols_fronts.issubset(set(df_fronts_mediano.columns)):
+        faltantes = sorted(cols_fronts - set(df_fronts_mediano.columns))
         alias_disponibles = []
-        if 'f2_neg_tolerance' in df_fronts_total.columns:
+        if 'f2_neg_tolerance' in df_fronts_mediano.columns:
             alias_disponibles.append('f2_neg_tolerance')
-        if 'f3_neg_hamming_avg' in df_fronts_total.columns:
+        if 'f3_neg_hamming_avg' in df_fronts_mediano.columns:
             alias_disponibles.append('f3_neg_hamming_avg')
         mensaje_alias = (
             f" Alias detectados en CSV: {sorted(alias_disponibles)}."
@@ -232,7 +253,7 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
         # Cálculo de límites globales para estandarizar ejes (unificar escala entre algoritmos)
         limites_ejes = {}
         objetivos_reales = decodificar_objetivos_reales(
-            df_fronts_total[
+            df_fronts_mediano[
                 ['f1_compactness', 'f2_transformed_tolerance', 'f3_transformed_hamming_avg', 'f4_balance_var']
             ].to_numpy(dtype=float),
             modo_transformacion_objetivos=cfg.modo_transformacion_objetivos,
@@ -251,97 +272,112 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
                 limites_ejes[nombre] = (vmin - margen, vmax + margen)
 
         max_workers = calcular_max_workers_paralelo()
-        tareas_plot = ['all_fronts', 'correlation', 'parallel']
-        with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
-            futures = [
-                executor.submit(
-                    _tarea_plot_frentes,
-                    t,
-                    df_fronts_total,
-                    cfg.carpetas,
-                    cfg.modo_ejecucion,
-                    cfg.report_plot_dpi,
-                    cfg.semilla_maestra,
-                    limites_ejes,
-                    cfg.modo_transformacion_objetivos,
-                )
-                for t in tareas_plot
-            ]
+        tareas_plot = []
+        if 'frentes' in cfg.graficas_activas: tareas_plot.append('all_fronts')
+        if 'correlacion' in cfg.graficas_activas: tareas_plot.append('correlation')
+        if 'paralelas' in cfg.graficas_activas: tareas_plot.append('parallel')
+        
+        if tareas_plot:
+            with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
+                futures = [
+                    executor.submit(
+                        _tarea_plot_frentes,
+                        t,
+                        df_fronts_mediano,
+                        cfg.carpetas,
+                        cfg.modo_ejecucion,
+                        cfg.report_plot_dpi,
+                        cfg.semilla_maestra,
+                        limites_ejes,
+                        cfg.modo_transformacion_objetivos,
+                    )
+                    for t in tareas_plot
+                ]
+                resultados_tareas = {}
+                for future in concurrent.futures.as_completed(futures):
+                    try:
+                        resultado = future.result()
+                        resultados_tareas[resultado.get('tarea')] = resultado.get('artefactos', [])
+                    except Exception as e:
+                        logger.error(f"      • ⚠️  Error en graficado paralelo: {e}")
+        else:
             resultados_tareas = {}
-            for future in concurrent.futures.as_completed(futures):
-                try:
-                    resultado = future.result()
-                    resultados_tareas[resultado.get('tarea')] = resultado.get('artefactos', [])
-                except Exception as e:
-                    logger.error(f"      • ⚠️  Error en graficado paralelo: {e}")
 
-        imprimir_subseccion("Correlación de Objetivos", icono="🔗")
-        for ruta, descripcion in resultados_tareas.get('correlation', []):
-            imprimir_grafico_guardado(ruta, descripcion)
+        if 'correlacion' in cfg.graficas_activas:
+            imprimir_subseccion("Correlación de Objetivos", icono="🔗")
+            for ruta, descripcion in resultados_tareas.get('correlation', []):
+                imprimir_grafico_guardado(ruta, descripcion)
 
-        imprimir_subseccion("Coordenadas Paralelas", icono="📈")
-        for ruta, descripcion in resultados_tareas.get('parallel', []):
-            imprimir_grafico_guardado(ruta, descripcion)
+        if 'paralelas' in cfg.graficas_activas:
+            imprimir_subseccion("Coordenadas Paralelas", icono="📈")
+            for ruta, descripcion in resultados_tareas.get('parallel', []):
+                imprimir_grafico_guardado(ruta, descripcion)
 
-        imprimir_subseccion("Frentes de Pareto", icono="🎯")
-        for ruta, descripcion in resultados_tareas.get('all_fronts', []):
-            imprimir_grafico_guardado(ruta, descripcion)
+        if 'frentes' in cfg.graficas_activas:
+            imprimir_subseccion("Frentes de Pareto", icono="🎯")
+            for ruta, descripcion in resultados_tareas.get('all_fronts', []):
+                imprimir_grafico_guardado(ruta, descripcion)
 
     logger.info(f"      • Tiempo bloque 'Frentes de Pareto': {time.time() - t0_frentes:.1f}s")
 
     imprimir_subseccion("Análisis de Convergencia Progresiva", icono="🔄")
-    if not df_gen.empty and {'algorithm', 'init', 'crossover', 'generation'}.issubset(df_gen.columns):
-        artefactos_conv = graficar_evolucion_generacional(
-            df_gen,
-            dir_salida=cfg.carpetas['metricas_convergencia'],
-            etiqueta_modo=cfg.modo_ejecucion,
-            dpi=cfg.report_plot_dpi,
-            emitir_log=False,
-        )
-        for ruta, descripcion in artefactos_conv:
-            imprimir_grafico_guardado(ruta, descripcion)
-    else:
-        logger.warning("      • ⚠️  Convergencia omitida: no hay histórico generacional válido.")
+    if 'convergencia' in cfg.graficas_activas:
+        if not df_gen_mediano.empty and {'algorithm', 'init', 'crossover', 'generation'}.issubset(df_gen_mediano.columns):
+            artefactos_conv = graficar_evolucion_generacional(
+                df_gen_mediano,
+                dir_salida=cfg.carpetas['metricas_convergencia'],
+                etiqueta_modo=cfg.modo_ejecucion,
+                dpi=cfg.report_plot_dpi,
+                emitir_log=False,
+            )
+            for ruta, descripcion in artefactos_conv:
+                imprimir_grafico_guardado(ruta, descripcion)
+        else:
+            logger.warning("      • ⚠️  Convergencia omitida: no hay histórico generacional válido.")
 
     imprimir_subseccion("Síntesis Estadística Comparativa", icono="📊️")
     if not df_final.empty:
-        tareas_estadisticas = [
-            ('boxplots', cfg.carpetas['sintesis_boxplots']),
-            ('violin', cfg.carpetas['sintesis_violines']),
-            ('mean_std', cfg.carpetas['sintesis_barras']),
-        ]
+        tareas_estadisticas = []
+        if 'boxplots' in cfg.graficas_activas: tareas_estadisticas.append(('boxplots', cfg.carpetas['sintesis_boxplots']))
+        if 'violines' in cfg.graficas_activas: tareas_estadisticas.append(('violin', cfg.carpetas['sintesis_violines']))
+        if 'media_std' in cfg.graficas_activas: tareas_estadisticas.append(('mean_std', cfg.carpetas['sintesis_barras']))
+        
         resultados_est = {}
-        max_workers_est = min(calcular_max_workers_paralelo(), len(tareas_estadisticas))
-        with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers_est) as executor:
-            futures = [
-                executor.submit(
-                    _tarea_sintesis_estadistica,
-                    tarea,
-                    df_final,
-                    dir_salida,
-                    cfg.modo_ejecucion,
-                    cfg.report_plot_dpi,
-                )
-                for tarea, dir_salida in tareas_estadisticas
-            ]
-            for future in concurrent.futures.as_completed(futures):
-                try:
-                    resultado = future.result()
-                    resultados_est[resultado.get('tarea')] = resultado.get('artefactos', [])
-                except Exception as e:
-                    logger.error(f"      • ⚠️  Error en síntesis estadística paralela: {e}")
+        if tareas_estadisticas:
+            max_workers_est = min(calcular_max_workers_paralelo(), len(tareas_estadisticas))
+            with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers_est) as executor:
+                futures = [
+                    executor.submit(
+                        _tarea_sintesis_estadistica,
+                        tarea,
+                        df_final,
+                        dir_salida,
+                        cfg.modo_ejecucion,
+                        cfg.report_plot_dpi,
+                    )
+                    for tarea, dir_salida in tareas_estadisticas
+                ]
+                for future in concurrent.futures.as_completed(futures):
+                    try:
+                        resultado = future.result()
+                        resultados_est[resultado.get('tarea')] = resultado.get('artefactos', [])
+                    except Exception as e:
+                        logger.error(f"      • ⚠️  Error en síntesis estadística paralela: {e}")
 
-        imprimir_subseccion("Resumen Global (Boxplots)", icono="📦")
-        for ruta, descripcion in resultados_est.get('boxplots', []):
-            imprimir_grafico_guardado(ruta, descripcion)
+        if 'boxplots' in cfg.graficas_activas:
+            imprimir_subseccion("Resumen Global (Boxplots)", icono="📦")
+            for ruta, descripcion in resultados_est.get('boxplots', []):
+                imprimir_grafico_guardado(ruta, descripcion)
 
-        imprimir_subseccion("Distribuciones Detalladas (Violin Plots)", icono="🎻")
-        for ruta, descripcion in resultados_est.get('violin', []):
-            imprimir_grafico_guardado(ruta, descripcion)
+        if 'violines' in cfg.graficas_activas:
+            imprimir_subseccion("Distribuciones Detalladas (Violin Plots)", icono="🎻")
+            for ruta, descripcion in resultados_est.get('violin', []):
+                imprimir_grafico_guardado(ruta, descripcion)
 
-        imprimir_subseccion("Análisis de Tendencia Central (Media ± Std)", icono="📉")
-        for ruta, descripcion in resultados_est.get('mean_std', []):
-            imprimir_grafico_guardado(ruta, descripcion)
+        if 'media_std' in cfg.graficas_activas:
+            imprimir_subseccion("Análisis de Tendencia Central (Media ± Std)", icono="📉")
+            for ruta, descripcion in resultados_est.get('mean_std', []):
+                imprimir_grafico_guardado(ruta, descripcion)
 
     if not df_final.empty:
         # --- 1. Preparación de Datos y Rankings ---
@@ -464,8 +500,9 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
                 logger.info(f"         • \033[1mPara más detalles\033[0m: {link_csv}")
 
                 # --- VALIDACIÓN ESTADÍSTICA ANIDADA ---
+                graficar_hm = 'estadistica' in cfg.graficas_activas
                 if tipo == 'config' and 'Average Ranking' not in metrica:
-                    graficar_analisis_kruskal_dunn(df_final, cfg.carpetas['rankings'], metrica, cfg.modo_ejecucion, indent=9)
+                    graficar_analisis_kruskal_dunn(df_final, cfg.carpetas['rankings'], metrica, cfg.modo_ejecucion, indent=9, graficar=graficar_hm)
                 elif 'Average Ranking' in metrica:
                     if metrica == 'Average Ranking Overall':
                         col_friedman = 'config'
@@ -475,24 +512,25 @@ def ejecutar_reportes_visualizacion(cfg: ConfiguracionExperimento, df_final: pd.
                         col_friedman = 'init'
                     else:
                         col_friedman = 'crossover'
-                    graficar_analisis_estadistico(df_final, cfg.carpetas['rankings'], cfg.modo_ejecucion, col_group=col_friedman, indent=9)
+                    graficar_analisis_estadistico(df_final, cfg.carpetas['rankings'], cfg.modo_ejecucion, col_group=col_friedman, indent=9, graficar=graficar_hm)
                 
                 logger.info("") # Espacio entre métricas
 
     # --- Análisis de Decisión Multi-Criterio (MCDM) ---
-    imprimir_subseccion("Análisis de Decisión Multi-Criterio (MCDM)", icono="🎯")
-    if df_fronts_total is not None and not df_fronts_total.empty:
-        try:
-            analizar_decision_mcdm(
-                df_fronts_total,
-                dir_salida=cfg.carpetas['decision_mcdm'],
-                etiqueta_modo=cfg.modo_ejecucion,
-                modo_transformacion_objetivos=cfg.modo_transformacion_objetivos,
-                dpi=cfg.report_plot_dpi,
-                emitir_log=True,
-            )
-            logger.info("      • Análisis MCDM completado.")
-        except Exception as e:
-            logger.error(f"      • ⚠️  Error en análisis MCDM: {e}")
-    else:
-        logger.warning("      • ⚠️  MCDM omitido: no hay datos de frentes de Pareto disponibles.")
+    if 'mcdm' in cfg.graficas_activas:
+        imprimir_subseccion("Análisis de Decisión Multi-Criterio (MCDM)", icono="🎯")
+        if df_fronts_mediano is not None and not df_fronts_mediano.empty:
+            try:
+                analizar_decision_mcdm(
+                    df_fronts_mediano,
+                    dir_salida=cfg.carpetas['decision_mcdm'],
+                    etiqueta_modo=cfg.modo_ejecucion,
+                    modo_transformacion_objetivos=cfg.modo_transformacion_objetivos,
+                    dpi=cfg.report_plot_dpi,
+                    emitir_log=True,
+                )
+                logger.info("      • Análisis MCDM completado.")
+            except Exception as e:
+                logger.error(f"      • ⚠️  Error en análisis MCDM: {e}")
+        else:
+            logger.warning("      • ⚠️  MCDM omitido: no hay datos de frentes de Pareto disponibles.")

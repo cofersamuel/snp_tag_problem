@@ -316,7 +316,7 @@ def graficar_boxplot_metricas(df_runs: pd.DataFrame, dir_salida: str, etiqueta_m
     return artefactos
 
 
-def graficar_analisis_estadistico(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str, col_group: str = 'config', dpi: int = 300, indent: int = 9) -> Optional[np.ndarray]:
+def graficar_analisis_estadistico(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str, col_group: str = 'config', dpi: int = 300, indent: int = 9, graficar: bool = True) -> Optional[np.ndarray]:
     """
     Ejecuta el test de Friedman y Nemenyi, exportando su gráfico de diferencias críticas.
 
@@ -376,7 +376,7 @@ def graficar_analisis_estadistico(df_runs: pd.DataFrame, dir_salida: str, etique
         print(f"{espacios}    P-valor: {p_value:.4e}")
         print(f"{espacios}    Significativo (p < 0.05): {'Sí' if p_value < 0.05 else 'No'}\n")
     
-    if p_values_nemenyi is not None:
+    if p_values_nemenyi is not None and graficar:
         
         tamano_hm = max(14.0, n_configs * 0.4)
         plt.figure(figsize=(tamano_hm, tamano_hm))
@@ -412,7 +412,7 @@ def graficar_analisis_estadistico(df_runs: pd.DataFrame, dir_salida: str, etique
     return resumen[[col_group, 'AvgRank']]
 
 
-def graficar_analisis_kruskal_dunn(df_runs: pd.DataFrame, dir_salida: str, metrica_objetivo: str, etiqueta_modo: str, dpi: int = 300, indent: int = 9) -> None:
+def graficar_analisis_kruskal_dunn(df_runs: pd.DataFrame, dir_salida: str, metrica_objetivo: str, etiqueta_modo: str, dpi: int = 300, indent: int = 9, graficar: bool = True) -> None:
     """
     Evalúa contrastes no paramétricos multivariables y exporta un heatmap de los p-values.
 
@@ -456,7 +456,7 @@ def graficar_analisis_kruskal_dunn(df_runs: pd.DataFrame, dir_salida: str, metri
     print(f"{espacios}    P-valor: {p_val:.4e}")
     print(f"{espacios}    Significativo (p < 0.05): {'Sí' if p_val < 0.05 else 'No'}\n")
     
-    if p_dunn is not None:
+    if p_dunn is not None and graficar:
         
         tamano_hm = max(14.0, n_configs * 0.4)
         plt.figure(figsize=(tamano_hm, tamano_hm))

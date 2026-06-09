@@ -39,6 +39,7 @@ CLAVES_TUNABLES_REQUERIDAS = (
     'cap_tolerancia',
     'crossover_operadores_activos',
     'paso_generacional_metricas',
+    'graficas_activas',
 )
 
 
@@ -181,12 +182,12 @@ PARAMETROS_CONFIGURACION = {
     # - descendencia: número de descendientes por generación.
     # - n_runs: repeticiones por configuración algoritmo-init.
     'perfiles_modo': {
-        'fast': {'tam_pob': 10, 'n_gen': 2, 'descendencia': 10, 'n_runs': 2},
-        'medium': {'tam_pob': 84, 'n_gen': 50, 'descendencia': 84, 'n_runs': 2},
+        'fast': {'tam_pob': 10, 'n_gen': 2, 'descendencia': 10, 'n_runs': 3},
+        'medium': {'tam_pob': 84, 'n_gen': 50, 'descendencia': 84, 'n_runs': 3},
         'high': {'tam_pob': 120, 'n_gen': 100, 'descendencia': 120, 'n_runs': 3},
         'full': {'tam_pob': 220, 'n_gen': 500, 'descendencia': 220, 'n_runs': 5},
-        'full_20': {'tam_pob': 220, 'n_gen': 500, 'descendencia': 220, 'n_runs': 20},
-        'full_30': {'tam_pob': 220, 'n_gen': 500, 'descendencia': 220, 'n_runs': 30},
+        'full_20': {'tam_pob': 220, 'n_gen': 500, 'descendencia': 220, 'n_runs': 21},
+        'full_30': {'tam_pob': 220, 'n_gen': 500, 'descendencia': 220, 'n_runs': 31},
     },
 
     # Fuentes de datos permitidas al construir configuración.
@@ -241,6 +242,7 @@ MODOS_EVALUACION_DISPONIBLES = tuple(PARAMETROS_CONFIGURACION['modos_evaluacion_
 MODOS_SEMILLA_DISPONIBLES = tuple(PARAMETROS_CONFIGURACION['modos_semilla_disponibles'])
 MODOS_TRANSFORMACION_OBJETIVOS_DISPONIBLES = tuple(PARAMETROS_CONFIGURACION['modos_transformacion_objetivos_disponibles'])
 ALGORITMOS_DISPONIBLES = tuple(PARAMETROS_CONFIGURACION['algoritmos_disponibles'])
+GRAFICAS_DISPONIBLES = ('diagnostico_datos', 'tiempo', 'frentes', 'paralelas', 'correlacion', 'convergencia', 'boxplots', 'violines', 'media_std', 'estadistica', 'mcdm')
 PARAMS_TUNABLES_DEFECTO = PARAMETROS_CONFIGURACION['tunables']
 CLAVES_TUNABLES_PERMITIDAS = frozenset(PARAMS_TUNABLES_DEFECTO.keys())
 
@@ -305,6 +307,7 @@ class ConfiguracionExperimento:
     
     algoritmos_activos: List[str] = field(default_factory=list)
     opciones_init: List[str] = field(default_factory=list)
+    graficas_activas: List[str] = field(default_factory=lambda: list(GRAFICAS_DISPONIBLES))
     modo_normalizacion: str = PARAMS_TUNABLES_DEFECTO.get('modo_normalizacion', 'static_dataset_limits')
     modo_evaluacion: str = PARAMS_TUNABLES_DEFECTO.get('modo_evaluacion', 'absoluta')
     modo_semillas: str = PARAMS_TUNABLES_DEFECTO.get('modo_semillas', 'non_deterministic')
@@ -425,6 +428,11 @@ def construir_configuracion(modo: str = 'medium', data_source: str = 'hinds2005'
         if not es_algoritmo_valido(str(nombre_algoritmo)):
             raise ValueError(f"Algoritmo no válido: {nombre_algoritmo}")
 
+    graficas_activas = _asegurar_lista(params.get('graficas_activas', []))
+    for grafica in graficas_activas:
+        if str(grafica).strip().lower() not in GRAFICAS_DISPONIBLES:
+            raise ValueError(f"Gráfica no soportada: {grafica}. Opciones válidas: {GRAFICAS_DISPONIBLES}")
+
     theta_pbi = float(params['theta_moead_pbi'])
     if theta_pbi <= 0:
         raise ValueError("'theta_moead_pbi' debe ser > 0.")
@@ -501,6 +509,7 @@ def construir_configuracion(modo: str = 'medium', data_source: str = 'hinds2005'
         max_k_holistic=int(params.get('max_k_holistic', 5)),
         algoritmos_activos=algoritmos_activos,
         opciones_init=opciones_init,
+        graficas_activas=[str(g).strip().lower() for g in graficas_activas],
         modo_normalizacion=modo_normalizacion_res,
         modo_evaluacion=modo_evaluacion_res,
         modo_semillas=resolver_modo_semillas(params.get('modo_semillas')),
@@ -569,11 +578,13 @@ def informar_configuracion(cfg: ConfiguracionExperimento) -> None:
     logger.info(f"      • [Gráficos]")
     logger.info(f"          - report_plot_dpi: {cfg.report_plot_dpi}")
     logger.info(f"          - paso_generacional_metricas: {cfg.paso_generacional_metricas}")
+    logger.info(f"          - graficas_activas: {', '.join(cfg.graficas_activas)}")
     
     # [Resumen de Objetivos]
+    # Solo f3 y f4 son proporcionales (divididos por k); f2 (tolerancia) se mantiene absoluta.
     suffix = " Prop." if cfg.modo_evaluacion == 'proportional' else ""
     logger.info("      • Objetivos de optimización:")
     logger.info(f"          - f1 (Compacidad): Minimizar")
-    logger.info(f"          - f2 (Tolerancia{suffix}): Maximizar")
+    logger.info(f"          - f2 (Tolerancia): Maximizar")
     logger.info(f"          - f3 (Hamming Medio{suffix}): Maximizar")
     logger.info(f"          - f4 (Disimilitud{suffix}): Minimizar")

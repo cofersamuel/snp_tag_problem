@@ -319,7 +319,10 @@ def ejecutar_pipeline(args: Any) -> str:
         for rr in resultados
     ])
     if not df_perf.empty:
-        graficar_rendimiento_tiempo(df_perf, cfg.carpetas['tiempo'], cfg.modo_ejecucion)
+        if 'tiempo' in cfg.graficas_activas:
+            graficar_rendimiento_tiempo(df_perf, cfg.carpetas['tiempo'], cfg.modo_ejecucion)
+        else:
+            logger.info("      • ⚠️  Gráfica de tiempo omitida (user_config.ini).")
     logger.info(f"      • Tiempo bloque 'Análisis de Rendimiento y Tiempo': {time.time() - t0_perf:.1f}s")
 
     
