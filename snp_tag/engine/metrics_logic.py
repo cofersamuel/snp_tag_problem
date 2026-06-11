@@ -5,20 +5,32 @@ Implementa las métricas de rendimiento para la evaluación de frentes de Pareto
 incluyendo Range, SumMin, MinSum e Hipervolumen, así como indicadores crudos.
 """
 
+# =============================================================================
+# LIBRERÍAS ESTÁNDAR
+# =============================================================================
+import concurrent.futures
+import os
+import time
+from collections import defaultdict
+from functools import lru_cache
+from typing import Any, Dict, List, Tuple
+
+# =============================================================================
+# LIBRERÍAS DE TERCEROS
+# =============================================================================
 import numpy as np
 import pandas as pd
-import time
-import os
-import concurrent.futures
-from functools import lru_cache
-from typing import List, Tuple, Dict, Any
-from collections import defaultdict
-from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
-from pymoo.indicators.igd_plus import IGDPlus
 from pymoo.indicators.gd_plus import GDPlus
 from pymoo.indicators.hv import HV
+from pymoo.indicators.igd_plus import IGDPlus
+from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 
-from snp_tag.config import resolver_modo_normalizacion, cargar_params_tunables_desde_ini, resolver_modo_evaluacion
+# =============================================================================
+# MÓDULOS LOCALES (snp_tag)
+# =============================================================================
+from snp_tag.config import (cargar_params_tunables_desde_ini,
+                            resolver_modo_evaluacion,
+                            resolver_modo_normalizacion)
 
 # Cargar el modo de evaluación desde la configuración una sola vez
 _PARAMS_TUNABLES_GLOBALES = cargar_params_tunables_desde_ini()

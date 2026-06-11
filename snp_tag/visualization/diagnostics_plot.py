@@ -5,14 +5,25 @@ Implementa funciones para la inspección visual de la estructura haplotípica,
 incluyendo mapas de calor, bloques LD y distribuciones de variabilidad.
 """
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-import numpy as np
+# =============================================================================
+# LIBRERÍAS ESTÁNDAR
+# =============================================================================
 import os
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
+# =============================================================================
+# LIBRERÍAS DE TERCEROS
+# =============================================================================
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+
+# =============================================================================
+# MÓDULOS LOCALES (snp_tag)
+# =============================================================================
 from snp_tag.engine.diagnostics_logic import detectar_bloques_ld
 from snp_tag.utils.terminal import imprimir_grafico_guardado
+
 
 def graficar_mapa_calor_haplotipos(H: np.ndarray, carpetas: Dict[str, str], etiqueta_modo: str, dpi: int = 200) -> None:
     """

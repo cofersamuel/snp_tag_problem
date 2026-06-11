@@ -7,7 +7,8 @@ por todo el pipeline, mitigando el uso de "magic strings".
 
 # Orden preferido de algoritmos para la visualización conjunta
 PREFERRED_ALGORITHMS_ORDER = [
-    'NSGA3', 'MOEAD_TCHE', 'MOEAD_PBI', 'MOEAD_WS', 'NSGA2', 'SPEA2'
+    'NSGA3', 'MOEAD_TCHE', 'MOEAD_PBI', 'MOEAD_WS', 'NSGA2', 'SPEA2',
+    'AGEMOEA2', 'SMSEMOA', 'RVEA'
 ]
 
 # Definición de las métricas que se intentan maximizar (el resto se minimiza)

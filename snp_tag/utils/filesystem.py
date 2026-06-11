@@ -5,11 +5,18 @@ Administra la jerarquía de directorios para la organización de resultados,
 utilizando rutas robustas basadas en pathlib.
 """
 
-from pathlib import Path
+# =============================================================================
+# LIBRERÍAS ESTÁNDAR
+# =============================================================================
 from datetime import datetime
+from pathlib import Path
+from typing import Dict, Tuple
+
+# =============================================================================
+# MÓDULOS LOCALES (snp_tag)
+# =============================================================================
 from snp_tag.config import ConfiguracionExperimento
 
-from typing import Tuple, Dict
 
 def crear_arbol_directorios_dataset(cfg: ConfiguracionExperimento, tipo_dataset: str, is_report_only_csv: bool = False) -> Tuple[str, Dict[str, str]]:
     """

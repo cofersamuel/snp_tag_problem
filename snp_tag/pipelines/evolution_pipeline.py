@@ -5,22 +5,33 @@ Orquesta la ejecución paralela y concurrente de los experimentos evolutivos,
 gestionando la distribución de carga y la persistencia de resultados.
 """
 
-import time
-import hashlib
+# =============================================================================
+# LIBRERÍAS ESTÁNDAR
+# =============================================================================
 import concurrent.futures
-import numpy as np
+import hashlib
+import time
 from dataclasses import dataclass
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
+
+# =============================================================================
+# LIBRERÍAS DE TERCEROS
+# =============================================================================
+import numpy as np
+from pymoo.core.callback import Callback
 from pymoo.optimize import minimize
 from pymoo.termination import get_termination
-from pymoo.core.callback import Callback
 
+# =============================================================================
+# MÓDULOS LOCALES (snp_tag)
+# =============================================================================
 from snp_tag.config import ConfiguracionExperimento
-from snp_tag.core.problem import ProblemaTagSNP, evaluar_poblacion_vectorizado
 from snp_tag.core.algorithm import fabricar_algoritmo
-from snp_tag.utils.terminal import imprimir_subseccion, imprimir_estado
+from snp_tag.core.problem import ProblemaTagSNP, evaluar_poblacion_vectorizado
 from snp_tag.utils.logger import logger
 from snp_tag.utils.runtime import calcular_max_workers_paralelo
+from snp_tag.utils.terminal import imprimir_estado, imprimir_subseccion
+
 
 @dataclass
 class ResultadoEjecucion:

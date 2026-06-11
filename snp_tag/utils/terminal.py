@@ -6,12 +6,24 @@ incluyendo formateo de texto, enlaces clicables y un sistema de volcado (Tee)
 para el registro de la sesión en disco.
 """
 
+# =============================================================================
+# LIBRERÍAS ESTÁNDAR
+# =============================================================================
 import os
 import sys
-import pandas as pd
-import numpy as np
 from typing import Optional
+
+# =============================================================================
+# LIBRERÍAS DE TERCEROS
+# =============================================================================
+import numpy as np
+import pandas as pd
+
+# =============================================================================
+# MÓDULOS LOCALES (snp_tag)
+# =============================================================================
 from snp_tag.utils.logger import logger
+
 
 def obtener_bit_string_estilizado(bits: np.ndarray) -> str:
     """Retorna una cadena de bits con los ceros en gris para mejorar la legibilidad."""
@@ -45,17 +57,24 @@ def imprimir_subseccion(titulo: str, icono: str = "🔹") -> None:
     """
     Imprime un encabezado de subsección descriptivo y en negrita.
     """
-    # Estandarización de iconos: eliminar VS16 existentes para evitar duplicados
+    # Estandarización de iconos: se elimina el Variation Selector-16 (VS16, \ufe0f)
+    # si ya estuviese presente en el icono de entrada. Esto evita que al añadirlo
+    # posteriormente de forma programática se duplique (ej. \ufe0f\ufe0f), lo cual
+    # puede romper el espaciado o causar problemas de renderizado en ciertas terminales.
     icono_base = icono.replace("\ufe0f", "")
     
     # Lista de emojis que requieren VS16 y espacio extra por renderizado terminal
     necesitan_vs16 = ["⚙", "⚖", "⏱", "⚠️", "↔"]
     if icono_base in necesitan_vs16:
         icono_final = icono_base + "\ufe0f"
-        # Tres espacios: uno suele ser 'absorbido' por el renderizado del glifo ancho
+        # Tres espacios: compensa los emojis que ocupan 2 celdas físicas (glifos de doble ancho,
+        # entendiendo por glifo la representación gráfica o dibujo del emoji en pantalla)
+        # pero donde la terminal desplaza el cursor solo 1 celda, solapando y ocultando el primer espacio.
         espaciado = "   "
     else:
+        # Si no requiere VS16, se emplea el icono base directamente (renderizado de 1 celda).
         icono_final = icono_base
+        # Se aplican 2 espacios de separación, pues al ser de ancho simple la terminal no solapa caracteres.
         espaciado = "  "
 
     # Imprimir con el espaciado calculado

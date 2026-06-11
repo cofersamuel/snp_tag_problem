@@ -8,30 +8,33 @@ Gestiona el parseo de argumentos.
 # =============================================================================
 # LIBRERÍAS ESTÁNDAR
 # =============================================================================
+import argparse  # Procesamiento y parseo de argumentos de línea de comandos.
 import os  # Gestión de rutas y verificación de existencia de directorios.
 import sys  # Acceso a parámetros y funciones del sistema (no utilizado actualmente).
-import argparse  # Procesamiento y parseo de argumentos de línea de comandos.
 
 # =============================================================================
 # MÓDULOS LOCALES (snp_tag)
 # =============================================================================
 # Importación desde config.py de:
 # - la lista de modos de ejecución disponibles (perfiles predefinidos de coste/búsqueda):
-#       - fast: ejecución ultrarrápida de depuración (pob=10, gen=2, runs=2)
-#       - medium: ejecución intermedia por defecto (pob=84, gen=50, runs=2)
+#       - fast: ejecución ultrarrápida de depuración (pob=10, gen=2, runs=3)
+#       - medium: ejecución intermedia por defecto (pob=84, gen=50, runs=3)
 #       - high: ejecución de coste y calidad altos (pob=120, gen=100, runs=3)
 #       - full: ejecución exhaustiva completa (pob=220, gen=500, runs=5)
-#       - full_20: ejecución exhaustiva con 20 ejecuciones independientes para validación robusta (pob=220, gen=500, runs=20)
-#       - full_30: ejecución exhaustiva con 30 ejecuciones independientes para validación robusta (pob=220, gen=500, runs=30)
+#       - full_21: ejecución exhaustiva con 21 ejecuciones independientes para validación robusta (pob=220, gen=500, runs=21)
+#       - full_31: ejecución exhaustiva con 31 ejecuciones independientes para validación robusta (pob=220, gen=500, runs=31)
 # - la lista de fuentes de datos permitidas:
 #       - hinds2005: bloque histórico real del estudio de Hinds et al. (2005)
 #       - synthetic: bloque sintético generado artificialmente con linkage disequilibrium configurable
-from snp_tag.config import MODOS_DISPONIBLES, FUENTES_DATOS_DISPONIBLES
-from snp_tag.utils.logger import logger  # Registro y salida de mensajes informativos y de error.
+from snp_tag.config import FUENTES_DATOS_DISPONIBLES, MODOS_DISPONIBLES
+# Orquestador del pipeline modular para ejecutar la búsqueda evolutiva completa o generar reportes exclusivos (modo report-only-csv).
+from snp_tag.orchestrator import (ejecutar_pipeline,
+                                  ejecutar_pipeline_report_only_csv)
+from snp_tag.utils.logger import \
+    logger  # Registro y salida de mensajes informativos y de error.
 # Generación de hipervínculos interactivos en la terminal.
 from snp_tag.utils.terminal import obtener_enlace_terminal
-# Orquestador del pipeline modular para ejecutar la búsqueda evolutiva completa o generar reportes exclusivos (modo report-only-csv).
-from snp_tag.orchestrator import ejecutar_pipeline, ejecutar_pipeline_report_only_csv
+
 
 def main():
     """
@@ -72,7 +75,7 @@ def main():
     
     try:  # Bloque try-except para capturar y controlar posibles excepciones ocurridas durante la ejecución del pipeline.
         if args.report_only_csv:  # Condición: si el usuario ha activado la bandera '--report-only-csv'.
-            ruta_base = ejecutar_pipeline_report_only_csv(args)  # Ejecuta el orquestador únicamente en modo "report-only-csv" y obtiene la ruta de resultados.
+            ruta_base = ejecutar_pipeline_report_only_csv(args) # TOREAD  # Ejecuta el orquestador únicamente en modo "report-only-csv" y obtiene la ruta de resultados.
         else:  # En caso contrario (ejecución normal del pipeline evolutivo).
             ruta_base = ejecutar_pipeline(args)  # Ejecuta la optimización completa y obtiene la ruta del directorio de salida.
         

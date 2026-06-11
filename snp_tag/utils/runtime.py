@@ -5,6 +5,9 @@ Centraliza heurísticas operativas de ejecución, como el cálculo adaptativo
 de workers en paralelo en función de CPU y memoria disponible.
 """
 
+# =============================================================================
+# LIBRERÍAS ESTÁNDAR
+# =============================================================================
 import os
 
 

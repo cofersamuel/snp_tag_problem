@@ -5,8 +5,12 @@ Define la clase TagSNPProblem compatible con PyMoo, implementando funciones
 de evaluación vectorizadas para optimizar el rendimiento computacional.
 """
 
+# =============================================================================
+# LIBRERÍAS DE TERCEROS
+# =============================================================================
 import numpy as np
 from pymoo.core.problem import Problem
+
 
 def transformar_objetivos_a_minimizacion(
     k: np.ndarray,

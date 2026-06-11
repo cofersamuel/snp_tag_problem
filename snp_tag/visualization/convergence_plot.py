@@ -5,12 +5,26 @@ Visualiza la evolución de las métricas de rendimiento a lo largo de las
 generaciones para cada configuración experimental.
 """
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-import os
-import pandas as pd
+# =============================================================================
+# LIBRERÍAS ESTÁNDAR
+# =============================================================================
 import math
-from typing import Optional, Dict, List, Tuple
+import os
+from typing import Dict, List, Optional, Tuple
+
+# =============================================================================
+# LIBRERÍAS DE TERCEROS
+# =============================================================================
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+
+# =============================================================================
+# MÓDULOS LOCALES (snp_tag)
+# =============================================================================
+from snp_tag.constants import METRICS_DISPLAY_NAMES, PREFERRED_ALGORITHMS_ORDER
+from snp_tag.utils.terminal import imprimir_grafico_guardado
+
 
 def graficar_evolucion_generacional(df_gen: pd.DataFrame, dir_salida: Optional[str] = None, 
                                    etiqueta_modo: Optional[str] = None, 
@@ -42,7 +56,6 @@ def graficar_evolucion_generacional(df_gen: pd.DataFrame, dir_salida: Optional[s
     List[Tuple[str, str]]
         Tuplas de la ruta generada y el título de la figura.
     """
-    from snp_tag.constants import METRICS_DISPLAY_NAMES
     metricas = list(METRICS_DISPLAY_NAMES.items())
 
     cols_base = {'algorithm', 'init', 'crossover', 'generation'}
@@ -80,7 +93,6 @@ def graficar_evolucion_generacional(df_gen: pd.DataFrame, dir_salida: Optional[s
 
     g_min, g_max = float(df_plot['generation'].min()), float(df_plot['generation'].max())
 
-    from snp_tag.constants import PREFERRED_ALGORITHMS_ORDER
     algoritmos_presentes = sorted(df_plot['algorithm'].dropna().unique().tolist())
     algoritmos_ordenados = [a for a in PREFERRED_ALGORITHMS_ORDER if a in algoritmos_presentes]
     algoritmos_ordenados.extend([a for a in algoritmos_presentes if a not in algoritmos_ordenados])
@@ -158,7 +170,6 @@ def graficar_evolucion_generacional(df_gen: pd.DataFrame, dir_salida: Optional[s
             fig.savefig(ruta, dpi=dpi, bbox_inches='tight')
             artefactos.append((ruta, f"Convergencia por métrica - {algoritmo}"))
             if emitir_log:
-                from snp_tag.utils.terminal import imprimir_grafico_guardado
                 imprimir_grafico_guardado(ruta, f"Convergencia por métrica - {algoritmo}")
         plt.close(fig)
 

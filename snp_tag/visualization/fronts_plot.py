@@ -5,18 +5,29 @@ Proporciona herramientas para la representación gráfica de las soluciones
 en el espacio de objetivos, incluyendo frentes de Pareto 2D y coordenadas paralelas.
 """
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-import numpy as np
+# =============================================================================
+# LIBRERÍAS ESTÁNDAR
+# =============================================================================
 import os
-import pandas as pd
-from typing import Optional, Dict, List, Tuple
-from pandas.plotting import parallel_coordinates
-from matplotlib.lines import Line2D
-import statsmodels.api as sm
 import warnings
+from typing import Dict, List, Optional, Tuple
 
+# =============================================================================
+# LIBRERÍAS DE TERCEROS
+# =============================================================================
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import statsmodels.api as sm
+from matplotlib.lines import Line2D
+from pandas.plotting import parallel_coordinates
+
+# =============================================================================
+# MÓDULOS LOCALES (snp_tag)
+# =============================================================================
 from snp_tag.engine.metrics_logic import decodificar_objetivos_reales
+from snp_tag.utils.terminal import imprimir_grafico_guardado
 
 
 def _normalizar_columnas_frentes(df_base: pd.DataFrame) -> pd.DataFrame:
@@ -226,7 +237,6 @@ def graficar_frentes_pareto(df_datos: pd.DataFrame, nombre_algoritmo: str,
             fig.savefig(ruta, dpi=dpi, bbox_inches='tight')
             artefactos.append((ruta, f"Frente Pareto {nombre_algoritmo} ({i_val})"))
             if emitir_log:
-                from snp_tag.utils.terminal import imprimir_grafico_guardado
                 imprimir_grafico_guardado(ruta, f"Frente Pareto {nombre_algoritmo} ({i_val})")
         plt.close(fig)
 
@@ -285,7 +295,6 @@ def graficar_correlacion_objetivos_pareto(df_total: pd.DataFrame, carpetas: Dict
     ruta = os.path.join(dir_otros, f'correlacion_objetivos_pareto_{etiqueta_modo}.png')
     plt.savefig(ruta, dpi=dpi, bbox_inches='tight')
     if emitir_log:
-        from snp_tag.utils.terminal import imprimir_grafico_guardado
         imprimir_grafico_guardado(ruta, "Correlación objetivos Pareto (Valores Reales)")
     plt.close()
     return [(ruta, "Correlación objetivos Pareto (Valores Reales)")]
@@ -403,7 +412,6 @@ def graficar_coordenadas_paralelas_pareto(df_total: pd.DataFrame, seed: int, car
             fig.savefig(ruta, dpi=dpi, bbox_inches='tight')
             artefactos.append((ruta, f"Coordenadas paralelas {algorithm_name} ({init_name})"))
             if emitir_log:
-                from snp_tag.utils.terminal import imprimir_grafico_guardado
                 imprimir_grafico_guardado(ruta, f"Coordenadas paralelas {algorithm_name} ({init_name})")
             
             plt.close(fig)
@@ -516,7 +524,6 @@ def graficar_frentes_pareto_agregados(df_datos: pd.DataFrame, titulo_gen: str,
         artefactos.append((ruta, f"Frente Agregado: {titulo_gen}"))
         
         if emitir_log:
-            from snp_tag.utils.terminal import imprimir_grafico_guardado
             imprimir_grafico_guardado(ruta, f"Frente Agregado: {titulo_gen}")
             
     plt.close(fig)

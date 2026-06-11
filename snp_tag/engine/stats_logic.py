@@ -4,11 +4,17 @@ Módulo del Motor Estadístico (stats.py)
 Realiza pruebas estadísticas no paramétricas sobre los resultados del experimento.
 """
 
+# =============================================================================
+# LIBRERÍAS DE TERCEROS
+# =============================================================================
 import numpy as np
 import pandas as pd
 import scipy.stats as ss
 
 try:
+    # =============================================================================
+# LIBRERÍAS DE TERCEROS
+# =============================================================================
     import scikit_posthocs as sp
 except ImportError:
     sp = None

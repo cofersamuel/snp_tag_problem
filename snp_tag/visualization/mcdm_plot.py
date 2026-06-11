@@ -15,16 +15,27 @@ Flujo:
     5. Genera visualizaciones (Scatter con destacados, Radar) y CSV.
 """
 
+# =============================================================================
+# LIBRERÍAS ESTÁNDAR
+# =============================================================================
+import os
+from typing import Dict, List, Optional, Tuple
+
+# =============================================================================
+# LIBRERÍAS DE TERCEROS
+# =============================================================================
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import os
-from typing import List, Tuple, Optional, Dict
 
-from snp_tag.engine.mcdm_logic import decodificar_y_filtrar, normalizar_minimizacion, evaluar_estrategias_mcdm
+# =============================================================================
+# MÓDULOS LOCALES (snp_tag)
+# =============================================================================
+from snp_tag.engine.mcdm_logic import (decodificar_y_filtrar,
+                                       evaluar_estrategias_mcdm,
+                                       normalizar_minimizacion)
 from snp_tag.utils.terminal import imprimir_grafico_guardado
-
 
 # ---------------------------------------------------------------------------
 # Constantes del módulo
@@ -358,9 +369,7 @@ def analizar_decision_mcdm(
     espacios = " " * 6
     filas_csv = []
 
-    # =======================================================================
     # 1. ANÁLISIS AGREGADO (GLOBAL)
-    # =======================================================================
     df_feas, F_real = decodificar_y_filtrar(df_fronts, modo_transformacion_objetivos)
 
     if len(F_real) < _MIN_SOLUCIONES:
@@ -484,9 +493,7 @@ def analizar_decision_mcdm(
         mejor_knee_idx = I_knee[F_norm[I_knee].mean(axis=1).argmin()]
         registrar_recomendacion([mejor_knee_idx], 'Mejor Knee Point')
 
-    # =======================================================================
     # 2. ANÁLISIS PER-CONFIGURACIÓN
-    # =======================================================================
     if 'algorithm' in df_fronts.columns and 'init' in df_fronts.columns:
         configs = sorted(df_fronts.groupby(['algorithm', 'init']).groups.keys())
 
@@ -547,9 +554,7 @@ def analizar_decision_mcdm(
                 mejor_knee_idx = I_cfg_knee[F_cfg_norm[I_cfg_knee].mean(axis=1).argmin()]
                 registrar_recomendacion([mejor_knee_idx], 'Mejor Knee Point', is_global=False)
 
-    # =======================================================================
     # 3. EXPORTACIÓN CSV
-    # =======================================================================
     if filas_csv:
         df_csv = pd.DataFrame(filas_csv).drop_duplicates()
         ruta_csv = os.path.join(dir_salida, f'mcdm_recomendaciones_{etiqueta_modo}.csv')

@@ -4,14 +4,23 @@ Módulo del Motor MCDM (mcdm.py)
 Procesa datos de frentes Pareto y ejecuta estrategias MCDM (Multi-Criteria Decision Making).
 """
 
-import numpy as np
-import pandas as pd
+# =============================================================================
+# LIBRERÍAS ESTÁNDAR
+# =============================================================================
 from typing import Tuple
 
+# =============================================================================
+# LIBRERÍAS DE TERCEROS
+# =============================================================================
+import numpy as np
+import pandas as pd
 from pymoo.decomposition.asf import ASF
-from pymoo.mcdm.pseudo_weights import PseudoWeights
 from pymoo.mcdm.high_tradeoff import HighTradeoffPoints
+from pymoo.mcdm.pseudo_weights import PseudoWeights
 
+# =============================================================================
+# MÓDULOS LOCALES (snp_tag)
+# =============================================================================
 from snp_tag.engine.metrics_logic import decodificar_objetivos_reales
 
 _HIGHER_IS_BETTER = {1, 2}  # Tolerancia, Hamming (índices de columna)

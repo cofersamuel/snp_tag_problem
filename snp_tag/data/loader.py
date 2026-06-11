@@ -6,16 +6,26 @@ la carga del bloque histórico de Hinds et al. (2005) o la generación estocást
 de bloques con estructura de desequilibrio de ligamiento (LD).
 """
 
+# =============================================================================
+# LIBRERÍAS ESTÁNDAR
+# =============================================================================
+import json
 import os
+from typing import Dict, List, Tuple
+
+# =============================================================================
+# LIBRERÍAS DE TERCEROS
+# =============================================================================
 import numpy as np
 import pandas as pd
-import json
-from typing import Tuple, List, Dict
-from snp_tag.utils.logger import logger
 
+# =============================================================================
+# MÓDULOS LOCALES (snp_tag)
+# =============================================================================
 from snp_tag.config import ConfiguracionExperimento
-from snp_tag.utils.terminal import imprimir_estado, imprimir_grafico_guardado
 from snp_tag.utils.filesystem import crear_arbol_directorios_dataset
+from snp_tag.utils.logger import logger
+from snp_tag.utils.terminal import imprimir_estado, imprimir_grafico_guardado
 
 
 def filtrar_snps_monomorficos(H: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:

@@ -5,34 +5,39 @@ Fabrica las instancias de los algoritmos evolutivos (NSGA-II, NSGA-III,
 SPEA2, MOEA/D) configuradas para el problema de Tag SNPs.
 """
 
-from pymoo.algorithms.moo.nsga2 import NSGA2
-from pymoo.algorithms.moo.nsga3 import NSGA3
-from pymoo.algorithms.moo.spea2 import SPEA2, SPEA2Survival
-from pymoo.algorithms.moo.moead import MOEAD
+# =============================================================================
+# LIBRERÍAS DE TERCEROS
+# =============================================================================
+import numpy as np
 from pymoo.algorithms.moo.age2 import AGEMOEA2
-from pymoo.algorithms.moo.sms import SMSEMOA
+from pymoo.algorithms.moo.moead import MOEAD
+from pymoo.algorithms.moo.nsga2 import NSGA2
+from pymoo.algorithms.moo.nsga3 import NSGA3, HyperplaneNormalization
 from pymoo.algorithms.moo.rvea import RVEA
-from pymoo.decomposition.tchebicheff import Tchebicheff
+from pymoo.algorithms.moo.sms import SMSEMOA
+from pymoo.algorithms.moo.spea2 import SPEA2, SPEA2Survival
+from pymoo.core.repair import Repair
 from pymoo.decomposition.pbi import PBI
+from pymoo.decomposition.tchebicheff import Tchebicheff
 from pymoo.decomposition.weighted_sum import WeightedSum
-from pymoo.algorithms.moo.nsga3 import HyperplaneNormalization
-from pymoo.operators.crossover.ux import UX
 from pymoo.operators.crossover.hux import HUX
-from pymoo.operators.crossover.pntx import SinglePointCrossover, TwoPointCrossover
+from pymoo.operators.crossover.pntx import (SinglePointCrossover,
+                                            TwoPointCrossover)
+from pymoo.operators.crossover.ux import UX
 from pymoo.operators.mutation.bitflip import BitflipMutation
 from pymoo.operators.sampling.rnd import BinaryRandomSampling
-from pymoo.core.repair import Repair
-from pymoo.util.ref_dirs import get_reference_directions
 from pymoo.util.dominator import Dominator
 from pymoo.util.misc import vectorized_cdist
+from pymoo.util.ref_dirs import get_reference_directions
 
-import numpy as np
-
-from snp_tag.core.sampling import (
-    MuestreoAleatorioDisperso, MuestreoGreedyMultiCobertura,
-    MuestreoGreedyTing, MuestreoGreedyHolistico
-)
+# =============================================================================
+# MÓDULOS LOCALES (snp_tag)
+# =============================================================================
 from snp_tag.config import ConfiguracionExperimento
+from snp_tag.core.sampling import (MuestreoAleatorioDisperso,
+                                   MuestreoGreedyHolistico,
+                                   MuestreoGreedyMultiCobertura,
+                                   MuestreoGreedyTing)
 
 
 class SPEA2SurvivalSeguro(SPEA2Survival):

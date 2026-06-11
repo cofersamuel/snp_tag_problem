@@ -5,12 +5,20 @@ Define las estructuras de datos y parámetros globales requeridos para la
 ejecución controlada de experimentos de búsqueda multiobjetivo de Tag SNPs.
 """
 
-from dataclasses import dataclass, field
-from typing import List, Dict, Optional, Any
-from pathlib import Path
-import re
+# =============================================================================
+# LIBRERÍAS ESTÁNDAR
+# =============================================================================
 import configparser
+import re
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
+# =============================================================================
+# MÓDULOS LOCALES (snp_tag)
+# =============================================================================
+from snp_tag.utils.logger import logger
+from snp_tag.utils.terminal import imprimir_encabezado
 
 RUTA_USER_CONFIG = Path(__file__).resolve().parent / "user_config.ini"
 
@@ -186,8 +194,8 @@ PARAMETROS_CONFIGURACION = {
         'medium': {'tam_pob': 84, 'n_gen': 50, 'descendencia': 84, 'n_runs': 3},
         'high': {'tam_pob': 120, 'n_gen': 100, 'descendencia': 120, 'n_runs': 3},
         'full': {'tam_pob': 220, 'n_gen': 500, 'descendencia': 220, 'n_runs': 5},
-        'full_20': {'tam_pob': 220, 'n_gen': 500, 'descendencia': 220, 'n_runs': 21},
-        'full_30': {'tam_pob': 220, 'n_gen': 500, 'descendencia': 220, 'n_runs': 31},
+        'full_21': {'tam_pob': 220, 'n_gen': 500, 'descendencia': 220, 'n_runs': 21},
+        'full_31': {'tam_pob': 220, 'n_gen': 500, 'descendencia': 220, 'n_runs': 31},
     },
 
     # Fuentes de datos permitidas al construir configuración.
@@ -520,8 +528,6 @@ def construir_configuracion(modo: str = 'medium', data_source: str = 'hinds2005'
 
 def informar_configuracion(cfg: ConfiguracionExperimento) -> None:
     """Muestra un resumen jerárquico y condicional de user_config.ini en la terminal."""
-    from snp_tag.utils.terminal import imprimir_encabezado
-    from snp_tag.utils.logger import logger
     imprimir_encabezado("CONFIGURACIÓN (user_config.ini)")
     
     # [General]

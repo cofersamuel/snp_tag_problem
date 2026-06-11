@@ -5,14 +5,30 @@ Genera comparaciones estadísticas globales, rankings y resúmenes de rendimient
 entre los diferentes algoritmos e inicializaciones.
 """
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-import numpy as np
+# =============================================================================
+# LIBRERÍAS ESTÁNDAR
+# =============================================================================
 import os
+from typing import Any, List, Optional, Tuple
+
+# =============================================================================
+# LIBRERÍAS DE TERCEROS
+# =============================================================================
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
-from typing import List, Tuple, Optional, Any
-from matplotlib.colors import ListedColormap, BoundaryNorm
-from snp_tag.utils.terminal import imprimir_grafico_guardado, imprimir_subseccion
+import seaborn as sns
+from matplotlib.colors import BoundaryNorm, ListedColormap
+
+# =============================================================================
+# MÓDULOS LOCALES (snp_tag)
+# =============================================================================
+from snp_tag.engine.stats_logic import (compute_friedman_nemenyi,
+                                        compute_kruskal_dunn,
+                                        prepare_rank_matrix)
+from snp_tag.utils.terminal import (imprimir_grafico_guardado,
+                                    imprimir_subseccion)
+
 
 def graficar_rendimiento_tiempo(df_runs: pd.DataFrame, dir_salida: str, etiqueta_modo: str, dpi: int = 300) -> None:
     """
@@ -349,7 +365,6 @@ def graficar_analisis_estadistico(df_runs: pd.DataFrame, dir_salida: str, etique
     
     n_configs = df_plot[col_group].nunique()
     
-    from snp_tag.engine.stats_logic import prepare_rank_matrix, compute_friedman_nemenyi
     rank_matrix, resumen = prepare_rank_matrix(df_plot, col_group)
     if rank_matrix is None: return None
     
@@ -440,7 +455,6 @@ def graficar_analisis_kruskal_dunn(df_runs: pd.DataFrame, dir_salida: str, metri
     
     n_configs = df_plot['config'].nunique()
     
-    from snp_tag.engine.stats_logic import compute_kruskal_dunn
     stat, p_val, p_dunn = compute_kruskal_dunn(df_plot, metrica_objetivo, 'config')
     
     sub_line = "─" * (len(metrica_objetivo) + 28)

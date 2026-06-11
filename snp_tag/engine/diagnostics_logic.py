@@ -6,14 +6,27 @@ Incluye rutinas para la detección de bloques genómicos y la caracterización
 de la variabilidad alélica.
 """
 
+# =============================================================================
+# LIBRERÍAS ESTÁNDAR
+# =============================================================================
+import os
+from typing import Dict, List, Optional, Tuple
+
+# =============================================================================
+# LIBRERÍAS DE TERCEROS
+# =============================================================================
+import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
-import matplotlib.pyplot as plt
-import os
-from typing import Tuple, List, Dict, Optional
 
+# =============================================================================
+# MÓDULOS LOCALES (snp_tag)
+# =============================================================================
 from snp_tag.config import ConfiguracionExperimento
-from snp_tag.utils.terminal import imprimir_subseccion, imprimir_estado, imprimir_metadato, obtener_bit_string_estilizado
+from snp_tag.utils.terminal import (imprimir_estado, imprimir_grafico_guardado,
+                                    imprimir_metadato, imprimir_subseccion,
+                                    obtener_bit_string_estilizado)
+
 
 def calcular_ld_completo(X: np.ndarray) -> Tuple[float, np.ndarray, np.ndarray]:
     """
@@ -98,9 +111,9 @@ def detectar_bloques_ld(H: np.ndarray, ventana_suavizado: int = 11,
         
     return [(cortes_validos[i], cortes_validos[i + 1]) for i in range(len(cortes_validos) - 1)]
 
-def analizar_similitud_genotipica(H: np.ndarray) -> Tuple[np.ndarray, float, float, List[Tuple[Tuple[int, int], int]], List[Tuple[Tuple[int, int], int]]]:
+def analizar_similitud_genotipica(H: np.ndarray) -> np.ndarray:
     """
-    Calcula distancias Hamming por pares e identifica extremos.
+    Calcula distancias Hamming por pares.
 
     Compara todos los pares posibles de haplotipos en la matriz para
     evaluar la diversidad poblacional.
@@ -112,12 +125,8 @@ def analizar_similitud_genotipica(H: np.ndarray) -> Tuple[np.ndarray, float, flo
 
     Retorna:
     --------
-    Tuple[np.ndarray, float, float, List, List]
+    np.ndarray
         - dvals: Vector de distancias Hamming para todos los pares.
-        - p33: Percentil 33 de las distancias.
-        - p66: Percentil 66 de las distancias.
-        - top_sim: Lista de los 3 pares más similares (menor distancia).
-        - top_dist: Lista de los 3 pares más disimilares (mayor distancia).
     """
     n = H.shape[0]
     dlist = []
@@ -126,14 +135,8 @@ def analizar_similitud_genotipica(H: np.ndarray) -> Tuple[np.ndarray, float, flo
             dlist.append(((a, b), int((H[a] != H[b]).sum())))
             
     dvals = np.array([v for (_, v) in dlist]) if dlist else np.array([0])
-    p33 = float(np.percentile(dvals, 33))
-    p66 = float(np.percentile(dvals, 66))
     
-    sorted_pairs = sorted(dlist, key=lambda x: x[1])
-    top_sim = sorted_pairs[:3]
-    top_dist = sorted_pairs[-3:][::-1]
-    
-    return dvals, p33, p66, top_sim, top_dist
+    return dvals
 
 def ejecutar_diagnostico_ld(H: np.ndarray, cfg: ConfiguracionExperimento, rutas_ld: Optional[Dict[str, str]] = None) -> Tuple[float, np.ndarray, np.ndarray, List[Tuple[int, int]]]:
     """
@@ -156,7 +159,6 @@ def ejecutar_diagnostico_ld(H: np.ndarray, cfg: ConfiguracionExperimento, rutas_
         - corr_full: Matriz completa de correlaciones.
         - segmentos: Lista de límites de bloques detectados.
     """
-    from snp_tag.utils.terminal import imprimir_grafico_guardado
     
     media_ld, corrs, corr_full = calcular_ld_completo(H)
     abs_corr = np.abs(corrs)

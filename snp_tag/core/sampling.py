@@ -5,10 +5,18 @@ Implementa diversas tácticas de inicialización de la población, incluyendo
 métodos aleatorios dispersos y construcciones heurísticas tipo Greedy.
 """
 
+# =============================================================================
+# LIBRERÍAS DE TERCEROS
+# =============================================================================
 import numpy as np
 from pymoo.core.sampling import Sampling
+
+# =============================================================================
+# MÓDULOS LOCALES (snp_tag)
+# =============================================================================
 from snp_tag.core.problem import calcular_distinguibilidad_snps
 from snp_tag.engine.diagnostics_logic import detectar_bloques_ld
+
 
 def _construir_tabla_cobertura(H, pair_idx):
     """
@@ -376,9 +384,7 @@ class MuestreoGreedyTing(Sampling):
 
         return X
 
-# ============================================================
 # Helpers para MuestreoGreedyHolistico
-# ============================================================
 
 def _ancla_max_hamming_medio(discrepancia, distinguibilidad, n_snps, n_pares, rng):
     """
