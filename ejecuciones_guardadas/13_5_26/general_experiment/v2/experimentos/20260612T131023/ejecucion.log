@@ -1,0 +1,737 @@
+[2026-06-12 13:10:23] [INFO] 
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                  DIAGNÓSTICO DE DATOS Y DESEQUILIBRIO (LD)                   ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+[2026-06-12 13:10:23] [INFO] 
+  📊  Metadatos y Dimensiones del Dataset
+[2026-06-12 13:10:23] [INFO]   ─────────────────────────────────────────
+[2026-06-12 13:10:23] [INFO]        ✅  Hinds 2005 cargado y filtrado: 48 patrones alelicos × 772 SNPs polimórficos (de 1032 originales)
+[2026-06-12 13:10:23] [INFO]       • N_SNPS=772 | N_PATRONES=48 | FICHERO=snp_tag/data/datasets/hinds2005_1032.txt
+[2026-06-12 13:10:23] [INFO] 
+  🧬  Visualización de la Estructura de Haplotipos
+[2026-06-12 13:10:23] [INFO]   ──────────────────────────────────────────────────
+[2026-06-12 13:10:23] [INFO]       • ⚠️  Gráficas de estructura de haplotipos omitidas (user_config.ini).
+[2026-06-12 13:10:23] [INFO] 
+  📈  Análisis de Variabilidad y Frecuencia Alélica
+[2026-06-12 13:10:23] [INFO]   ───────────────────────────────────────────────────
+[2026-06-12 13:10:23] [INFO]       • ⚠️  Gráficas de variabilidad omitidas (user_config.ini).
+[2026-06-12 13:10:23] [INFO] 
+  🔗  Caracterización Global de Correlación (LD)
+[2026-06-12 13:10:23] [INFO]   ────────────────────────────────────────────────
+[2026-06-12 13:10:23] [INFO] 
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                             MOTOR MULTIOBJETIVO                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+[2026-06-12 13:10:23] [INFO] 
+  📅  Planificación de Ejecución
+[2026-06-12 13:10:23] [INFO]   ────────────────────────────────
+[2026-06-12 13:10:23] [INFO]       • Referencias (Das and Dennis): 220 puntos | Particiones: 9
+[2026-06-12 13:10:23] [INFO] 
+  🧬  Fase Evolutiva
+[2026-06-12 13:10:23] [INFO]   ────────────────────
+[2026-06-12 13:10:23] [INFO]     • Iniciando 420 experimentos en modo paralelo seguro
+[2026-06-12 13:10:23] [INFO]       • Paralelizando con hasta 14 procesos en paralelo
+[2026-06-12 13:13:23] [INFO]       • [Progreso:   1/420] | [SPEA2-random_dense-HUX] ejecución 4/5 (179.4 s)
+[2026-06-12 13:14:10] [INFO]       • [Progreso:   2/420] | [SPEA2-random_dense-1P] ejecución 2/5 (226.5 s)
+[2026-06-12 13:14:14] [INFO]       • [Progreso:   3/420] | [SPEA2-random_dense-HUX] ejecución 5/5 (230.9 s)
+[2026-06-12 13:14:21] [INFO]       • [Progreso:   4/420] | [SPEA2-random_dense-UX] ejecución 1/5 (237.9 s)
+[2026-06-12 13:15:08] [INFO]       • [Progreso:   5/420] | [SPEA2-random_dense-HUX] ejecución 3/5 (284.8 s)
+[2026-06-12 13:15:13] [INFO]       • [Progreso:   6/420] | [SPEA2-random_dense-UX] ejecución 3/5 (289.8 s)
+[2026-06-12 13:15:17] [INFO]       • [Progreso:   7/420] | [SPEA2-random_dense-HUX] ejecución 1/5 (294.2 s)
+[2026-06-12 13:15:31] [INFO]       • [Progreso:   8/420] | [SPEA2-random_dense-1P] ejecución 4/5 (307.8 s)
+[2026-06-12 13:15:44] [INFO]       • [Progreso:   9/420] | [SPEA2-random_dense-UX] ejecución 2/5 (320.5 s)
+[2026-06-12 13:15:49] [INFO]       • [Progreso:  10/420] | [SPEA2-random_dense-HUX] ejecución 2/5 (325.3 s)
+[2026-06-12 13:15:50] [INFO]       • [Progreso:  11/420] | [SPEA2-random_dense-UX] ejecución 4/5 (327.3 s)
+[2026-06-12 13:15:57] [INFO]       • [Progreso:  12/420] | [SPEA2-random_dense-1P] ejecución 1/5 (333.5 s)
+[2026-06-12 13:16:09] [INFO]       • [Progreso:  13/420] | [SPEA2-random_dense-1P] ejecución 3/5 (346.0 s)
+[2026-06-12 13:16:12] [INFO]       • [Progreso:  14/420] | [SPEA2-random_dense-UX] ejecución 5/5 (349.3 s)
+[2026-06-12 13:17:16] [INFO]       • [Progreso:  15/420] | [SPEA2-random_dense-1P] ejecución 5/5 (233.3 s)
+[2026-06-12 13:18:07] [INFO]       • [Progreso:  16/420] | [SPEA2-greedy_ting-UX] ejecución 1/5 (169.5 s)
+[2026-06-12 13:18:19] [INFO]       • [Progreso:  17/420] | [SPEA2-random_dense-2P] ejecución 4/5 (190.9 s)
+[2026-06-12 13:18:29] [INFO]       • [Progreso:  18/420] | [SPEA2-random_dense-2P] ejecución 2/5 (255.1 s)
+[2026-06-12 13:19:35] [INFO]       • [Progreso:  19/420] | [SPEA2-random_dense-2P] ejecución 1/5 (325.3 s)
+[2026-06-12 13:19:59] [INFO]       • [Progreso:  20/420] | [SPEA2-random_dense-2P] ejecución 3/5 (338.2 s)
+[2026-06-12 13:20:08] [INFO]       • [Progreso:  21/420] | [SPEA2-greedy_ting-HUX] ejecución 2/5 (238.5 s)
+[2026-06-12 13:20:09] [INFO]       • [Progreso:  22/420] | [SPEA2-random_dense-2P] ejecución 5/5 (296.3 s)
+[2026-06-12 13:20:10] [INFO]       • [Progreso:  23/420] | [SPEA2-greedy_ting-HUX] ejecución 4/5 (173.9 s)
+[2026-06-12 13:21:07] [INFO]       • [Progreso:  24/420] | [SPEA2-greedy_ting-UX] ejecución 2/5 (336.0 s)
+[2026-06-12 13:21:14] [INFO]       • [Progreso:  25/420] | [SPEA2-greedy_ting-UX] ejecución 3/5 (330.5 s)
+[2026-06-12 13:21:22] [INFO]       • [Progreso:  26/420] | [SPEA2-greedy_ting-UX] ejecución 5/5 (330.9 s)
+[2026-06-12 13:21:24] [INFO]       • [Progreso:  27/420] | [SPEA2-greedy_ting-UX] ejecución 4/5 (335.5 s)
+[2026-06-12 13:21:53] [INFO]       • [Progreso:  28/420] | [SPEA2-greedy_ting-HUX] ejecución 5/5 (225.4 s)
+[2026-06-12 13:21:55] [INFO]       • [Progreso:  29/420] | [SPEA2-greedy_ting-HUX] ejecución 1/5 (358.2 s)
+[2026-06-12 13:22:09] [INFO]       • [Progreso:  30/420] | [SPEA2-greedy_ting-HUX] ejecución 3/5 (356.1 s)
+[2026-06-12 13:22:43] [INFO]       • [Progreso:  31/420] | [SPEA2-greedy_ting-1P] ejecución 2/5 (253.2 s)
+[2026-06-12 13:23:13] [INFO]       • [Progreso:  32/420] | [SPEA2-greedy_ting-1P] ejecución 5/5 (185.2 s)
+[2026-06-12 13:23:38] [INFO]       • [Progreso:  33/420] | [SPEA2-greedy_ting-2P] ejecución 2/5 (208.1 s)
+[2026-06-12 13:24:05] [INFO]       • [Progreso:  34/420] | [SPEA2-greedy_ting-1P] ejecución 1/5 (345.6 s)
+[2026-06-12 13:24:14] [INFO]       • [Progreso:  35/420] | [SPEA2-greedy_ting-1P] ejecución 4/5 (254.6 s)
+[2026-06-12 13:24:56] [INFO]       • [Progreso:  36/420] | [SPEA2-greedy_ting-1P] ejecución 3/5 (320.6 s)
+[2026-06-12 13:25:16] [INFO]       • [Progreso:  37/420] | [SPEA2-greedy_ting-2P] ejecución 1/5 (306.0 s)
+[2026-06-12 13:26:01] [INFO]       • [Progreso:  38/420] | [SPEA2-greedy_multi-UX] ejecución 2/5 (248.3 s)
+[2026-06-12 13:26:06] [INFO]       • [Progreso:  39/420] | [SPEA2-greedy_ting-2P] ejecución 3/5 (298.3 s)
+[2026-06-12 13:26:13] [INFO]       • [Progreso:  40/420] | [SPEA2-greedy_multi-UX] ejecución 4/5 (244.3 s)
+[2026-06-12 13:26:41] [INFO]       • [Progreso:  41/420] | [SPEA2-greedy_multi-UX] ejecución 1/5 (316.9 s)
+[2026-06-12 13:26:43] [INFO]       • [Progreso:  42/420] | [SPEA2-greedy_ting-2P] ejecución 4/5 (328.6 s)
+[2026-06-12 13:26:47] [INFO]       • [Progreso:  43/420] | [SPEA2-greedy_ting-2P] ejecución 5/5 (325.3 s)
+[2026-06-12 13:27:04] [INFO]       • [Progreso:  44/420] | [SPEA2-greedy_multi-UX] ejecución 5/5 (261.2 s)
+[2026-06-12 13:27:30] [INFO]       • [Progreso:  45/420] | [SPEA2-greedy_multi-UX] ejecución 3/5 (335.2 s)
+[2026-06-12 13:27:48] [INFO]       • [Progreso:  46/420] | [SPEA2-greedy_multi-HUX] ejecución 2/5 (249.9 s)
+[2026-06-12 13:27:52] [INFO]       • [Progreso:  47/420] | [SPEA2-greedy_multi-HUX] ejecución 1/5 (278.4 s)
+[2026-06-12 13:28:41] [INFO]       • [Progreso:  48/420] | [SPEA2-greedy_multi-HUX] ejecución 4/5 (266.2 s)
+[2026-06-12 13:28:53] [INFO]       • [Progreso:  49/420] | [SPEA2-greedy_multi-HUX] ejecución 5/5 (237.3 s)
+[2026-06-12 13:29:15] [INFO]       • [Progreso:  50/420] | [SPEA2-greedy_multi-HUX] ejecución 3/5 (310.4 s)
+[2026-06-12 13:29:16] [INFO]       • [Progreso:  51/420] | [SPEA2-greedy_multi-1P] ejecución 1/5 (240.2 s)
+[2026-06-12 13:30:12] [INFO]       • [Progreso:  52/420] | [SPEA2-greedy_multi-1P] ejecución 2/5 (250.7 s)
+[2026-06-12 13:30:15] [INFO]       • [Progreso:  53/420] | [SPEA2-greedy_multi-1P] ejecución 3/5 (248.8 s)
+[2026-06-12 13:30:24] [INFO]       • [Progreso:  54/420] | [SPEA2-greedy_multi-2P] ejecución 1/5 (220.9 s)
+[2026-06-12 13:30:56] [INFO]       • [Progreso:  55/420] | [NSGA2-random_dense-UX] ejecución 1/5 (184.6 s)
+[2026-06-12 13:31:50] [INFO]       • [Progreso:  56/420] | [SPEA2-greedy_multi-1P] ejecución 5/5 (308.3 s)
+[2026-06-12 13:31:55] [INFO]       • [Progreso:  57/420] | [SPEA2-greedy_multi-1P] ejecución 4/5 (341.7 s)
+[2026-06-12 13:32:05] [INFO]       • [Progreso:  58/420] | [SPEA2-greedy_multi-2P] ejecución 3/5 (300.9 s)
+[2026-06-12 13:32:10] [INFO]       • [Progreso:  59/420] | [SPEA2-greedy_multi-2P] ejecución 2/5 (323.1 s)
+[2026-06-12 13:32:31] [INFO]       • [Progreso:  60/420] | [NSGA2-random_dense-UX] ejecución 2/5 (229.8 s)
+[2026-06-12 13:32:34] [INFO]       • [Progreso:  61/420] | [NSGA2-random_dense-HUX] ejecución 2/5 (139.5 s)
+[2026-06-12 13:32:41] [INFO]       • [Progreso:  62/420] | [SPEA2-greedy_multi-2P] ejecución 4/5 (310.3 s)
+[2026-06-12 13:32:44] [INFO]       • [Progreso:  63/420] | [NSGA2-random_dense-UX] ejecución 3/5 (230.7 s)
+[2026-06-12 13:32:50] [INFO]       • [Progreso:  64/420] | [NSGA2-random_dense-UX] ejecución 5/5 (213.9 s)
+[2026-06-12 13:32:55] [INFO]       • [Progreso:  65/420] | [SPEA2-greedy_multi-2P] ejecución 5/5 (306.5 s)
+[2026-06-12 13:33:22] [INFO]       • [Progreso:  66/420] | [NSGA2-random_dense-UX] ejecución 4/5 (246.0 s)
+[2026-06-12 13:33:38] [INFO]       • [Progreso:  67/420] | [NSGA2-random_dense-HUX] ejecución 4/5 (161.6 s)
+[2026-06-12 13:33:56] [INFO]       • [Progreso:  68/420] | [NSGA2-random_dense-HUX] ejecución 3/5 (211.0 s)
+[2026-06-12 13:34:12] [INFO]       • [Progreso:  69/420] | [NSGA2-random_dense-HUX] ejecución 1/5 (239.4 s)
+[2026-06-12 13:35:33] [INFO]       • [Progreso:  70/420] | [NSGA2-random_dense-1P] ejecución 5/5 (178.6 s)
+[2026-06-12 13:35:35] [INFO]       • [Progreso:  71/420] | [NSGA2-random_dense-2P] ejecución 2/5 (170.4 s)
+[2026-06-12 13:35:44] [INFO]       • [Progreso:  72/420] | [NSGA2-random_dense-2P] ejecución 5/5 (142.4 s)
+[2026-06-12 13:36:05] [INFO]       • [Progreso:  73/420] | [NSGA2-random_dense-HUX] ejecución 5/5 (254.8 s)
+[2026-06-12 13:36:09] [INFO]       • [Progreso:  74/420] | [NSGA2-greedy_ting-UX] ejecución 1/5 (151.0 s)
+[2026-06-12 13:36:12] [INFO]       • [Progreso:  75/420] | [NSGA2-random_dense-1P] ejecución 3/5 (241.7 s)
+[2026-06-12 13:36:15] [INFO]       • [Progreso:  76/420] | [NSGA2-random_dense-1P] ejecución 1/5 (259.5 s)
+[2026-06-12 13:36:18] [INFO]       • [Progreso:  77/420] | [NSGA2-random_dense-2P] ejecución 1/5 (217.2 s)
+[2026-06-12 13:36:21] [INFO]       • [Progreso:  78/420] | [NSGA2-random_dense-2P] ejecución 3/5 (211.0 s)
+[2026-06-12 13:36:24] [INFO]       • [Progreso:  79/420] | [NSGA2-random_dense-1P] ejecución 2/5 (258.2 s)
+[2026-06-12 13:36:31] [INFO]       • [Progreso:  80/420] | [NSGA2-random_dense-1P] ejecución 4/5 (240.2 s)
+[2026-06-12 13:36:53] [INFO]       • [Progreso:  81/420] | [NSGA2-random_dense-2P] ejecución 4/5 (237.8 s)
+[2026-06-12 13:37:54] [INFO]       • [Progreso:  82/420] | [NSGA2-greedy_ting-UX] ejecución 2/5 (238.4 s)
+[2026-06-12 13:37:58] [INFO]       • [Progreso:  83/420] | [NSGA2-greedy_ting-HUX] ejecución 1/5 (133.3 s)
+[2026-06-12 13:38:07] [INFO]       • [Progreso:  84/420] | [NSGA2-greedy_ting-UX] ejecución 3/5 (235.5 s)
+[2026-06-12 13:39:10] [INFO]       • [Progreso:  85/420] | [NSGA2-greedy_ting-HUX] ejecución 3/5 (180.1 s)
+[2026-06-12 13:39:15] [INFO]       • [Progreso:  86/420] | [NSGA2-greedy_ting-UX] ejecución 5/5 (219.5 s)
+[2026-06-12 13:39:19] [INFO]       • [Progreso:  87/420] | [NSGA2-greedy_ting-1P] ejecución 2/5 (177.5 s)
+[2026-06-12 13:39:25] [INFO]       • [Progreso:  88/420] | [NSGA2-greedy_ting-UX] ejecución 4/5 (232.0 s)
+[2026-06-12 13:39:39] [INFO]       • [Progreso:  89/420] | [NSGA2-greedy_ting-1P] ejecución 5/5 (166.0 s)
+[2026-06-12 13:40:09] [INFO]       • [Progreso:  90/420] | [NSGA2-greedy_ting-HUX] ejecución 4/5 (236.3 s)
+[2026-06-12 13:40:19] [INFO]       • [Progreso:  91/420] | [NSGA2-greedy_ting-1P] ejecución 3/5 (235.4 s)
+[2026-06-12 13:40:21] [INFO]       • [Progreso:  92/420] | [NSGA2-greedy_ting-HUX] ejecución 2/5 (255.5 s)
+[2026-06-12 13:40:23] [INFO]       • [Progreso:  93/420] | [NSGA2-greedy_ting-2P] ejecución 3/5 (135.5 s)
+[2026-06-12 13:40:32] [INFO]       • [Progreso:  94/420] | [NSGA2-greedy_ting-HUX] ejecución 5/5 (256.4 s)
+[2026-06-12 13:40:34] [INFO]       • [Progreso:  95/420] | [NSGA2-greedy_ting-1P] ejecución 4/5 (242.9 s)
+[2026-06-12 13:40:39] [INFO]       • [Progreso:  96/420] | [NSGA2-greedy_ting-1P] ejecución 1/5 (260.1 s)
+[2026-06-12 13:41:58] [INFO]       • [Progreso:  97/420] | [NSGA2-greedy_ting-2P] ejecución 1/5 (244.1 s)
+[2026-06-12 13:41:59] [INFO]       • [Progreso:  98/420] | [NSGA2-greedy_multi-UX] ejecución 3/5 (139.6 s)
+[2026-06-12 13:42:10] [INFO]       • [Progreso:  99/420] | [NSGA2-greedy_ting-2P] ejecución 2/5 (252.3 s)
+[2026-06-12 13:43:01] [INFO]       • [Progreso: 100/420] | [NSGA2-greedy_multi-HUX] ejecución 3/5 (149.0 s)
+[2026-06-12 13:43:03] [INFO]       • [Progreso: 101/420] | [NSGA2-greedy_multi-UX] ejecución 1/5 (224.0 s)
+[2026-06-12 13:43:15] [INFO]       • [Progreso: 102/420] | [NSGA2-greedy_ting-2P] ejecución 4/5 (244.7 s)
+[2026-06-12 13:43:15] [INFO]       • [Progreso: 103/420] | [NSGA2-greedy_multi-HUX] ejecución 2/5 (172.2 s)
+[2026-06-12 13:43:18] [INFO]       • [Progreso: 104/420] | [NSGA2-greedy_multi-UX] ejecución 2/5 (232.2 s)
+[2026-06-12 13:43:28] [INFO]       • [Progreso: 105/420] | [NSGA2-greedy_ting-2P] ejecución 5/5 (253.5 s)
+[2026-06-12 13:44:18] [INFO]       • [Progreso: 106/420] | [NSGA2-greedy_multi-UX] ejecución 4/5 (248.7 s)
+[2026-06-12 13:44:19] [INFO]       • [Progreso: 107/420] | [NSGA2-greedy_multi-UX] ejecución 5/5 (239.3 s)
+[2026-06-12 13:44:37] [INFO]       • [Progreso: 108/420] | [NSGA2-greedy_multi-1P] ejecución 1/5 (158.9 s)
+[2026-06-12 13:44:41] [INFO]       • [Progreso: 109/420] | [NSGA2-greedy_multi-HUX] ejecución 5/5 (242.1 s)
+[2026-06-12 13:44:41] [INFO]       • [Progreso: 110/420] | [NSGA2-greedy_multi-HUX] ejecución 4/5 (247.0 s)
+[2026-06-12 13:44:46] [INFO]       • [Progreso: 111/420] | [NSGA2-greedy_multi-HUX] ejecución 1/5 (265.6 s)
+[2026-06-12 13:45:03] [INFO]       • [Progreso: 112/420] | [NSGA2-greedy_multi-1P] ejecución 2/5 (184.0 s)
+[2026-06-12 13:45:33] [INFO]       • [Progreso: 113/420] | [NSGA2-greedy_multi-2P] ejecución 2/5 (138.4 s)
+[2026-06-12 13:46:48] [INFO]       • [Progreso: 114/420] | [NSGA2-greedy_multi-1P] ejecución 3/5 (277.7 s)
+[2026-06-12 13:46:51] [INFO]       • [Progreso: 115/420] | [NSGA3-random_dense-UX] ejecución 2/5 (134.0 s)
+[2026-06-12 13:47:25] [INFO]       • [Progreso: 116/420] | [NSGA2-greedy_multi-2P] ejecución 3/5 (246.7 s)
+[2026-06-12 13:47:30] [INFO]       • [Progreso: 117/420] | [NSGA2-greedy_multi-2P] ejecución 1/5 (255.6 s)
+[2026-06-12 13:47:32] [INFO]       • [Progreso: 118/420] | [NSGA2-greedy_multi-1P] ejecución 4/5 (271.2 s)
+[2026-06-12 13:47:36] [INFO]       • [Progreso: 119/420] | [NSGA2-greedy_multi-2P] ejecución 4/5 (247.7 s)
+[2026-06-12 13:47:40] [INFO]       • [Progreso: 120/420] | [NSGA2-greedy_multi-1P] ejecución 5/5 (276.9 s)
+[2026-06-12 13:47:53] [INFO]       • [Progreso: 121/420] | [NSGA3-random_dense-HUX] ejecución 2/5 (139.9 s)
+[2026-06-12 13:47:54] [INFO]       • [Progreso: 122/420] | [NSGA3-random_dense-UX] ejecución 1/5 (215.7 s)
+[2026-06-12 13:48:31] [INFO]       • [Progreso: 123/420] | [NSGA2-greedy_multi-2P] ejecución 5/5 (253.0 s)
+[2026-06-12 13:48:31] [INFO]       • [Progreso: 124/420] | [NSGA3-random_dense-UX] ejecución 3/5 (230.1 s)
+[2026-06-12 13:48:35] [INFO]       • [Progreso: 125/420] | [NSGA3-random_dense-HUX] ejecución 1/5 (212.5 s)
+[2026-06-12 13:48:44] [INFO]       • [Progreso: 126/420] | [NSGA3-random_dense-UX] ejecución 4/5 (242.3 s)
+[2026-06-12 13:49:06] [INFO]       • [Progreso: 127/420] | [NSGA3-random_dense-UX] ejecución 5/5 (259.7 s)
+[2026-06-12 13:49:43] [INFO]       • [Progreso: 128/420] | [NSGA3-random_dense-HUX] ejecución 3/5 (174.8 s)
+[2026-06-12 13:50:01] [INFO]       • [Progreso: 129/420] | [NSGA3-random_dense-1P] ejecución 5/5 (127.6 s)
+[2026-06-12 13:50:19] [INFO]       • [Progreso: 130/420] | [NSGA3-random_dense-HUX] ejecución 4/5 (207.7 s)
+[2026-06-12 13:51:00] [INFO]       • [Progreso: 131/420] | [NSGA3-random_dense-2P] ejecución 1/5 (185.2 s)
+[2026-06-12 13:51:19] [INFO]       • [Progreso: 132/420] | [NSGA3-random_dense-HUX] ejecución 5/5 (234.6 s)
+[2026-06-12 13:51:35] [INFO]       • [Progreso: 133/420] | [NSGA3-random_dense-1P] ejecución 1/5 (244.7 s)
+[2026-06-12 13:51:42] [INFO]       • [Progreso: 134/420] | [NSGA3-random_dense-1P] ejecución 3/5 (245.7 s)
+[2026-06-12 13:51:55] [INFO]       • [Progreso: 135/420] | [NSGA3-random_dense-1P] ejecución 2/5 (262.7 s)
+[2026-06-12 13:52:03] [INFO]       • [Progreso: 136/420] | [NSGA3-random_dense-1P] ejecución 4/5 (262.1 s)
+[2026-06-12 13:52:13] [INFO]       • [Progreso: 137/420] | [NSGA3-greedy_ting-UX] ejecución 3/5 (131.9 s)
+[2026-06-12 13:52:26] [INFO]       • [Progreso: 138/420] | [NSGA3-random_dense-2P] ejecución 4/5 (230.2 s)
+[2026-06-12 13:52:26] [INFO]       • [Progreso: 139/420] | [NSGA3-random_dense-2P] ejecución 3/5 (234.7 s)
+[2026-06-12 13:52:27] [INFO]       • [Progreso: 140/420] | [NSGA3-random_dense-2P] ejecución 2/5 (236.2 s)
+[2026-06-12 13:52:47] [INFO]       • [Progreso: 141/420] | [NSGA3-random_dense-2P] ejecución 5/5 (243.6 s)
+[2026-06-12 13:52:57] [INFO]       • [Progreso: 142/420] | [NSGA3-greedy_ting-UX] ejecución 4/5 (157.3 s)
+[2026-06-12 13:53:00] [INFO]       • [Progreso: 143/420] | [NSGA3-greedy_ting-UX] ejecución 2/5 (197.8 s)
+[2026-06-12 13:53:25] [INFO]       • [Progreso: 144/420] | [NSGA3-greedy_ting-UX] ejecución 1/5 (259.1 s)
+[2026-06-12 13:54:47] [INFO]       • [Progreso: 145/420] | [NSGA3-greedy_ting-UX] ejecución 5/5 (227.3 s)
+[2026-06-12 13:54:52] [INFO]       • [Progreso: 146/420] | [NSGA3-greedy_ting-1P] ejecución 2/5 (146.6 s)
+[2026-06-12 13:55:04] [INFO]       • [Progreso: 147/420] | [NSGA3-greedy_ting-2P] ejecución 1/5 (127.4 s)
+[2026-06-12 13:55:14] [INFO]       • [Progreso: 148/420] | [NSGA3-greedy_ting-1P] ejecución 1/5 (180.7 s)
+[2026-06-12 13:55:16] [INFO]       • [Progreso: 149/420] | [NSGA3-greedy_ting-HUX] ejecución 1/5 (236.5 s)
+[2026-06-12 13:55:38] [INFO]       • [Progreso: 150/420] | [NSGA3-greedy_ting-HUX] ejecución 2/5 (242.7 s)
+[2026-06-12 13:55:44] [INFO]       • [Progreso: 151/420] | [NSGA3-greedy_ting-HUX] ejecución 3/5 (242.4 s)
+[2026-06-12 13:56:02] [INFO]       • [Progreso: 152/420] | [NSGA3-greedy_ting-1P] ejecución 3/5 (216.5 s)
+[2026-06-12 13:56:14] [INFO]       • [Progreso: 153/420] | [NSGA3-greedy_ting-HUX] ejecución 4/5 (259.0 s)
+[2026-06-12 13:56:22] [INFO]       • [Progreso: 154/420] | [NSGA3-greedy_ting-HUX] ejecución 5/5 (259.7 s)
+[2026-06-12 13:56:36] [INFO]       • [Progreso: 155/420] | [NSGA3-greedy_ting-1P] ejecución 4/5 (248.7 s)
+[2026-06-12 13:56:57] [INFO]       • [Progreso: 156/420] | [NSGA3-greedy_ting-1P] ejecución 5/5 (249.4 s)
+[2026-06-12 13:57:00] [INFO]       • [Progreso: 157/420] | [NSGA3-greedy_ting-2P] ejecución 2/5 (239.0 s)
+[2026-06-12 13:57:11] [INFO]       • [Progreso: 158/420] | [NSGA3-greedy_ting-2P] ejecución 5/5 (138.9 s)
+[2026-06-12 13:57:50] [INFO]       • [Progreso: 159/420] | [NSGA3-greedy_ting-2P] ejecución 3/5 (265.0 s)
+[2026-06-12 13:58:14] [INFO]       • [Progreso: 160/420] | [NSGA3-greedy_multi-HUX] ejecución 1/5 (131.5 s)
+[2026-06-12 13:58:38] [INFO]       • [Progreso: 161/420] | [NSGA3-greedy_ting-2P] ejecución 4/5 (230.9 s)
+[2026-06-12 13:58:50] [INFO]       • [Progreso: 162/420] | [NSGA3-greedy_multi-UX] ejecución 1/5 (225.6 s)
+[2026-06-12 13:59:19] [INFO]       • [Progreso: 163/420] | [NSGA3-greedy_multi-UX] ejecución 2/5 (244.8 s)
+[2026-06-12 13:59:19] [INFO]       • [Progreso: 164/420] | [NSGA3-greedy_multi-UX] ejecución 3/5 (242.7 s)
+[2026-06-12 13:59:25] [INFO]       • [Progreso: 165/420] | [NSGA3-greedy_multi-1P] ejecución 2/5 (134.0 s)
+[2026-06-12 13:59:48] [INFO]       • [Progreso: 166/420] | [NSGA3-greedy_multi-UX] ejecución 4/5 (250.0 s)
+[2026-06-12 13:59:54] [INFO]       • [Progreso: 167/420] | [NSGA3-greedy_multi-UX] ejecución 5/5 (249.4 s)
+[2026-06-12 14:00:41] [INFO]       • [Progreso: 168/420] | [NSGA3-greedy_multi-HUX] ejecución 2/5 (266.9 s)
+[2026-06-12 14:00:45] [INFO]       • [Progreso: 169/420] | [NSGA3-greedy_multi-HUX] ejecución 4/5 (249.1 s)
+[2026-06-12 14:00:49] [INFO]       • [Progreso: 170/420] | [NSGA3-greedy_multi-HUX] ejecución 3/5 (266.9 s)
+[2026-06-12 14:01:00] [INFO]       • [Progreso: 171/420] | [NSGA3-greedy_multi-1P] ejecución 3/5 (189.9 s)
+[2026-06-12 14:01:08] [INFO]       • [Progreso: 172/420] | [NSGA3-greedy_multi-HUX] ejecución 5/5 (251.0 s)
+[2026-06-12 14:01:14] [INFO]       • [Progreso: 173/420] | [NSGA3-greedy_multi-1P] ejecución 4/5 (179.7 s)
+[2026-06-12 14:01:16] [INFO]       • [Progreso: 174/420] | [NSGA3-greedy_multi-1P] ejecución 1/5 (256.0 s)
+[2026-06-12 14:01:46] [INFO]       • [Progreso: 175/420] | [NSGA3-greedy_multi-1P] ejecución 5/5 (187.8 s)
+[2026-06-12 14:02:11] [INFO]       • [Progreso: 176/420] | [NSGA3-greedy_multi-2P] ejecución 1/5 (201.2 s)
+[2026-06-12 14:03:27] [INFO]       • [Progreso: 177/420] | [NSGA3-greedy_multi-2P] ejecución 4/5 (242.1 s)
+[2026-06-12 14:03:32] [INFO]       • [Progreso: 178/420] | [NSGA3-greedy_multi-2P] ejecución 3/5 (253.4 s)
+[2026-06-12 14:03:35] [INFO]       • [Progreso: 179/420] | [NSGA3-greedy_multi-2P] ejecución 5/5 (227.2 s)
+[2026-06-12 14:03:41] [INFO]       • [Progreso: 180/420] | [NSGA3-greedy_multi-2P] ejecución 2/5 (262.7 s)
+[2026-06-12 14:10:11] [INFO]       • [Progreso: 181/420] | [MOEAD_TCHE-random_dense-UX] ejecución 5/5 (550.2 s)
+[2026-06-12 14:10:46] [INFO]       • [Progreso: 182/420] | [MOEAD_TCHE-random_dense-HUX] ejecución 2/5 (571.9 s)
+[2026-06-12 14:10:51] [INFO]       • [Progreso: 183/420] | [MOEAD_TCHE-random_dense-HUX] ejecución 1/5 (583.3 s)
+[2026-06-12 14:10:59] [INFO]       • [Progreso: 184/420] | [MOEAD_TCHE-random_dense-UX] ejecución 1/5 (665.1 s)
+[2026-06-12 14:11:32] [INFO]       • [Progreso: 185/420] | [MOEAD_TCHE-random_dense-UX] ejecución 4/5 (642.9 s)
+[2026-06-12 14:12:02] [INFO]       • [Progreso: 186/420] | [MOEAD_TCHE-random_dense-UX] ejecución 2/5 (680.6 s)
+[2026-06-12 14:12:13] [INFO]       • [Progreso: 187/420] | [MOEAD_TCHE-random_dense-UX] ejecución 3/5 (687.9 s)
+[2026-06-12 14:12:26] [INFO]       • [Progreso: 188/420] | [MOEAD_TCHE-random_dense-HUX] ejecución 4/5 (639.9 s)
+[2026-06-12 14:12:49] [INFO]       • [Progreso: 189/420] | [MOEAD_TCHE-random_dense-HUX] ejecución 3/5 (693.0 s)
+[2026-06-12 14:13:28] [INFO]       • [Progreso: 190/420] | [MOEAD_TCHE-random_dense-HUX] ejecución 5/5 (677.2 s)
+[2026-06-12 14:14:39] [INFO]       • [Progreso: 191/420] | [MOEAD_TCHE-random_dense-1P] ejecución 2/5 (666.3 s)
+[2026-06-12 14:15:05] [INFO]       • [Progreso: 192/420] | [MOEAD_TCHE-random_dense-1P] ejecución 3/5 (689.7 s)
+[2026-06-12 14:15:16] [INFO]       • [Progreso: 193/420] | [MOEAD_TCHE-random_dense-1P] ejecución 4/5 (694.3 s)
+[2026-06-12 14:15:49] [INFO]       • [Progreso: 194/420] | [MOEAD_TCHE-random_dense-1P] ejecución 1/5 (740.9 s)
+[2026-06-12 14:21:12] [INFO]       • [Progreso: 195/420] | [MOEAD_TCHE-random_dense-2P] ejecución 3/5 (612.7 s)
+[2026-06-12 14:21:19] [INFO]       • [Progreso: 196/420] | [MOEAD_TCHE-random_dense-2P] ejecución 1/5 (632.9 s)
+[2026-06-12 14:22:25] [INFO]       • [Progreso: 197/420] | [MOEAD_TCHE-greedy_ting-UX] ejecución 3/5 (576.2 s)
+[2026-06-12 14:22:36] [INFO]       • [Progreso: 198/420] | [MOEAD_TCHE-random_dense-1P] ejecución 5/5 (745.2 s)
+[2026-06-12 14:23:03] [INFO]       • [Progreso: 199/420] | [MOEAD_TCHE-greedy_ting-UX] ejecución 2/5 (637.0 s)
+[2026-06-12 14:23:05] [INFO]       • [Progreso: 200/420] | [MOEAD_TCHE-random_dense-2P] ejecución 2/5 (733.3 s)
+[2026-06-12 14:23:26] [INFO]       • [Progreso: 201/420] | [MOEAD_TCHE-random_dense-2P] ejecución 5/5 (683.9 s)
+[2026-06-12 14:24:04] [INFO]       • [Progreso: 202/420] | [MOEAD_TCHE-random_dense-2P] ejecución 4/5 (751.7 s)
+[2026-06-12 14:24:45] [INFO]       • [Progreso: 203/420] | [MOEAD_TCHE-greedy_ting-UX] ejecución 1/5 (751.7 s)
+[2026-06-12 14:25:07] [INFO]       • [Progreso: 204/420] | [MOEAD_TCHE-greedy_ting-UX] ejecución 4/5 (698.3 s)
+[2026-06-12 14:25:37] [INFO]       • [Progreso: 205/420] | [MOEAD_TCHE-greedy_ting-HUX] ejecución 2/5 (620.6 s)
+[2026-06-12 14:25:55] [INFO]       • [Progreso: 206/420] | [MOEAD_TCHE-greedy_ting-HUX] ejecución 1/5 (649.4 s)
+[2026-06-12 14:27:11] [INFO]       • [Progreso: 207/420] | [MOEAD_TCHE-greedy_ting-UX] ejecución 5/5 (752.5 s)
+[2026-06-12 14:28:21] [INFO]       • [Progreso: 208/420] | [MOEAD_TCHE-greedy_ting-HUX] ejecución 3/5 (752.4 s)
+[2026-06-12 14:32:04] [INFO]       • [Progreso: 209/420] | [MOEAD_TCHE-greedy_ting-1P] ejecución 2/5 (568.0 s)
+[2026-06-12 14:32:12] [INFO]       • [Progreso: 210/420] | [MOEAD_TCHE-greedy_ting-HUX] ejecución 5/5 (653.4 s)
+[2026-06-12 14:32:35] [INFO]       • [Progreso: 211/420] | [MOEAD_TCHE-greedy_ting-HUX] ejecución 4/5 (682.9 s)
+[2026-06-12 14:34:26] [INFO]       • [Progreso: 212/420] | [MOEAD_TCHE-greedy_ting-1P] ejecución 5/5 (659.8 s)
+[2026-06-12 14:34:35] [INFO]       • [Progreso: 213/420] | [MOEAD_TCHE-greedy_ting-1P] ejecución 3/5 (692.1 s)
+[2026-06-12 14:35:00] [INFO]       • [Progreso: 214/420] | [MOEAD_TCHE-greedy_ting-1P] ejecución 1/5 (754.9 s)
+[2026-06-12 14:35:18] [INFO]       • [Progreso: 215/420] | [MOEAD_TCHE-greedy_ting-2P] ejecución 5/5 (562.7 s)
+[2026-06-12 14:35:40] [INFO]       • [Progreso: 216/420] | [MOEAD_TCHE-greedy_ting-1P] ejecución 4/5 (755.4 s)
+[2026-06-12 14:36:10] [INFO]       • [Progreso: 217/420] | [MOEAD_TCHE-greedy_ting-2P] ejecución 3/5 (663.3 s)
+[2026-06-12 14:36:19] [INFO]       • [Progreso: 218/420] | [MOEAD_TCHE-greedy_ting-2P] ejecución 1/5 (734.3 s)
+[2026-06-12 14:37:22] [INFO]       • [Progreso: 219/420] | [MOEAD_TCHE-greedy_ting-2P] ejecución 2/5 (756.7 s)
+[2026-06-12 14:38:15] [INFO]       • [Progreso: 220/420] | [MOEAD_TCHE-greedy_ting-2P] ejecución 4/5 (758.2 s)
+[2026-06-12 14:39:20] [INFO]       • [Progreso: 221/420] | [MOEAD_TCHE-greedy_multi-UX] ejecución 2/5 (659.0 s)
+[2026-06-12 14:40:03] [INFO]       • [Progreso: 222/420] | [MOEAD_TCHE-greedy_multi-UX] ejecución 1/5 (771.1 s)
+[2026-06-12 14:43:50] [INFO]       • [Progreso: 223/420] | [MOEAD_TCHE-greedy_multi-UX] ejecución 5/5 (674.2 s)
+[2026-06-12 14:43:59] [INFO]       • [Progreso: 224/420] | [MOEAD_TCHE-greedy_multi-UX] ejecución 4/5 (706.7 s)
+[2026-06-12 14:44:37] [INFO]       • [Progreso: 225/420] | [MOEAD_TCHE-greedy_multi-UX] ejecución 3/5 (753.1 s)
+[2026-06-12 14:45:07] [INFO]       • [Progreso: 226/420] | [MOEAD_TCHE-greedy_multi-HUX] ejecución 1/5 (640.9 s)
+[2026-06-12 14:45:19] [INFO]       • [Progreso: 227/420] | [MOEAD_TCHE-greedy_multi-HUX] ejecución 3/5 (618.7 s)
+[2026-06-12 14:46:10] [INFO]       • [Progreso: 228/420] | [MOEAD_TCHE-greedy_multi-HUX] ejecución 4/5 (652.6 s)
+[2026-06-12 14:46:53] [INFO]       • [Progreso: 229/420] | [MOEAD_TCHE-greedy_multi-1P] ejecución 3/5 (570.5 s)
+[2026-06-12 14:47:07] [INFO]       • [Progreso: 230/420] | [MOEAD_TCHE-greedy_multi-1P] ejecución 2/5 (648.5 s)
+[2026-06-12 14:47:19] [INFO]       • [Progreso: 231/420] | [MOEAD_TCHE-greedy_multi-HUX] ejecución 2/5 (763.8 s)
+[2026-06-12 14:47:54] [INFO]       • [Progreso: 232/420] | [MOEAD_TCHE-greedy_multi-HUX] ejecución 5/5 (733.9 s)
+[2026-06-12 14:48:26] [INFO]       • [Progreso: 233/420] | [MOEAD_TCHE-greedy_multi-1P] ejecución 1/5 (735.9 s)
+[2026-06-12 14:48:56] [INFO]       • [Progreso: 234/420] | [MOEAD_TCHE-greedy_multi-1P] ejecución 5/5 (575.7 s)
+[2026-06-12 14:50:01] [INFO]       • [Progreso: 235/420] | [MOEAD_TCHE-greedy_multi-1P] ejecución 4/5 (706.3 s)
+[2026-06-12 14:50:40] [INFO]       • [Progreso: 236/420] | [MOEAD_TCHE-greedy_multi-2P] ejecución 1/5 (637.7 s)
+[2026-06-12 14:51:07] [INFO]       • [Progreso: 237/420] | [AGEMOEA2-random_dense-UX] ejecución 3/5 (254.4 s)
+[2026-06-12 14:51:40] [INFO]       • [Progreso: 238/420] | [MOEAD_TCHE-greedy_multi-2P] ejecución 4/5 (422.0 s)
+[2026-06-12 14:52:19] [INFO]       • [Progreso: 239/420] | [MOEAD_TCHE-greedy_multi-2P] ejecución 2/5 (509.5 s)
+[2026-06-12 14:52:25] [INFO]       • [Progreso: 240/420] | [AGEMOEA2-random_dense-UX] ejecución 2/5 (374.8 s)
+[2026-06-12 14:53:00] [INFO]       • [Progreso: 241/420] | [AGEMOEA2-random_dense-UX] ejecución 1/5 (461.1 s)
+[2026-06-12 14:53:35] [INFO]       • [Progreso: 242/420] | [MOEAD_TCHE-greedy_multi-2P] ejecución 3/5 (575.5 s)
+[2026-06-12 14:54:06] [INFO]       • [Progreso: 243/420] | [MOEAD_TCHE-greedy_multi-2P] ejecución 5/5 (539.0 s)
+[2026-06-12 14:54:39] [INFO]       • [Progreso: 244/420] | [AGEMOEA2-random_dense-UX] ejecución 5/5 (439.4 s)
+[2026-06-12 14:55:59] [INFO]       • [Progreso: 245/420] | [AGEMOEA2-random_dense-UX] ejecución 4/5 (531.4 s)
+[2026-06-12 14:56:32] [INFO]       • [Progreso: 246/420] | [AGEMOEA2-random_dense-1P] ejecución 1/5 (324.3 s)
+[2026-06-12 14:56:39] [INFO]       • [Progreso: 247/420] | [AGEMOEA2-random_dense-1P] ejecución 4/5 (253.4 s)
+[2026-06-12 14:56:52] [INFO]       • [Progreso: 248/420] | [AGEMOEA2-random_dense-HUX] ejecución 5/5 (371.2 s)
+[2026-06-12 14:56:54] [INFO]       • [Progreso: 249/420] | [AGEMOEA2-random_dense-HUX] ejecución 1/5 (539.3 s)
+[2026-06-12 14:57:14] [INFO]       • [Progreso: 250/420] | [AGEMOEA2-random_dense-HUX] ejecución 2/5 (527.2 s)
+[2026-06-12 14:57:14] [INFO]       • [Progreso: 251/420] | [AGEMOEA2-random_dense-2P] ejecución 1/5 (218.9 s)
+[2026-06-12 14:57:19] [INFO]       • [Progreso: 252/420] | [AGEMOEA2-random_dense-1P] ejecución 2/5 (339.2 s)
+[2026-06-12 14:57:34] [INFO]       • [Progreso: 253/420] | [AGEMOEA2-random_dense-HUX] ejecución 3/5 (517.4 s)
+[2026-06-12 14:57:52] [INFO]       • [Progreso: 254/420] | [AGEMOEA2-random_dense-1P] ejecución 3/5 (332.2 s)
+[2026-06-12 14:58:25] [INFO]       • [Progreso: 255/420] | [AGEMOEA2-random_dense-HUX] ejecución 4/5 (503.2 s)
+[2026-06-12 15:00:29] [INFO]       • [Progreso: 256/420] | [AGEMOEA2-random_dense-2P] ejecución 2/5 (382.5 s)
+[2026-06-12 15:00:48] [INFO]       • [Progreso: 257/420] | [AGEMOEA2-random_dense-1P] ejecución 5/5 (467.7 s)
+[2026-06-12 15:01:00] [INFO]       • [Progreso: 258/420] | [AGEMOEA2-greedy_ting-UX] ejecución 5/5 (226.1 s)
+[2026-06-12 15:01:02] [INFO]       • [Progreso: 259/420] | [AGEMOEA2-random_dense-2P] ejecución 3/5 (382.6 s)
+[2026-06-12 15:01:46] [INFO]       • [Progreso: 260/420] | [AGEMOEA2-greedy_ting-UX] ejecución 1/5 (307.5 s)
+[2026-06-12 15:01:50] [INFO]       • [Progreso: 261/420] | [AGEMOEA2-greedy_ting-HUX] ejecución 2/5 (255.8 s)
+[2026-06-12 15:02:20] [INFO]       • [Progreso: 262/420] | [AGEMOEA2-random_dense-2P] ejecución 5/5 (348.6 s)
+[2026-06-12 15:03:21] [INFO]       • [Progreso: 263/420] | [AGEMOEA2-greedy_ting-UX] ejecución 4/5 (367.0 s)
+[2026-06-12 15:03:49] [INFO]       • [Progreso: 264/420] | [AGEMOEA2-random_dense-2P] ejecución 4/5 (470.2 s)
+[2026-06-12 15:04:13] [INFO]       • [Progreso: 265/420] | [AGEMOEA2-greedy_ting-1P] ejecución 2/5 (192.6 s)
+[2026-06-12 15:04:25] [INFO]       • [Progreso: 266/420] | [AGEMOEA2-greedy_ting-UX] ejecución 2/5 (453.3 s)
+[2026-06-12 15:05:03] [INFO]       • [Progreso: 267/420] | [AGEMOEA2-greedy_ting-1P] ejecución 4/5 (196.3 s)
+[2026-06-12 15:05:19] [INFO]       • [Progreso: 268/420] | [AGEMOEA2-greedy_ting-UX] ejecución 3/5 (504.7 s)
+[2026-06-12 15:05:22] [INFO]       • [Progreso: 269/420] | [AGEMOEA2-greedy_ting-HUX] ejecución 1/5 (482.6 s)
+[2026-06-12 15:05:38] [INFO]       • [Progreso: 270/420] | [AGEMOEA2-greedy_ting-HUX] ejecución 3/5 (466.2 s)
+[2026-06-12 15:06:43] [INFO]       • [Progreso: 271/420] | [AGEMOEA2-greedy_ting-HUX] ejecución 5/5 (373.5 s)
+[2026-06-12 15:06:44] [INFO]       • [Progreso: 272/420] | [AGEMOEA2-greedy_ting-1P] ejecución 5/5 (294.3 s)
+[2026-06-12 15:06:54] [INFO]       • [Progreso: 273/420] | [AGEMOEA2-greedy_ting-HUX] ejecución 4/5 (509.1 s)
+[2026-06-12 15:08:00] [INFO]       • [Progreso: 274/420] | [AGEMOEA2-greedy_ting-2P] ejecución 1/5 (339.1 s)
+[2026-06-12 15:08:01] [INFO]       • [Progreso: 275/420] | [AGEMOEA2-greedy_multi-UX] ejecución 1/5 (177.7 s)
+[2026-06-12 15:08:11] [INFO]       • [Progreso: 276/420] | [AGEMOEA2-greedy_ting-1P] ejecución 1/5 (442.9 s)
+[2026-06-12 15:08:33] [INFO]       • [Progreso: 277/420] | [AGEMOEA2-greedy_ting-2P] ejecución 4/5 (260.0 s)
+[2026-06-12 15:08:48] [INFO]       • [Progreso: 278/420] | [AGEMOEA2-greedy_ting-1P] ejecución 3/5 (466.3 s)
+[2026-06-12 15:09:00] [INFO]       • [Progreso: 279/420] | [AGEMOEA2-greedy_ting-2P] ejecución 2/5 (339.1 s)
+[2026-06-12 15:10:09] [INFO]       • [Progreso: 280/420] | [AGEMOEA2-greedy_multi-UX] ejecución 4/5 (270.6 s)
+[2026-06-12 15:10:47] [INFO]       • [Progreso: 281/420] | [AGEMOEA2-greedy_multi-HUX] ejecución 1/5 (242.1 s)
+[2026-06-12 15:11:01] [INFO]       • [Progreso: 282/420] | [AGEMOEA2-greedy_multi-HUX] ejecución 4/5 (179.9 s)
+[2026-06-12 15:11:20] [INFO]       • [Progreso: 283/420] | [AGEMOEA2-greedy_ting-2P] ejecución 3/5 (450.7 s)
+[2026-06-12 15:11:44] [INFO]       • [Progreso: 284/420] | [AGEMOEA2-greedy_multi-UX] ejecución 3/5 (382.2 s)
+[2026-06-12 15:12:00] [INFO]       • [Progreso: 285/420] | [AGEMOEA2-greedy_ting-2P] ejecución 5/5 (454.1 s)
+[2026-06-12 15:12:01] [INFO]       • [Progreso: 286/420] | [AGEMOEA2-greedy_multi-1P] ejecución 1/5 (208.2 s)
+[2026-06-12 15:12:09] [INFO]       • [Progreso: 287/420] | [AGEMOEA2-greedy_multi-UX] ejecución 5/5 (326.0 s)
+[2026-06-12 15:12:22] [INFO]       • [Progreso: 288/420] | [AGEMOEA2-greedy_multi-UX] ejecución 2/5 (422.9 s)
+[2026-06-12 15:13:15] [INFO]       • [Progreso: 289/420] | [AGEMOEA2-greedy_multi-HUX] ejecución 3/5 (315.2 s)
+[2026-06-12 15:13:53] [INFO]       • [Progreso: 290/420] | [AGEMOEA2-greedy_multi-HUX] ejecución 2/5 (418.6 s)
+[2026-06-12 15:14:12] [INFO]       • [Progreso: 291/420] | [AGEMOEA2-greedy_multi-2P] ejecución 1/5 (191.3 s)
+[2026-06-12 15:14:28] [INFO]       • [Progreso: 292/420] | [AGEMOEA2-greedy_multi-1P] ejecución 4/5 (259.3 s)
+[2026-06-12 15:14:49] [INFO]       • [Progreso: 293/420] | [AGEMOEA2-greedy_multi-HUX] ejecución 5/5 (397.2 s)
+[2026-06-12 15:15:02] [INFO]       • [Progreso: 294/420] | [AGEMOEA2-greedy_multi-1P] ejecución 3/5 (361.8 s)
+[2026-06-12 15:16:13] [INFO]       • [Progreso: 295/420] | [AGEMOEA2-greedy_multi-1P] ejecución 2/5 (444.6 s)
+[2026-06-12 15:16:44] [INFO]       • [Progreso: 296/420] | [AGEMOEA2-greedy_multi-1P] ejecución 5/5 (356.9 s)
+[2026-06-12 15:17:19] [INFO]       • [Progreso: 297/420] | [AGEMOEA2-greedy_multi-2P] ejecución 5/5 (317.8 s)
+[2026-06-12 15:18:25] [INFO]       • [Progreso: 298/420] | [AGEMOEA2-greedy_multi-2P] ejecución 2/5 (424.3 s)
+[2026-06-12 15:18:59] [INFO]       • [Progreso: 299/420] | [AGEMOEA2-greedy_multi-2P] ejecución 4/5 (419.4 s)
+[2026-06-12 15:19:06] [INFO]       • [Progreso: 300/420] | [AGEMOEA2-greedy_multi-2P] ejecución 3/5 (442.1 s)
+[2026-06-12 15:25:29] [INFO]       • [Progreso: 301/420] | [SMSEMOA-random_dense-UX] ejecución 5/5 (677.0 s)
+[2026-06-12 15:25:41] [INFO]       • [Progreso: 302/420] | [SMSEMOA-random_dense-UX] ejecución 3/5 (745.5 s)
+[2026-06-12 15:26:16] [INFO]       • [Progreso: 303/420] | [SMSEMOA-random_dense-UX] ejecución 1/5 (846.7 s)
+[2026-06-12 15:26:19] [INFO]       • [Progreso: 304/420] | [SMSEMOA-random_dense-HUX] ejecución 3/5 (677.1 s)
+[2026-06-12 15:29:22] [INFO]       • [Progreso: 305/420] | [SMSEMOA-random_dense-UX] ejecución 2/5 (1019.7 s)
+[2026-06-12 15:29:32] [INFO]       • [Progreso: 306/420] | [SMSEMOA-random_dense-HUX] ejecución 1/5 (903.8 s)
+[2026-06-12 15:30:16] [INFO]       • [Progreso: 307/420] | [SMSEMOA-random_dense-HUX] ejecución 2/5 (927.2 s)
+[2026-06-12 15:31:28] [INFO]       • [Progreso: 308/420] | [SMSEMOA-random_dense-UX] ejecución 4/5 (1054.8 s)
+[2026-06-12 15:32:44] [INFO]       • [Progreso: 309/420] | [SMSEMOA-random_dense-HUX] ejecución 5/5 (959.6 s)
+[2026-06-12 15:32:59] [INFO]       • [Progreso: 310/420] | [SMSEMOA-random_dense-HUX] ejecución 4/5 (1005.9 s)
+[2026-06-12 15:41:36] [INFO]       • [Progreso: 311/420] | [SMSEMOA-greedy_ting-UX] ejecución 1/5 (679.9 s)
+[2026-06-12 15:45:36] [INFO]       • [Progreso: 312/420] | [SMSEMOA-random_dense-1P] ejecución 1/5 (1696.0 s)
+[2026-06-12 15:46:20] [INFO]       • [Progreso: 313/420] | [SMSEMOA-random_dense-1P] ejecución 2/5 (1675.0 s)
+[2026-06-12 15:46:29] [INFO]       • [Progreso: 314/420] | [SMSEMOA-random_dense-2P] ejecución 2/5 (1212.6 s)
+[2026-06-12 15:46:45] [INFO]       • [Progreso: 315/420] | [SMSEMOA-greedy_ting-UX] ejecución 4/5 (825.8 s)
+[2026-06-12 15:47:01] [INFO]       • [Progreso: 316/420] | [SMSEMOA-greedy_ting-UX] ejecución 2/5 (933.1 s)
+[2026-06-12 15:47:51] [INFO]       • [Progreso: 317/420] | [SMSEMOA-random_dense-2P] ejecución 1/5 (1330.2 s)
+[2026-06-12 15:48:29] [INFO]       • [Progreso: 318/420] | [SMSEMOA-greedy_ting-UX] ejecución 3/5 (945.0 s)
+[2026-06-12 15:49:34] [INFO]       • [Progreso: 319/420] | [SMSEMOA-random_dense-2P] ejecución 3/5 (1394.4 s)
+[2026-06-12 15:49:58] [INFO]       • [Progreso: 320/420] | [SMSEMOA-random_dense-1P] ejecución 4/5 (1851.6 s)
+[2026-06-12 15:50:25] [INFO]       • [Progreso: 321/420] | [SMSEMOA-random_dense-1P] ejecución 3/5 (1885.2 s)
+[2026-06-12 15:51:00] [INFO]       • [Progreso: 322/420] | [SMSEMOA-greedy_ting-UX] ejecución 5/5 (564.1 s)
+[2026-06-12 15:51:19] [INFO]       • [Progreso: 323/420] | [SMSEMOA-random_dense-2P] ejecución 5/5 (1306.0 s)
+[2026-06-12 15:52:35] [INFO]       • [Progreso: 324/420] | [SMSEMOA-random_dense-1P] ejecución 5/5 (1626.3 s)
+[2026-06-12 15:57:21] [INFO]       • [Progreso: 325/420] | [SMSEMOA-random_dense-2P] ejecución 4/5 (1678.8 s)
+[2026-06-12 15:57:23] [INFO]       • [Progreso: 326/420] | [SMSEMOA-greedy_ting-HUX] ejecución 4/5 (637.5 s)
+[2026-06-12 16:00:29] [INFO]       • [Progreso: 327/420] | [SMSEMOA-greedy_ting-HUX] ejecución 3/5 (840.1 s)
+[2026-06-12 16:00:33] [INFO]       • [Progreso: 328/420] | [SMSEMOA-greedy_ting-HUX] ejecución 1/5 (897.0 s)
+[2026-06-12 16:01:58] [INFO]       • [Progreso: 329/420] | [SMSEMOA-greedy_ting-HUX] ejecución 2/5 (937.6 s)
+[2026-06-12 16:02:46] [INFO]       • [Progreso: 330/420] | [SMSEMOA-greedy_ting-HUX] ejecución 5/5 (945.0 s)
+[2026-06-12 16:09:55] [INFO]       • [Progreso: 331/420] | [SMSEMOA-greedy_ting-2P] ejecución 2/5 (1115.7 s)
+[2026-06-12 16:10:20] [INFO]       • [Progreso: 332/420] | [SMSEMOA-greedy_ting-2P] ejecución 1/5 (1159.2 s)
+[2026-06-12 16:12:18] [INFO]       • [Progreso: 333/420] | [SMSEMOA-greedy_ting-1P] ejecución 3/5 (1364.3 s)
+[2026-06-12 16:13:11] [INFO]       • [Progreso: 334/420] | [SMSEMOA-greedy_ting-2P] ejecución 5/5 (948.3 s)
+[2026-06-12 16:14:09] [INFO]       • [Progreso: 335/420] | [SMSEMOA-greedy_ting-1P] ejecución 1/5 (1577.6 s)
+[2026-06-12 16:15:19] [INFO]       • [Progreso: 336/420] | [SMSEMOA-greedy_ting-2P] ejecución 3/5 (1363.7 s)
+[2026-06-12 16:15:21] [INFO]       • [Progreso: 337/420] | [SMSEMOA-greedy_multi-UX] ejecución 2/5 (887.6 s)
+[2026-06-12 16:16:37] [INFO]       • [Progreso: 338/420] | [SMSEMOA-greedy_multi-UX] ejecución 1/5 (968.4 s)
+[2026-06-12 16:16:38] [INFO]       • [Progreso: 339/420] | [SMSEMOA-greedy_ting-1P] ejecución 2/5 (1689.0 s)
+[2026-06-12 16:17:58] [INFO]       • [Progreso: 340/420] | [SMSEMOA-greedy_multi-HUX] ejecución 1/5 (458.1 s)
+[2026-06-12 16:18:08] [INFO]       • [Progreso: 341/420] | [SMSEMOA-greedy_multi-UX] ejecución 4/5 (921.1 s)
+[2026-06-12 16:19:24] [INFO]       • [Progreso: 342/420] | [SMSEMOA-greedy_ting-1P] ejecución 4/5 (1765.2 s)
+[2026-06-12 16:20:25] [INFO]       • [Progreso: 343/420] | [SMSEMOA-greedy_ting-2P] ejecución 4/5 (1384.2 s)
+[2026-06-12 16:20:55] [INFO]       • [Progreso: 344/420] | [SMSEMOA-greedy_multi-UX] ejecución 3/5 (1137.1 s)
+[2026-06-12 16:21:01] [INFO]       • [Progreso: 345/420] | [SMSEMOA-greedy_ting-1P] ejecución 5/5 (1835.8 s)
+[2026-06-12 16:26:08] [INFO]       • [Progreso: 346/420] | [SMSEMOA-greedy_multi-HUX] ejecución 2/5 (829.4 s)
+[2026-06-12 16:26:47] [INFO]       • [Progreso: 347/420] | [SMSEMOA-greedy_multi-UX] ejecución 5/5 (1012.4 s)
+[2026-06-12 16:28:41] [INFO]       • [Progreso: 348/420] | [SMSEMOA-greedy_multi-HUX] ejecución 3/5 (929.8 s)
+[2026-06-12 16:29:23] [INFO]       • [Progreso: 349/420] | [RVEA-random_dense-UX] ejecución 1/5 (156.2 s)
+[2026-06-12 16:30:53] [INFO]       • [Progreso: 350/420] | [SMSEMOA-greedy_multi-HUX] ejecución 5/5 (933.5 s)
+[2026-06-12 16:31:03] [INFO]       • [Progreso: 351/420] | [SMSEMOA-greedy_multi-HUX] ejecución 4/5 (1014.1 s)
+[2026-06-12 16:31:07] [INFO]       • [Progreso: 352/420] | [RVEA-random_dense-UX] ejecución 2/5 (145.9 s)
+[2026-06-12 16:31:54] [INFO]       • [Progreso: 353/420] | [RVEA-random_dense-UX] ejecución 3/5 (150.8 s)
+[2026-06-12 16:32:25] [INFO]       • [Progreso: 354/420] | [RVEA-random_dense-UX] ejecución 4/5 (92.2 s)
+[2026-06-12 16:33:36] [INFO]       • [Progreso: 355/420] | [RVEA-random_dense-UX] ejecución 5/5 (152.4 s)
+[2026-06-12 16:33:39] [INFO]       • [Progreso: 356/420] | [RVEA-random_dense-HUX] ejecución 1/5 (151.6 s)
+[2026-06-12 16:33:48] [INFO]       • [Progreso: 357/420] | [RVEA-random_dense-HUX] ejecución 3/5 (82.5 s)
+[2026-06-12 16:33:50] [INFO]       • [Progreso: 358/420] | [SMSEMOA-greedy_multi-1P] ejecución 2/5 (1032.1 s)
+[2026-06-12 16:34:18] [INFO]       • [Progreso: 359/420] | [RVEA-random_dense-HUX] ejecución 2/5 (143.7 s)
+[2026-06-12 16:35:22] [INFO]       • [Progreso: 360/420] | [RVEA-random_dense-1P] ejecución 1/5 (93.7 s)
+[2026-06-12 16:35:25] [INFO]       • [Progreso: 361/420] | [RVEA-random_dense-HUX] ejecución 5/5 (105.9 s)
+[2026-06-12 16:35:59] [INFO]       • [Progreso: 362/420] | [RVEA-random_dense-HUX] ejecución 4/5 (143.7 s)
+[2026-06-12 16:36:21] [INFO]       • [Progreso: 363/420] | [RVEA-random_dense-1P] ejecución 2/5 (151.0 s)
+[2026-06-12 16:36:53] [INFO]       • [Progreso: 364/420] | [RVEA-random_dense-1P] ejecución 4/5 (91.5 s)
+[2026-06-12 16:36:59] [INFO]       • [Progreso: 365/420] | [RVEA-random_dense-1P] ejecución 5/5 (93.5 s)
+[2026-06-12 16:36:59] [INFO]       • [Progreso: 366/420] | [RVEA-random_dense-1P] ejecución 3/5 (161.1 s)
+[2026-06-12 16:38:20] [INFO]       • [Progreso: 367/420] | [RVEA-random_dense-2P] ejecución 3/5 (87.1 s)
+[2026-06-12 16:38:31] [INFO]       • [Progreso: 368/420] | [SMSEMOA-greedy_multi-1P] ejecución 1/5 (1390.8 s)
+[2026-06-12 16:38:36] [INFO]       • [Progreso: 369/420] | [RVEA-random_dense-2P] ejecución 4/5 (97.0 s)
+[2026-06-12 16:38:45] [INFO]       • [Progreso: 370/420] | [RVEA-random_dense-2P] ejecución 1/5 (165.3 s)
+[2026-06-12 16:38:54] [INFO]       • [Progreso: 371/420] | [RVEA-random_dense-2P] ejecución 2/5 (152.7 s)
+[2026-06-12 16:39:30] [INFO]       • [Progreso: 372/420] | [RVEA-greedy_ting-UX] ejecución 1/5 (70.1 s)
+[2026-06-12 16:39:43] [INFO]       • [Progreso: 373/420] | [RVEA-random_dense-2P] ejecución 5/5 (163.6 s)
+[2026-06-12 16:40:23] [INFO]       • [Progreso: 374/420] | [SMSEMOA-greedy_multi-1P] ejecución 4/5 (1345.2 s)
+[2026-06-12 16:40:34] [INFO]       • [Progreso: 375/420] | [RVEA-greedy_ting-UX] ejecución 2/5 (122.5 s)
+[2026-06-12 16:40:38] [INFO]       • [Progreso: 376/420] | [RVEA-greedy_ting-UX] ejecución 3/5 (122.2 s)
+[2026-06-12 16:40:40] [INFO]       • [Progreso: 377/420] | [RVEA-greedy_ting-HUX] ejecución 1/5 (69.7 s)
+[2026-06-12 16:40:54] [INFO]       • [Progreso: 378/420] | [RVEA-greedy_ting-UX] ejecución 4/5 (128.8 s)
+[2026-06-12 16:40:56] [INFO]       • [Progreso: 379/420] | [RVEA-greedy_ting-UX] ejecución 5/5 (122.3 s)
+[2026-06-12 16:40:58] [INFO]       • [Progreso: 380/420] | [SMSEMOA-greedy_multi-1P] ejecución 5/5 (1369.6 s)
+[2026-06-12 16:41:39] [INFO]       • [Progreso: 381/420] | [RVEA-greedy_ting-HUX] ejecución 3/5 (75.9 s)
+[2026-06-12 16:41:42] [INFO]       • [Progreso: 382/420] | [RVEA-greedy_ting-HUX] ejecución 2/5 (119.1 s)
+[2026-06-12 16:42:10] [INFO]       • [Progreso: 383/420] | [RVEA-greedy_ting-1P] ejecución 1/5 (89.7 s)
+[2026-06-12 16:42:21] [INFO]       • [Progreso: 384/420] | [RVEA-greedy_ting-HUX] ejecución 5/5 (103.2 s)
+[2026-06-12 16:42:36] [INFO]       • [Progreso: 385/420] | [RVEA-greedy_ting-HUX] ejecución 4/5 (122.1 s)
+[2026-06-12 16:43:11] [INFO]       • [Progreso: 386/420] | [RVEA-greedy_ting-1P] ejecución 2/5 (137.4 s)
+[2026-06-12 16:43:12] [INFO]       • [Progreso: 387/420] | [RVEA-greedy_ting-1P] ejecución 3/5 (136.4 s)
+[2026-06-12 16:43:14] [INFO]       • [Progreso: 388/420] | [RVEA-greedy_ting-1P] ejecución 4/5 (136.0 s)
+[2026-06-12 16:43:29] [INFO]       • [Progreso: 389/420] | [RVEA-greedy_ting-2P] ejecución 2/5 (79.5 s)
+[2026-06-12 16:43:43] [INFO]       • [Progreso: 390/420] | [RVEA-greedy_ting-1P] ejecución 5/5 (123.6 s)
+[2026-06-12 16:43:49] [INFO]       • [Progreso: 391/420] | [RVEA-greedy_ting-2P] ejecución 1/5 (126.4 s)
+[2026-06-12 16:44:18] [INFO]       • [Progreso: 392/420] | [RVEA-greedy_ting-2P] ejecución 3/5 (116.9 s)
+[2026-06-12 16:44:43] [INFO]       • [Progreso: 393/420] | [RVEA-greedy_ting-2P] ejecución 4/5 (127.2 s)
+[2026-06-12 16:45:01] [INFO]       • [Progreso: 394/420] | [RVEA-greedy_multi-UX] ejecución 3/5 (92.2 s)
+[2026-06-12 16:45:18] [INFO]       • [Progreso: 395/420] | [SMSEMOA-greedy_multi-2P] ejecución 1/5 (1553.9 s)
+[2026-06-12 16:45:22] [INFO]       • [Progreso: 396/420] | [RVEA-greedy_ting-2P] ejecución 5/5 (130.9 s)
+[2026-06-12 16:45:26] [INFO]       • [Progreso: 397/420] | [RVEA-greedy_multi-UX] ejecución 1/5 (134.0 s)
+[2026-06-12 16:45:28] [INFO]       • [Progreso: 398/420] | [RVEA-greedy_multi-UX] ejecución 2/5 (133.9 s)
+[2026-06-12 16:45:35] [INFO]       • [Progreso: 399/420] | [RVEA-greedy_multi-UX] ejecución 5/5 (106.1 s)
+[2026-06-12 16:45:35] [INFO]       • [Progreso: 400/420] | [RVEA-greedy_multi-HUX] ejecución 1/5 (77.5 s)
+[2026-06-12 16:45:56] [INFO]       • [Progreso: 401/420] | [RVEA-greedy_multi-UX] ejecución 4/5 (133.0 s)
+[2026-06-12 16:46:24] [INFO]       • [Progreso: 402/420] | [SMSEMOA-greedy_multi-2P] ejecución 5/5 (1215.8 s)
+[2026-06-12 16:46:32] [INFO]       • [Progreso: 403/420] | [RVEA-greedy_multi-HUX] ejecución 3/5 (90.1 s)
+[2026-06-12 16:46:39] [INFO]       • [Progreso: 404/420] | [RVEA-greedy_multi-HUX] ejecución 4/5 (81.5 s)
+[2026-06-12 16:46:44] [INFO]       • [Progreso: 405/420] | [SMSEMOA-greedy_multi-1P] ejecución 3/5 (1805.5 s)
+[2026-06-12 16:46:58] [INFO]       • [Progreso: 406/420] | [RVEA-greedy_multi-HUX] ejecución 2/5 (134.6 s)
+[2026-06-12 16:47:32] [INFO]       • [Progreso: 407/420] | [RVEA-greedy_multi-HUX] ejecución 5/5 (129.5 s)
+[2026-06-12 16:47:39] [INFO]       • [Progreso: 408/420] | [RVEA-greedy_multi-1P] ejecución 4/5 (123.6 s)
+[2026-06-12 16:47:49] [INFO]       • [Progreso: 409/420] | [RVEA-greedy_multi-1P] ejecución 2/5 (141.7 s)
+[2026-06-12 16:47:55] [INFO]       • [Progreso: 410/420] | [RVEA-greedy_multi-1P] ejecución 3/5 (140.0 s)
+[2026-06-12 16:48:01] [INFO]       • [Progreso: 411/420] | [RVEA-greedy_multi-1P] ejecución 1/5 (154.9 s)
+[2026-06-12 16:48:05] [INFO]       • [Progreso: 412/420] | [SMSEMOA-greedy_multi-2P] ejecución 4/5 (1624.1 s)
+[2026-06-12 16:48:08] [INFO]       • [Progreso: 413/420] | [RVEA-greedy_multi-2P] ejecución 3/5 (89.0 s)
+[2026-06-12 16:48:11] [INFO]       • [Progreso: 414/420] | [RVEA-greedy_multi-2P] ejecución 2/5 (99.3 s)
+[2026-06-12 16:48:18] [INFO]       • [Progreso: 415/420] | [RVEA-greedy_multi-1P] ejecución 5/5 (142.0 s)
+[2026-06-12 16:48:22] [INFO]       • [Progreso: 416/420] | [RVEA-greedy_multi-2P] ejecución 4/5 (98.4 s)
+[2026-06-12 16:48:25] [INFO]       • [Progreso: 417/420] | [RVEA-greedy_multi-2P] ejecución 1/5 (121.3 s)
+[2026-06-12 16:48:45] [INFO]       • [Progreso: 418/420] | [RVEA-greedy_multi-2P] ejecución 5/5 (107.2 s)
+[2026-06-12 16:51:46] [INFO]       • [Progreso: 419/420] | [SMSEMOA-greedy_multi-2P] ejecución 2/5 (1880.8 s)
+[2026-06-12 16:51:56] [INFO]       • [Progreso: 420/420] | [SMSEMOA-greedy_multi-2P] ejecución 3/5 (1861.1 s)
+[2026-06-12 16:51:56] [INFO] 
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                            SÍNTESIS DE RESULTADOS                            ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+[2026-06-12 16:51:56] [INFO]   • Configuración de síntesis: DPI=300
+[2026-06-12 16:51:56] [INFO] 
+  ⏱️   Análisis de Rendimiento y Tiempo
+[2026-06-12 16:51:56] [INFO]   ──────────────────────────────────────
+[2026-06-12 16:51:56] [INFO]       • ⚠️  Gráfica de tiempo omitida (user_config.ini).
+[2026-06-12 16:51:56] [INFO]       • Tiempo bloque 'Análisis de Rendimiento y Tiempo': 0.0s
+[2026-06-12 16:51:56] [INFO] 
+  🧮  Procesamiento de Métricas (con progreso)
+[2026-06-12 16:51:56] [INFO]   ──────────────────────────────────────────────
+[2026-06-12 16:51:56] [INFO]     • Iniciando métricas finales: 420 ejecuciones
+[2026-06-12 16:52:21] [INFO]       • Métricas finales completadas: 420 ejecuciones en 25.0s
+[2026-06-12 16:52:21] [INFO] 
+    • Iniciando métricas generacionales: 420 ejecuciones con historial
+[2026-06-12 16:55:29] [INFO]       • Métricas generacionales completadas: 420 ejecuciones en 187.3s
+[2026-06-12 16:55:29] [INFO] 
+  📊  Trazabilidad y Exportación de Datos (CSV)
+[2026-06-12 16:55:29] [INFO]   ───────────────────────────────────────────────
+[2026-06-12 16:55:29] [INFO]       🖼️  Resultados detallados por ejecución:  resultados_detallados_full.csv
+[2026-06-12 16:55:29] [INFO]       🖼️  Historial evolutivo generacional:  historico_generacional_full.csv
+[2026-06-12 16:55:29] [INFO]       🖼️  Soluciones de frentes finales (CSV):  frentes_pareto_full.csv
+[2026-06-12 16:55:29] [INFO]       🖼️  Configuración del experimento (INI):  user_config_full.ini
+[2026-06-12 16:55:29] [INFO] 
+  📍  Puntos Críticos del Espacio de Objetivos
+[2026-06-12 16:55:29] [INFO]   ──────────────────────────────────────────────
+[2026-06-12 16:55:29] [INFO]       • Punto Ideal Empírico (mejor): [      7.0000,    -103.0000,      -0.5102,       0.0014]
+[2026-06-12 16:55:29] [INFO]       • Punto Nadir Empírico (peor): [    452.0000,      -1.0000,      -0.1542,       0.0533]
+[2026-06-12 16:55:29] [INFO]       • Punto Ideal Teórico (Ref): [      1.0000,    -128.0000,      -1.0000,       0.0000]
+[2026-06-12 16:55:29] [INFO]       • Punto Nadir Teórico (Ref): [    772.0000,      -0.0000,       0.0000,       0.2500]
+[2026-06-12 16:55:29] [INFO]       • Punto Ref. Hipervolumen (1.1): [    849.1000,      12.8000,       0.1000,       0.2750]
+[2026-06-12 16:55:29] [INFO] 
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                           REPORTES Y VISUALIZACIÓN                           ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+[2026-06-12 16:55:29] [INFO] 
+  🔍  Distribución y Correlación de Frentes de Pareto
+[2026-06-12 16:55:29] [INFO]   ─────────────────────────────────────────────────────
+[2026-06-12 16:55:29] [INFO]       • Tiempo bloque 'Frentes de Pareto': 0.0s
+[2026-06-12 16:55:29] [INFO] 
+  🔄  Análisis de Convergencia Progresiva
+[2026-06-12 16:55:29] [INFO]   ─────────────────────────────────────────
+[2026-06-12 16:55:29] [INFO] 
+  📊  Síntesis Estadística Comparativa
+[2026-06-12 16:55:29] [INFO]   ──────────────────────────────────────
+[2026-06-12 16:55:29] [INFO] 
+  🏆  Ranking por Métrica
+[2026-06-12 16:55:29] [INFO]   ─────────────────────────
+[2026-06-12 16:55:29] [INFO]       • Range (↑)
+[2026-06-12 16:55:29] [INFO]           1. NSGA2 (greedy_ting+UX): 1.6391 ± 0.0274
+[2026-06-12 16:55:29] [INFO]           2. NSGA2 (greedy_ting+HUX): 1.6259 ± 0.0281
+[2026-06-12 16:55:29] [INFO]           3. NSGA2 (greedy_ting+1P): 1.5892 ± 0.0357
+[2026-06-12 16:55:29] [INFO]           4. NSGA2 (greedy_ting+2P): 1.5870 ± 0.0331
+[2026-06-12 16:55:29] [INFO]           5. AGEMOEA2 (greedy_ting+2P): 1.5799 ± 0.0641
+[2026-06-12 16:55:29] [INFO]           6. AGEMOEA2 (greedy_ting+1P): 1.5694 ± 0.0320
+[2026-06-12 16:55:29] [INFO]           7. AGEMOEA2 (greedy_ting+UX): 1.5451 ± 0.0577
+[2026-06-12 16:55:29] [INFO]           8. AGEMOEA2 (greedy_ting+HUX): 1.5343 ± 0.0653
+[2026-06-12 16:55:29] [INFO]           9. SMSEMOA (greedy_ting+1P): 1.4682 ± 0.0318
+[2026-06-12 16:55:29] [INFO]          10. NSGA3 (greedy_ting+1P): 1.4657 ± 0.0455
+[2026-06-12 16:55:29] [INFO]          ...
+[2026-06-12 16:55:29] [INFO]          80. MOEAD_TCHE (greedy_multi+UX): 0.2624 ± 0.0362
+[2026-06-12 16:55:29] [INFO]          81. RVEA (greedy_multi+1P): 0.1412 ± 0.0116
+[2026-06-12 16:55:29] [INFO]          82. RVEA (greedy_multi+2P): 0.1383 ± 0.0016
+[2026-06-12 16:55:29] [INFO]          83. RVEA (greedy_multi+UX): 0.1375 ± 0.0056
+[2026-06-12 16:55:29] [INFO]          84. RVEA (greedy_multi+HUX): 0.1375 ± 0.0087
+[2026-06-12 16:55:29] [INFO]          • Para más detalles:  ranking_Range_full.csv
+[2026-06-12 16:55:34] [INFO]       🖼️  Heatmap de Comparaciones Dunn (Post-hoc):  heatmap_dunn_range_full.png
+[2026-06-12 16:55:34] [INFO] 
+[2026-06-12 16:55:34] [INFO]       • MinSum (↓)
+[2026-06-12 16:55:34] [INFO]           1. AGEMOEA2 (random_dense+UX): 1.3604 ± 0.0062
+[2026-06-12 16:55:34] [INFO]           2. NSGA3 (random_dense+HUX): 1.3644 ± 0.0078
+[2026-06-12 16:55:34] [INFO]           3. AGEMOEA2 (random_dense+HUX): 1.3654 ± 0.0086
+[2026-06-12 16:55:34] [INFO]           4. NSGA3 (random_dense+UX): 1.3667 ± 0.0097
+[2026-06-12 16:55:34] [INFO]           5. SPEA2 (random_dense+UX): 1.3940 ± 0.0125
+[2026-06-12 16:55:34] [INFO]           6. SPEA2 (random_dense+HUX): 1.4002 ± 0.0134
+[2026-06-12 16:55:34] [INFO]           7. AGEMOEA2 (random_dense+2P): 1.4161 ± 0.0143
+[2026-06-12 16:55:34] [INFO]           8. NSGA3 (random_dense+2P): 1.4167 ± 0.0086
+[2026-06-12 16:55:34] [INFO]           9. SMSEMOA (random_dense+HUX): 1.4196 ± 0.0105
+[2026-06-12 16:55:34] [INFO]          10. SMSEMOA (random_dense+UX): 1.4198 ± 0.0185
+[2026-06-12 16:55:34] [INFO]          ...
+[2026-06-12 16:55:34] [INFO]          80. RVEA (greedy_ting+2P): 1.5611 ± 0.0222
+[2026-06-12 16:55:34] [INFO]          81. MOEAD_TCHE (random_dense+UX): 1.5646 ± 0.0277
+[2026-06-12 16:55:34] [INFO]          82. MOEAD_TCHE (random_dense+HUX): 1.5661 ± 0.0283
+[2026-06-12 16:55:34] [INFO]          83. MOEAD_TCHE (random_dense+1P): 1.5743 ± 0.0281
+[2026-06-12 16:55:34] [INFO]          84. RVEA (greedy_ting+1P): 1.5930 ± 0.0046
+[2026-06-12 16:55:34] [INFO]          • Para más detalles:  ranking_MinSum_full.csv
+[2026-06-12 16:55:38] [INFO]       🖼️  Heatmap de Comparaciones Dunn (Post-hoc):  heatmap_dunn_minsum_full.png
+[2026-06-12 16:55:38] [INFO] 
+[2026-06-12 16:55:38] [INFO]       • SumMin (↓)
+[2026-06-12 16:55:38] [INFO]           1. NSGA2 (greedy_ting+UX): 0.8210 ± 0.0153
+[2026-06-12 16:55:38] [INFO]           2. NSGA2 (greedy_ting+HUX): 0.8271 ± 0.0168
+[2026-06-12 16:55:38] [INFO]           3. NSGA2 (greedy_ting+1P): 0.8282 ± 0.0155
+[2026-06-12 16:55:38] [INFO]           4. AGEMOEA2 (greedy_ting+2P): 0.8387 ± 0.0169
+[2026-06-12 16:55:38] [INFO]           5. AGEMOEA2 (greedy_ting+1P): 0.8406 ± 0.0084
+[2026-06-12 16:55:38] [INFO]           6. NSGA2 (greedy_ting+2P): 0.8422 ± 0.0176
+[2026-06-12 16:55:38] [INFO]           7. SMSEMOA (greedy_ting+2P): 0.8489 ± 0.0102
+[2026-06-12 16:55:38] [INFO]           8. SMSEMOA (greedy_ting+1P): 0.8515 ± 0.0111
+[2026-06-12 16:55:38] [INFO]           9. NSGA3 (greedy_ting+1P): 0.8608 ± 0.0197
+[2026-06-12 16:55:38] [INFO]          10. AGEMOEA2 (greedy_ting+UX): 0.8615 ± 0.0255
+[2026-06-12 16:55:38] [INFO]          ...
+[2026-06-12 16:55:38] [INFO]          80. MOEAD_TCHE (greedy_multi+1P): 1.4751 ± 0.0132
+[2026-06-12 16:55:38] [INFO]          81. RVEA (greedy_multi+UX): 1.5084 ± 0.0051
+[2026-06-12 16:55:38] [INFO]          82. RVEA (greedy_multi+HUX): 1.5094 ± 0.0075
+[2026-06-12 16:55:38] [INFO]          83. RVEA (greedy_multi+2P): 1.5123 ± 0.0044
+[2026-06-12 16:55:38] [INFO]          84. RVEA (greedy_multi+1P): 1.5136 ± 0.0034
+[2026-06-12 16:55:38] [INFO]          • Para más detalles:  ranking_SumMin_full.csv
+[2026-06-12 16:55:41] [INFO]       🖼️  Heatmap de Comparaciones Dunn (Post-hoc):  heatmap_dunn_summin_full.png
+[2026-06-12 16:55:41] [INFO] 
+[2026-06-12 16:55:41] [INFO]       • MaxToleranceRate (↑)
+[2026-06-12 16:55:41] [INFO]           1. SMSEMOA (random_dense+UX): 0.2740 ± 0.0019
+[2026-06-12 16:55:41] [INFO]           2. NSGA3 (random_dense+HUX): 0.2739 ± 0.0036
+[2026-06-12 16:55:41] [INFO]           3. SMSEMOA (random_dense+HUX): 0.2723 ± 0.0030
+[2026-06-12 16:55:41] [INFO]           4. AGEMOEA2 (random_dense+HUX): 0.2717 ± 0.0055
+[2026-06-12 16:55:41] [INFO]           5. NSGA3 (random_dense+UX): 0.2711 ± 0.0025
+[2026-06-12 16:55:41] [INFO]           6. AGEMOEA2 (random_dense+UX): 0.2707 ± 0.0053
+[2026-06-12 16:55:41] [INFO]           7. SMSEMOA (greedy_ting+UX): 0.2705 ± 0.0048
+[2026-06-12 16:55:41] [INFO]           8. SMSEMOA (greedy_ting+HUX): 0.2703 ± 0.0033
+[2026-06-12 16:55:41] [INFO]           9. SPEA2 (greedy_multi+HUX): 0.2641 ± 0.0110
+[2026-06-12 16:55:41] [INFO]          10. SPEA2 (greedy_multi+UX): 0.2629 ± 0.0150
+[2026-06-12 16:55:41] [INFO]          ...
+[2026-06-12 16:55:41] [INFO]          80. RVEA (greedy_multi+2P): 0.1929 ± 0.0114
+[2026-06-12 16:55:41] [INFO]          81. MOEAD_TCHE (greedy_ting+UX): 0.1925 ± 0.0174
+[2026-06-12 16:55:41] [INFO]          82. RVEA (greedy_ting+1P): 0.1912 ± 0.0120
+[2026-06-12 16:55:41] [INFO]          83. MOEAD_TCHE (greedy_ting+2P): 0.1909 ± 0.0069
+[2026-06-12 16:55:41] [INFO]          84. MOEAD_TCHE (greedy_ting+1P): 0.1899 ± 0.0133
+[2026-06-12 16:55:41] [INFO]          • Para más detalles:  ranking_MaxToleranceRate_full.csv
+[2026-06-12 16:55:44] [INFO]       🖼️  Heatmap de Comparaciones Dunn (Post-hoc):  heatmap_dunn_maxtolerancerate_full.png
+[2026-06-12 16:55:44] [INFO] 
+[2026-06-12 16:55:44] [INFO]       • AvgToleranceRate (↑)
+[2026-06-12 16:55:44] [INFO]           1. SMSEMOA (random_dense+UX): 0.2602 ± 0.0027
+[2026-06-12 16:55:44] [INFO]           2. SMSEMOA (random_dense+HUX): 0.2592 ± 0.0032
+[2026-06-12 16:55:44] [INFO]           3. NSGA3 (random_dense+HUX): 0.2475 ± 0.0019
+[2026-06-12 16:55:44] [INFO]           4. NSGA3 (random_dense+UX): 0.2465 ± 0.0022
+[2026-06-12 16:55:44] [INFO]           5. SMSEMOA (random_dense+2P): 0.2373 ± 0.0037
+[2026-06-12 16:55:44] [INFO]           6. AGEMOEA2 (random_dense+UX): 0.2349 ± 0.0058
+[2026-06-12 16:55:44] [INFO]           7. AGEMOEA2 (random_dense+HUX): 0.2326 ± 0.0023
+[2026-06-12 16:55:44] [INFO]           8. SMSEMOA (random_dense+1P): 0.2308 ± 0.0040
+[2026-06-12 16:55:44] [INFO]           9. SMSEMOA (greedy_ting+UX): 0.2301 ± 0.0061
+[2026-06-12 16:55:44] [INFO]          10. SMSEMOA (greedy_ting+HUX): 0.2294 ± 0.0056
+[2026-06-12 16:55:44] [INFO]          ...
+[2026-06-12 16:55:44] [INFO]          80. NSGA2 (greedy_multi+UX): 0.0668 ± 0.0093
+[2026-06-12 16:55:44] [INFO]          81. RVEA (greedy_multi+2P): 0.0660 ± 0.0015
+[2026-06-12 16:55:44] [INFO]          82. RVEA (greedy_multi+1P): 0.0638 ± 0.0053
+[2026-06-12 16:55:44] [INFO]          83. NSGA2 (greedy_multi+1P): 0.0514 ± 0.0063
+[2026-06-12 16:55:44] [INFO]          84. NSGA2 (greedy_multi+2P): 0.0506 ± 0.0042
+[2026-06-12 16:55:44] [INFO]          • Para más detalles:  ranking_AvgToleranceRate_full.csv
+[2026-06-12 16:55:47] [INFO]       🖼️  Heatmap de Comparaciones Dunn (Post-hoc):  heatmap_dunn_avgtolerancerate_full.png
+[2026-06-12 16:55:47] [INFO] 
+[2026-06-12 16:55:47] [INFO]       • AvgHammingDistance (↑)
+[2026-06-12 16:55:47] [INFO]           1. AGEMOEA2 (random_dense+1P): 116.9776 ± 2.0767
+[2026-06-12 16:55:47] [INFO]           2. NSGA2 (random_dense+1P): 115.8734 ± 4.6155
+[2026-06-12 16:55:47] [INFO]           3. NSGA3 (random_dense+1P): 113.5330 ± 1.5886
+[2026-06-12 16:55:47] [INFO]           4. AGEMOEA2 (random_dense+2P): 112.4497 ± 3.8340
+[2026-06-12 16:55:47] [INFO]           5. NSGA2 (random_dense+2P): 111.2603 ± 5.4258
+[2026-06-12 16:55:47] [INFO]           6. NSGA3 (random_dense+2P): 111.1311 ± 3.1792
+[2026-06-12 16:55:47] [INFO]           7. RVEA (random_dense+1P): 109.9305 ± 2.1424
+[2026-06-12 16:55:47] [INFO]           8. RVEA (random_dense+2P): 105.3160 ± 2.6605
+[2026-06-12 16:55:47] [INFO]           9. AGEMOEA2 (random_dense+UX): 105.0320 ± 2.6094
+[2026-06-12 16:55:47] [INFO]          10. SPEA2 (random_dense+1P): 104.6641 ± 2.9953
+[2026-06-12 16:55:47] [INFO]          ...
+[2026-06-12 16:55:47] [INFO]          80. NSGA2 (greedy_multi+1P): 6.9776 ± 0.3195
+[2026-06-12 16:55:47] [INFO]          81. RVEA (greedy_multi+HUX): 6.4793 ± 0.4369
+[2026-06-12 16:55:47] [INFO]          82. RVEA (greedy_multi+UX): 6.4586 ± 0.4287
+[2026-06-12 16:55:47] [INFO]          83. RVEA (greedy_multi+2P): 6.3290 ± 0.4018
+[2026-06-12 16:55:47] [INFO]          84. RVEA (greedy_multi+1P): 6.2472 ± 0.1997
+[2026-06-12 16:55:47] [INFO]          • Para más detalles:  ranking_AvgHammingDistance_full.csv
+[2026-06-12 16:55:50] [INFO]       🖼️  Heatmap de Comparaciones Dunn (Post-hoc):  heatmap_dunn_avghammingdistance_full.png
+[2026-06-12 16:55:50] [INFO] 
+[2026-06-12 16:55:50] [INFO]       • Hypervolume (↑)
+[2026-06-12 16:55:50] [INFO]           1. AGEMOEA2 (greedy_ting+HUX): 0.4088 ± 0.0077
+[2026-06-12 16:55:50] [INFO]           2. NSGA2 (random_dense+HUX): 0.4066 ± 0.0058
+[2026-06-12 16:55:50] [INFO]           3. AGEMOEA2 (greedy_ting+UX): 0.4062 ± 0.0063
+[2026-06-12 16:55:50] [INFO]           4. AGEMOEA2 (greedy_ting+2P): 0.4022 ± 0.0054
+[2026-06-12 16:55:50] [INFO]           5. NSGA2 (random_dense+UX): 0.3997 ± 0.0072
+[2026-06-12 16:55:50] [INFO]           6. AGEMOEA2 (greedy_ting+1P): 0.3903 ± 0.0024
+[2026-06-12 16:55:50] [INFO]           7. AGEMOEA2 (random_dense+UX): 0.3888 ± 0.0054
+[2026-06-12 16:55:50] [INFO]           8. AGEMOEA2 (random_dense+HUX): 0.3877 ± 0.0052
+[2026-06-12 16:55:50] [INFO]           9. NSGA2 (greedy_ting+1P): 0.3874 ± 0.0050
+[2026-06-12 16:55:50] [INFO]          10. NSGA2 (greedy_ting+2P): 0.3808 ± 0.0065
+[2026-06-12 16:55:50] [INFO]          ...
+[2026-06-12 16:55:50] [INFO]          80. MOEAD_TCHE (greedy_multi+1P): 0.1082 ± 0.0072
+[2026-06-12 16:55:50] [INFO]          81. RVEA (greedy_multi+UX): 0.0977 ± 0.0025
+[2026-06-12 16:55:50] [INFO]          82. RVEA (greedy_multi+HUX): 0.0976 ± 0.0028
+[2026-06-12 16:55:50] [INFO]          83. RVEA (greedy_multi+2P): 0.0964 ± 0.0004
+[2026-06-12 16:55:50] [INFO]          84. RVEA (greedy_multi+1P): 0.0962 ± 0.0002
+[2026-06-12 16:55:50] [INFO]          • Para más detalles:  ranking_Hypervolume_full.csv
+[2026-06-12 16:55:54] [INFO]       🖼️  Heatmap de Comparaciones Dunn (Post-hoc):  heatmap_dunn_hypervolume_full.png
+[2026-06-12 16:55:54] [INFO] 
+[2026-06-12 16:55:54] [INFO]       • IGD+ (↓)
+[2026-06-12 16:55:54] [INFO]           1. NSGA2 (greedy_multi+HUX): 0.0009 ± 0.0009
+[2026-06-12 16:55:54] [INFO]           2. NSGA2 (greedy_multi+UX): 0.0009 ± 0.0009
+[2026-06-12 16:55:54] [INFO]           3. NSGA2 (greedy_multi+1P): 0.0011 ± 0.0000
+[2026-06-12 16:55:54] [INFO]           4. NSGA2 (greedy_multi+2P): 0.0011 ± 0.0002
+[2026-06-12 16:55:54] [INFO]           5. NSGA3 (greedy_multi+HUX): 0.0013 ± 0.0014
+[2026-06-12 16:55:54] [INFO]           6. NSGA3 (greedy_multi+1P): 0.0018 ± 0.0007
+[2026-06-12 16:55:54] [INFO]           7. MOEAD_TCHE (greedy_multi+UX): 0.0021 ± 0.0006
+[2026-06-12 16:55:54] [INFO]           8. MOEAD_TCHE (greedy_multi+1P): 0.0022 ± 0.0019
+[2026-06-12 16:55:54] [INFO]           9. MOEAD_TCHE (greedy_multi+HUX): 0.0022 ± 0.0012
+[2026-06-12 16:55:54] [INFO]          10. NSGA2 (greedy_ting+HUX): 0.0023 ± 0.0001
+[2026-06-12 16:55:54] [INFO]          ...
+[2026-06-12 16:55:54] [INFO]          80. NSGA2 (random_dense+1P): 0.6712 ± 0.0188
+[2026-06-12 16:55:54] [INFO]          81. AGEMOEA2 (random_dense+1P): 0.6834 ± 0.0179
+[2026-06-12 16:55:54] [INFO]          82. MOEAD_TCHE (random_dense+1P): 0.6958 ± 0.0375
+[2026-06-12 16:55:54] [INFO]          83. RVEA (random_dense+2P): 0.7092 ± 0.0322
+[2026-06-12 16:55:54] [INFO]          84. RVEA (random_dense+1P): 0.7274 ± 0.0207
+[2026-06-12 16:55:54] [INFO]          • Para más detalles:  ranking_IGD+_full.csv
+[2026-06-12 16:55:57] [INFO]       🖼️  Heatmap de Comparaciones Dunn (Post-hoc):  heatmap_dunn_igd+_full.png
+[2026-06-12 16:55:57] [INFO] 
+[2026-06-12 16:55:57] [INFO]       • GD+ (↓)
+[2026-06-12 16:55:57] [INFO]           1. RVEA (greedy_multi+UX): 0.0157 ± 0.0015
+[2026-06-12 16:55:57] [INFO]           2. RVEA (greedy_multi+HUX): 0.0160 ± 0.0019
+[2026-06-12 16:55:57] [INFO]           3. RVEA (greedy_multi+2P): 0.0171 ± 0.0014
+[2026-06-12 16:55:57] [INFO]           4. RVEA (greedy_multi+1P): 0.0181 ± 0.0023
+[2026-06-12 16:55:57] [INFO]           5. MOEAD_TCHE (greedy_multi+UX): 0.0823 ± 0.0230
+[2026-06-12 16:55:57] [INFO]           6. MOEAD_TCHE (greedy_multi+HUX): 0.0878 ± 0.0137
+[2026-06-12 16:55:57] [INFO]           7. MOEAD_TCHE (greedy_multi+2P): 0.0900 ± 0.0063
+[2026-06-12 16:55:57] [INFO]           8. AGEMOEA2 (greedy_multi+UX): 0.0921 ± 0.0091
+[2026-06-12 16:55:57] [INFO]           9. MOEAD_TCHE (greedy_multi+1P): 0.0958 ± 0.0162
+[2026-06-12 16:55:57] [INFO]          10. AGEMOEA2 (greedy_multi+HUX): 0.0982 ± 0.0076
+[2026-06-12 16:55:57] [INFO]          ...
+[2026-06-12 16:55:57] [INFO]          80. NSGA3 (random_dense+1P): 0.7794 ± 0.0108
+[2026-06-12 16:55:57] [INFO]          81. NSGA2 (random_dense+2P): 0.7893 ± 0.0204
+[2026-06-12 16:55:57] [INFO]          82. RVEA (random_dense+1P): 0.7941 ± 0.0225
+[2026-06-12 16:55:57] [INFO]          83. AGEMOEA2 (random_dense+1P): 0.8047 ± 0.0199
+[2026-06-12 16:55:57] [INFO]          84. NSGA2 (random_dense+1P): 0.8358 ± 0.0145
+[2026-06-12 16:55:57] [INFO]          • Para más detalles:  ranking_GD+_full.csv
+[2026-06-12 16:56:00] [INFO]       🖼️  Heatmap de Comparaciones Dunn (Post-hoc):  heatmap_dunn_gd+_full.png
+[2026-06-12 16:56:00] [INFO] 
+[2026-06-12 16:56:00] [INFO]       • Average Ranking Overall (↓)
+[2026-06-12 16:56:00] [INFO]           1. AGEMOEA2 (greedy_ting+HUX): 20.7778 ± 0.0000
+[2026-06-12 16:56:00] [INFO]           2. AGEMOEA2 (greedy_ting+UX): 21.5556 ± 0.0000
+[2026-06-12 16:56:00] [INFO]           3. AGEMOEA2 (random_dense+UX): 24.5556 ± 0.0000
+[2026-06-12 16:56:00] [INFO]           4. AGEMOEA2 (random_dense+HUX): 24.7778 ± 0.0000
+[2026-06-12 16:56:00] [INFO]           5. SMSEMOA (greedy_ting+HUX): 25.5556 ± 0.0000
+[2026-06-12 16:56:00] [INFO]           6. SMSEMOA (greedy_ting+1P): 25.6111 ± 0.0000
+[2026-06-12 16:56:00] [INFO]           7. NSGA3 (random_dense+HUX): 25.8889 ± 0.0000
+[2026-06-12 16:56:00] [INFO]           8. AGEMOEA2 (greedy_ting+2P): 26.0000 ± 0.0000
+[2026-06-12 16:56:00] [INFO]           9. SMSEMOA (greedy_ting+UX): 26.0556 ± 0.0000
+[2026-06-12 16:56:00] [INFO]          10. SMSEMOA (greedy_ting+2P): 26.4444 ± 0.0000
+[2026-06-12 16:56:00] [INFO]          ...
+[2026-06-12 16:56:00] [INFO]          80. NSGA2 (greedy_multi+1P): 59.6667 ± 0.0000
+[2026-06-12 16:56:00] [INFO]          81. RVEA (greedy_multi+UX): 63.2222 ± 0.0000
+[2026-06-12 16:56:00] [INFO]          82. RVEA (greedy_multi+HUX): 63.7778 ± 0.0000
+[2026-06-12 16:56:00] [INFO]          83. RVEA (greedy_multi+2P): 65.8889 ± 0.0000
+[2026-06-12 16:56:00] [INFO]          84. RVEA (greedy_multi+1P): 66.7778 ± 0.0000
+[2026-06-12 16:56:00] [INFO]          • Para más detalles:  ranking_Average_Ranking_Overall_full.csv
+[2026-06-12 16:56:03] [INFO]       🖼️  Heatmap de Significancia Nemenyi (Método (Algoritmo + Inicialización)):  heatmap_nemenyi_full.png
+[2026-06-12 16:56:03] [INFO] 
+[2026-06-12 16:56:03] [INFO]       • Average Ranking (Algorithm) (↓)
+[2026-06-12 16:56:03] [INFO]           1. AGEMOEA2: 2.0000 ± 0.0000
+[2026-06-12 16:56:03] [INFO]           2. NSGA3: 3.0000 ± 0.0000
+[2026-06-12 16:56:03] [INFO]           3. NSGA2: 3.3333 ± 0.0000
+[2026-06-12 16:56:03] [INFO]           4. SMSEMOA: 3.7778 ± 0.0000
+[2026-06-12 16:56:03] [INFO]           5. SPEA2: 4.1111 ± 0.0000
+[2026-06-12 16:56:03] [INFO]           6. RVEA: 5.7778 ± 0.0000
+[2026-06-12 16:56:03] [INFO]           7. MOEAD_TCHE: 6.0000 ± 0.0000
+[2026-06-12 16:56:03] [INFO]          • Para más detalles:  ranking_Average_Ranking_(Algorithm)_full.csv
+[2026-06-12 16:56:03] [INFO]       🖼️  Heatmap de Significancia Nemenyi (Algoritmo):  heatmap_nemenyi_algorithm_full.png
+[2026-06-12 16:56:03] [INFO] 
+[2026-06-12 16:56:03] [INFO]       • Average Ranking (Initialization) (↓)
+[2026-06-12 16:56:03] [INFO]           1. greedy_ting: 1.6667 ± 0.0000
+[2026-06-12 16:56:03] [INFO]           2. random_dense: 1.7778 ± 0.0000
+[2026-06-12 16:56:03] [INFO]           3. greedy_multi: 2.5556 ± 0.0000
+[2026-06-12 16:56:03] [INFO]          • Para más detalles:  ranking_Average_Ranking_(Initialization)_full.csv
+[2026-06-12 16:56:03] [INFO] 
+[2026-06-12 16:56:03] [INFO]       • Average Ranking (Crossover) (↓)
+[2026-06-12 16:56:03] [INFO]           1. UX: 1.6667 ± 0.0000
+[2026-06-12 16:56:03] [INFO]           2. HUX: 1.7778 ± 0.0000
+[2026-06-12 16:56:03] [INFO]           3. 2P: 3.0000 ± 0.0000
+[2026-06-12 16:56:03] [INFO]           4. 1P: 3.5556 ± 0.0000
+[2026-06-12 16:56:03] [INFO]          • Para más detalles:  ranking_Average_Ranking_(Crossover)_full.csv
+[2026-06-12 16:56:04] [INFO]       🖼️  Heatmap de Significancia Nemenyi (crossover):  heatmap_nemenyi_crossover_full.png
+[2026-06-12 16:56:04] [INFO] 
+[2026-06-12 16:56:04] [INFO] 
+========================================
+[2026-06-12 16:56:04] [INFO] ⏱️  TIEMPO TOTAL DE EJECUCIÓN: 3h 45m 40.67s
+[2026-06-12 16:56:04] [INFO] ========================================
+
+[2026-06-12 16:56:04] [INFO] 
+📁  Carpeta de los experimentos en:  /home/cofer/Documents/University/TFG/snp_tag_tfg/snp_tag/results/full/hinds2005/greedy_multi-greedy_ting-random_dense/20260612T131023
+[2026-06-12 16:56:04] [INFO] 💾  Salida de la terminal guardada en  ejecucion.log
+
