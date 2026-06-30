@@ -23,16 +23,17 @@ from pymoo.mcdm.pseudo_weights import PseudoWeights
 # =============================================================================
 from snp_tag.engine.metrics_logic import decodificar_objetivos_reales
 
-_HIGHER_IS_BETTER = {1, 2}  # Tolerancia, Hamming (índices de columna)
+_HIGHER_IS_BETTER = {1, 2}  # Tolerancia, Disimilitud (índices de columna)
 
 def decodificar_y_filtrar(df_fronts: pd.DataFrame,
-                          modo_transformacion: str) -> Tuple[pd.DataFrame, np.ndarray]:
+                          modo_transformacion: str,
+                          modo_evaluacion: str = 'absoluta') -> Tuple[pd.DataFrame, np.ndarray]:
     """
     Decodifica objetivos a escala real y filtra soluciones factibles.
 
     Returns:
         (df_factible, F_real)  donde F_real tiene columnas
-        [Compacidad, Tolerancia, Hamming, Balance].
+        [Compacidad, Tolerancia, Disimilitud, Balance].
     """
     cols_F = [
         'f1_compactness', 'f2_transformed_tolerance',
@@ -40,7 +41,7 @@ def decodificar_y_filtrar(df_fronts: pd.DataFrame,
     ]
     F_raw = df_fronts[cols_F].to_numpy(dtype=float)
 
-    reales = decodificar_objetivos_reales(F_raw, modo_transformacion)
+    reales = decodificar_objetivos_reales(F_raw, modo_transformacion, modo_evaluacion)
     F_real = np.column_stack([
         reales['compacidad'],
         reales['tolerancia_real'],
@@ -58,7 +59,7 @@ def normalizar_minimizacion(F_real: np.ndarray) -> np.ndarray:
 
     Compacidad (col 0): menor es mejor  → normalización directa.
     Tolerancia (col 1): mayor es mejor  → se invierte.
-    Hamming    (col 2): mayor es mejor  → se invierte.
+    Disimilitud (col 2): mayor es mejor  → se invierte.
     Balance    (col 3): menor es mejor  → normalización directa.
     """
     F_norm = F_real.copy()

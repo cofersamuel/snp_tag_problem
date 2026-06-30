@@ -35,26 +35,27 @@ import pandas as pd
 from snp_tag.engine.mcdm_logic import (decodificar_y_filtrar,
                                        evaluar_estrategias_mcdm,
                                        normalizar_minimizacion)
+from snp_tag.utils.ai_exports import exportar_gemelo_ia_csv
 from snp_tag.utils.terminal import imprimir_grafico_guardado
 
 # ---------------------------------------------------------------------------
 # Constantes del módulo
 # ---------------------------------------------------------------------------
 
-_NOMBRES_OBJETIVOS = ['Compacidad', 'Tolerancia', 'Hamming', 'Balance']
+_NOMBRES_OBJETIVOS = ['Compacidad', 'Tolerancia', 'Disimilitud', 'Balance']
 
 _ETIQUETAS_EJES = {
     'Compacidad': 'Compacidad (Nº Tag SNPs)',
     'Tolerancia': 'Tolerancia',
-    'Hamming': 'Distancia Hamming Promedio',
+    'Disimilitud': 'Disimilitud (Hamming Promedio)',
     'Balance': 'Varianza (Balance)',
 }
 
 # Proyecciones 2D canónicas (consistentes con fronts.py)
 _PROYECCIONES = [
     ('Compacidad', 'Tolerancia', '(a) Compacidad vs. Tolerancia'),
-    ('Tolerancia', 'Hamming', '(b) Tolerancia vs. Hamming'),
-    ('Hamming', 'Balance', '(c) Hamming vs. Balance'),
+    ('Tolerancia', 'Disimilitud', '(b) Tolerancia vs. Disimilitud'),
+    ('Disimilitud', 'Balance', '(c) Disimilitud vs. Balance'),
     ('Compacidad', 'Balance', '(d) Compacidad vs. Balance'),
 ]
 
@@ -65,6 +66,18 @@ _MIN_SOLUCIONES = 5
 # ---------------------------------------------------------------------------
 # Visualización y Terminal
 # ---------------------------------------------------------------------------
+
+_MAPA_CRUCES = {
+    'uniform': 'UX',
+    'hux': 'HUX',
+    'single_point': '1P',
+    'two_point': '2P'
+}
+
+def _acronimo_cruce(c: str) -> str:
+    """Retorna el acrónimo corto del operador de cruce."""
+    return _MAPA_CRUCES.get(c.lower(), c.upper())
+
 
 def _imprimir_caja_info(titulo: str, lineas: List[str], espacios: str = "      ") -> None:
     """
@@ -80,7 +93,7 @@ def _imprimir_caja_info(titulo: str, lineas: List[str], espacios: str = "      "
         Prefijo para sangría.
     """
     # Ancho total fijo para asegurar alineación perfecta (caracteres totales)
-    ancho_total = 72
+    ancho_total = 95
     
     # Línea superior: ┌─ Titulo ───┐
     # ┌─ (2) + ' ' (1) + len(titulo) + ' ' (1) + ┐ (1) = 5 fijos
@@ -168,6 +181,7 @@ def _graficar_scatter_mcdm(
 
     plt.tight_layout(rect=[0, 0.03, 1, 0.96])
     fig.savefig(ruta_salida, dpi=dpi, bbox_inches='tight')
+    exportar_gemelo_ia_csv(ruta_salida, array_datos=F_real, columnas=_NOMBRES_OBJETIVOS)
     plt.close(fig)
 
 
@@ -223,6 +237,11 @@ def _graficar_radar_pseudo_pesos(
     
     plt.tight_layout()
     fig.savefig(ruta_salida, dpi=dpi, bbox_inches='tight')
+    exportar_gemelo_ia_csv(
+        ruta_salida,
+        array_datos=np.concatenate([valores_pw, pesos_obj]).reshape(1, -1),
+        columnas=[f'{n}_pw' for n in _NOMBRES_OBJETIVOS] + [f'{n}_ref' for n in _NOMBRES_OBJETIVOS],
+    )
     plt.close(fig)
 
 
@@ -259,6 +278,16 @@ def _graficar_radar_mcdm(
 
     plt.tight_layout()
     fig.savefig(ruta_salida, dpi=dpi, bbox_inches='tight')
+    # Exportar las soluciones MCDM destacadas con sus valores normalizados
+    filas_radar = []
+    for crit, (indices, color, marker, label) in destacados.items():
+        if len(indices) > 0:
+            idx = indices[0]
+            fila = {obj: F_norm[idx, i] for i, obj in enumerate(_NOMBRES_OBJETIVOS)}
+            fila['criterio'] = label
+            filas_radar.append(fila)
+    if filas_radar:
+        exportar_gemelo_ia_csv(ruta_salida, df_datos=pd.DataFrame(filas_radar))
     plt.close(fig)
 
 
@@ -304,6 +333,15 @@ def _graficar_petal_mcdm(
 
     plt.tight_layout()
     fig.savefig(ruta_salida, dpi=dpi, bbox_inches='tight')
+    # Exportar las soluciones MCDM destacadas con sus valores normalizados
+    filas_petal = []
+    for crit, (indices, color, marker, label) in valid_destacados.items():
+        idx = indices[0]
+        fila = {obj: F_norm[idx, i] for i, obj in enumerate(_NOMBRES_OBJETIVOS)}
+        fila['criterio'] = label
+        filas_petal.append(fila)
+    if filas_petal:
+        exportar_gemelo_ia_csv(ruta_salida, df_datos=pd.DataFrame(filas_petal))
     plt.close(fig)
 
 
@@ -319,6 +357,7 @@ def analizar_decision_mcdm(
     dir_salida: str,
     etiqueta_modo: str,
     modo_transformacion_objetivos: str = 'neg',
+    modo_evaluacion: str = 'absoluta',
     pesos_usuario: Optional[np.ndarray] = None,
     dpi: int = 300,
     emitir_log: bool = True,
@@ -370,7 +409,7 @@ def analizar_decision_mcdm(
     filas_csv = []
 
     # 1. ANÁLISIS AGREGADO (GLOBAL)
-    df_feas, F_real = decodificar_y_filtrar(df_fronts, modo_transformacion_objetivos)
+    df_feas, F_real = decodificar_y_filtrar(df_fronts, modo_transformacion_objetivos, modo_evaluacion)
 
     if len(F_real) < _MIN_SOLUCIONES:
         if emitir_log:
@@ -390,11 +429,11 @@ def analizar_decision_mcdm(
         row_asf = df_feas.iloc[idx_asf]
         algo_asf = row_asf.get('algorithm', 'N/A')
         init_asf = row_asf.get('init', 'N/A')
+        cross_asf = _acronimo_cruce(row_asf.get('crossover', 'N/A'))
         sol_asf = F_real[idx_asf]
         lineas_asf = [
-            f"Solución #{idx_asf}: Compacidad={sol_asf[0]:.0f}, Tolerancia={sol_asf[1]:.2f},",
-            f"Hamming={sol_asf[2]:.2f}, Balance={sol_asf[3]:.4f}",
-            f"Config: {algo_asf} ({init_asf})"
+            f"Solución #{idx_asf}: Compacidad={sol_asf[0]:.0f}, Tolerancia={sol_asf[1]:.2f}, Disimilitud={sol_asf[2]:.2f}, Balance={sol_asf[3]:.4f}",
+            f"Config: {algo_asf} ({init_asf}, {cross_asf})"
         ]
         _imprimir_caja_info("Compromiso (ASF)", lineas_asf, espacios)
         
@@ -407,9 +446,10 @@ def analizar_decision_mcdm(
             row_knee = df_feas.iloc[idx_knee]
             algo_knee = row_knee.get('algorithm', 'N/A')
             init_knee = row_knee.get('init', 'N/A')
+            cross_knee = _acronimo_cruce(row_knee.get('crossover', 'N/A'))
             lineas_knee = [
                 f"{n_knee} knee points detectados",
-                f"Mejor knee: Solución #{idx_knee} ({algo_knee}, {init_knee})"
+                f"Mejor knee: Solución #{idx_knee} ({algo_knee}, {init_knee}, {cross_knee})"
             ]
         else:
             lineas_knee = ["0 knee points detectados"]
@@ -438,19 +478,7 @@ def analizar_decision_mcdm(
     if emitir_log:
         imprimir_grafico_guardado(ruta_scatter, "Scatter MCDM (Agregado Global)")
 
-    # Graficar Radar de Objetivos
-    ruta_radar_obj = os.path.join(dir_salida, f'mcdm_radar_objetivos_agregado_{etiqueta_modo}.png')
-    _graficar_radar_mcdm(F_norm, destacados_dict, 'Rendimiento de Soluciones MCDM (Radar)', ruta_radar_obj, dpi)
-    artefactos.append((ruta_radar_obj, "Radar Objetivos MCDM (Agregado)"))
-    if emitir_log:
-        imprimir_grafico_guardado(ruta_radar_obj, "Radar Objetivos MCDM (Agregado)")
 
-    # Graficar Petal de Objetivos
-    ruta_petal_obj = os.path.join(dir_salida, f'mcdm_petal_objetivos_agregado_{etiqueta_modo}.png')
-    _graficar_petal_mcdm(F_norm, destacados_dict, 'Rendimiento de Soluciones MCDM (Petal)', ruta_petal_obj, dpi)
-    artefactos.append((ruta_petal_obj, "Petal Objetivos MCDM (Agregado)"))
-    if emitir_log:
-        imprimir_grafico_guardado(ruta_petal_obj, "Petal Objetivos MCDM (Agregado)")
 
     # Graficar Radar Pseudo-Weights
     ruta_radar = os.path.join(dir_salida, f'mcdm_radar_pseudow_{etiqueta_modo}.png')
@@ -493,19 +521,26 @@ def analizar_decision_mcdm(
         mejor_knee_idx = I_knee[F_norm[I_knee].mean(axis=1).argmin()]
         registrar_recomendacion([mejor_knee_idx], 'Mejor Knee Point')
 
-    # 2. ANÁLISIS PER-CONFIGURACIÓN
-    if 'algorithm' in df_fronts.columns and 'init' in df_fronts.columns:
-        configs = sorted(df_fronts.groupby(['algorithm', 'init']).groups.keys())
+    # 2. ANÁLISIS POR CONFIGURACIÓN
+    if 'algorithm' in df_fronts.columns and 'init' in df_fronts.columns and 'crossover' in df_fronts.columns:
+        configs = sorted(df_fronts.groupby(['algorithm', 'init', 'crossover']).groups.keys())
 
         if emitir_log and len(configs) > 1:
-            print(f"\n{espacios}• Análisis per-configuración ({len(configs)} configuraciones):")
+            print(f"\n{espacios}• Análisis por configuración ({len(configs)} configuraciones):")
 
-        for algo, init in configs:
-            df_cfg = df_fronts[(df_fronts['algorithm'] == algo) & (df_fronts['init'] == init)].copy()
-            cfg_str = f"{algo} ({init})"
-            file_cfg_str = f"{algo.lower()}_{init}"
+        algoritmo_previo = None
+        for algo, init, cross in configs:
+            if emitir_log and algo != algoritmo_previo:
+                if algoritmo_previo is not None:
+                    print(f"{espacios}  --------------------------------------------------")
+                algoritmo_previo = algo
+                
+            df_cfg = df_fronts[(df_fronts['algorithm'] == algo) & (df_fronts['init'] == init) & (df_fronts['crossover'] == cross)].copy()
+            cross_acron = _acronimo_cruce(cross)
+            cfg_str = f"{algo} ({init}, {cross_acron})"
+            file_cfg_str = f"{algo.lower()}_{init}_{cross.lower()}"
 
-            df_cfg_feas, F_cfg_real = decodificar_y_filtrar(df_cfg, modo_transformacion_objetivos)
+            df_cfg_feas, F_cfg_real = decodificar_y_filtrar(df_cfg, modo_transformacion_objetivos, modo_evaluacion)
 
             if len(F_cfg_real) < _MIN_SOLUCIONES:
                 if emitir_log:
@@ -529,21 +564,7 @@ def analizar_decision_mcdm(
             if emitir_log:
                 imprimir_grafico_guardado(ruta_cfg_scatter, desc_scatter)
 
-            # Graficar Radar de Objetivos per-config
-            ruta_cfg_radar = os.path.join(dir_salida, f'mcdm_radar_objetivos_{file_cfg_str}_{etiqueta_modo}.png')
-            _graficar_radar_mcdm(F_cfg_norm, destacados_cfg, f'Radar Objetivos: {cfg_str}', ruta_cfg_radar, dpi)
-            desc_radar = f"Radar MCDM {cfg_str}"
-            artefactos.append((ruta_cfg_radar, desc_radar))
-            if emitir_log:
-                imprimir_grafico_guardado(ruta_cfg_radar, desc_radar)
 
-            # Graficar Petal de Objetivos per-config
-            ruta_cfg_petal = os.path.join(dir_salida, f'mcdm_petal_objetivos_{file_cfg_str}_{etiqueta_modo}.png')
-            _graficar_petal_mcdm(F_cfg_norm, destacados_cfg, f'Petal Objetivos: {cfg_str}', ruta_cfg_petal, dpi)
-            desc_petal = f"Petal MCDM {cfg_str}"
-            artefactos.append((ruta_cfg_petal, desc_petal))
-            if emitir_log:
-                imprimir_grafico_guardado(ruta_cfg_petal, desc_petal)
 
             # Registrar en CSV
             if len(I_cfg_asf) > 0:

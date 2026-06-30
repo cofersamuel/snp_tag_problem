@@ -18,7 +18,7 @@ from typing import Dict, Tuple
 from snp_tag.config import ConfiguracionExperimento
 
 
-def crear_arbol_directorios_dataset(cfg: ConfiguracionExperimento, tipo_dataset: str, is_report_only_csv: bool = False) -> Tuple[str, Dict[str, str]]:
+def crear_arbol_directorios_dataset(cfg: ConfiguracionExperimento, tipo_dataset: str, is_postprocessing: bool = False) -> Tuple[str, Dict[str, str]]:
     """
     Crea un árbol de directorios específico para un dataset y devuelve la ruta base y el diccionario de carpetas.
     Prioriza snp_tag/results como raíz de resultados.
@@ -29,7 +29,7 @@ def crear_arbol_directorios_dataset(cfg: ConfiguracionExperimento, tipo_dataset:
         Configuración global.
     tipo_dataset : str
         Nombre o identificador del dataset.
-    is_report_only_csv : bool
+    is_postprocessing : bool
         Flag que indica si la ejecución genera sólo reportes CSV.
 
     Retorna:
@@ -49,8 +49,8 @@ def crear_arbol_directorios_dataset(cfg: ConfiguracionExperimento, tipo_dataset:
     # Localizar la carpeta results dentro del paquete
     ruta_base_paquete = Path(__file__).parent.parent / "results"
     
-    if is_report_only_csv:
-        ruta_base = ruta_base_paquete / "report_only_csv" / cfg.modo_ejecucion / tipo_dataset / etiqueta_inits / ts
+    if is_postprocessing:
+        ruta_base = ruta_base_paquete / "postprocessing" / cfg.modo_ejecucion / tipo_dataset / etiqueta_inits / ts
     else:
         ruta_base = ruta_base_paquete / cfg.modo_ejecucion / tipo_dataset / etiqueta_inits / ts
     

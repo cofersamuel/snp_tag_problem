@@ -47,7 +47,7 @@ CLAVES_TUNABLES_REQUERIDAS = (
     'cap_tolerancia',
     'crossover_operadores_activos',
     'paso_generacional_metricas',
-    'graficas_activas',
+    'postprocesamiento_activo',
 )
 
 
@@ -131,6 +131,8 @@ def cargar_params_tunables_desde_ini(ruta_config: Path = RUTA_USER_CONFIG) -> Di
     params: Dict[str, Any] = {}
 
     for seccion in parser.sections():
+        if seccion.lower() == 'argumentos':
+            continue
         for clave, valor_txt in parser.items(seccion):
             if clave in params:
                 raise ValueError(
@@ -230,9 +232,9 @@ PARAMETROS_CONFIGURACION = {
     # Algoritmos disponibles para ejecución (selección tunable).
     # MOEA/D se expone en tres variantes independientes.
     'algoritmos_disponibles': (
-        'NSGA2', 'NSGA3', 'SPEA2',
-        'MOEAD_TCHE', 'MOEAD_PBI', 'MOEAD_WS',
-        'AGEMOEA2', 'SMSEMOA', 'RVEA'
+        'NSGA2', 'NSGA3', 'UNSGA3', 'SPEA2',
+        'MOEA/D_TCHE', 'MOEA/D_PBI', 'MOEA/D_WS',
+        'AGEMOEA2', 'SMSEMOA', 'RVEA', 'CTAEA'
     ),
 
     # Parámetros tunables editables (se cargan desde user_config.ini).
@@ -250,7 +252,7 @@ MODOS_EVALUACION_DISPONIBLES = tuple(PARAMETROS_CONFIGURACION['modos_evaluacion_
 MODOS_SEMILLA_DISPONIBLES = tuple(PARAMETROS_CONFIGURACION['modos_semilla_disponibles'])
 MODOS_TRANSFORMACION_OBJETIVOS_DISPONIBLES = tuple(PARAMETROS_CONFIGURACION['modos_transformacion_objetivos_disponibles'])
 ALGORITMOS_DISPONIBLES = tuple(PARAMETROS_CONFIGURACION['algoritmos_disponibles'])
-GRAFICAS_DISPONIBLES = ('diagnostico_datos', 'tiempo', 'frentes', 'paralelas', 'correlacion', 'convergencia', 'boxplots', 'violines', 'media_std', 'estadistica', 'mcdm')
+POSTPROCESAMIENTO_DISPONIBLE = ('todas', 'rankings', 'diagnostico_datos', 'tiempo', 'frentes', 'paralelas', 'correlacion', 'convergencia', 'boxplots', 'violines', 'media_std', 'estadistica', 'mcdm', 'metricas_finales', 'metricas_generacionales')
 PARAMS_TUNABLES_DEFECTO = PARAMETROS_CONFIGURACION['tunables']
 CLAVES_TUNABLES_PERMITIDAS = frozenset(PARAMS_TUNABLES_DEFECTO.keys())
 
@@ -315,7 +317,7 @@ class ConfiguracionExperimento:
     
     algoritmos_activos: List[str] = field(default_factory=list)
     opciones_init: List[str] = field(default_factory=list)
-    graficas_activas: List[str] = field(default_factory=lambda: list(GRAFICAS_DISPONIBLES))
+    postprocesamiento_activo: List[str] = field(default_factory=lambda: list(POSTPROCESAMIENTO_DISPONIBLE))
     modo_normalizacion: str = PARAMS_TUNABLES_DEFECTO.get('modo_normalizacion', 'static_dataset_limits')
     modo_evaluacion: str = PARAMS_TUNABLES_DEFECTO.get('modo_evaluacion', 'absoluta')
     modo_semillas: str = PARAMS_TUNABLES_DEFECTO.get('modo_semillas', 'non_deterministic')
@@ -436,10 +438,21 @@ def construir_configuracion(modo: str = 'medium', data_source: str = 'hinds2005'
         if not es_algoritmo_valido(str(nombre_algoritmo)):
             raise ValueError(f"Algoritmo no válido: {nombre_algoritmo}")
 
-    graficas_activas = _asegurar_lista(params.get('graficas_activas', []))
-    for grafica in graficas_activas:
-        if str(grafica).strip().lower() not in GRAFICAS_DISPONIBLES:
-            raise ValueError(f"Gráfica no soportada: {grafica}. Opciones válidas: {GRAFICAS_DISPONIBLES}")
+    postprocesamiento_crudo = _asegurar_lista(params.get('postprocesamiento_activo', []))
+    postprocesamiento_activo = []
+    for accion in postprocesamiento_crudo:
+        g_str = str(accion).strip().lower()
+        if g_str == 'todas':
+            # Add all known options EXCEPT 'metricas_generacionales' to avoid very long runtimes
+            todas = list(POSTPROCESAMIENTO_DISPONIBLE)
+            if 'metricas_generacionales' in todas:
+                todas.remove('metricas_generacionales')
+            postprocesamiento_activo = todas
+            break
+        elif g_str not in POSTPROCESAMIENTO_DISPONIBLE:
+            raise ValueError(f"Opción de postprocesamiento no soportada: {accion}. Opciones válidas: {POSTPROCESAMIENTO_DISPONIBLE} o 'todas'")
+        else:
+            postprocesamiento_activo.append(g_str)
 
     theta_pbi = float(params['theta_moead_pbi'])
     if theta_pbi <= 0:
@@ -517,7 +530,7 @@ def construir_configuracion(modo: str = 'medium', data_source: str = 'hinds2005'
         max_k_holistic=int(params.get('max_k_holistic', 5)),
         algoritmos_activos=algoritmos_activos,
         opciones_init=opciones_init,
-        graficas_activas=[str(g).strip().lower() for g in graficas_activas],
+        postprocesamiento_activo=[str(g).strip().lower() for g in postprocesamiento_activo],
         modo_normalizacion=modo_normalizacion_res,
         modo_evaluacion=modo_evaluacion_res,
         modo_semillas=resolver_modo_semillas(params.get('modo_semillas')),
@@ -528,7 +541,7 @@ def construir_configuracion(modo: str = 'medium', data_source: str = 'hinds2005'
 
 def informar_configuracion(cfg: ConfiguracionExperimento) -> None:
     """Muestra un resumen jerárquico y condicional de user_config.ini en la terminal."""
-    imprimir_encabezado("CONFIGURACIÓN (user_config.ini)")
+    imprimir_encabezado("CONFIGURACIÓN")
     
     # [General]
     logger.info(f"      • [General]")
@@ -562,7 +575,7 @@ def informar_configuracion(cfg: ConfiguracionExperimento) -> None:
     logger.info(f"          - inits: {', '.join(cfg.opciones_init)}")
     
     # [Algoritmos - Específicos] (Condicional)
-    moead_activos = [a for a in cfg.algoritmos_activos if 'MOEAD' in a]
+    moead_activos = [a for a in cfg.algoritmos_activos if 'MOEA/D' in a]
     if 'greedy_ting' in cfg.opciones_init or 'greedy_multi' in cfg.opciones_init or 'greedy_holistic' in cfg.opciones_init or moead_activos:
         logger.info(f"      • [Parámetros Específicos de Método]")
         if 'greedy_ting' in cfg.opciones_init or 'greedy_multi' in cfg.opciones_init or 'greedy_holistic' in cfg.opciones_init:
@@ -577,14 +590,14 @@ def informar_configuracion(cfg: ConfiguracionExperimento) -> None:
             logger.info(f"          - [MOEA/D]")
             logger.info(f"              - moead_vecinos: {cfg.vecinos_moead}")
             logger.info(f"              - moead_prob_vecindad: {cfg.prob_vecindad_moead}")
-            if 'MOEAD_PBI' in cfg.algoritmos_activos:
+            if 'MOEA/D_PBI' in cfg.algoritmos_activos:
                 logger.info(f"              - moead_theta_pbi: {cfg.theta_moead_pbi}")
 
-    # [Reporting]
-    logger.info(f"      • [Gráficos]")
+    # [Postprocesamiento]
+    logger.info(f"      • [Postprocesamiento]")
     logger.info(f"          - report_plot_dpi: {cfg.report_plot_dpi}")
     logger.info(f"          - paso_generacional_metricas: {cfg.paso_generacional_metricas}")
-    logger.info(f"          - graficas_activas: {', '.join(cfg.graficas_activas)}")
+    logger.info(f"          - postprocesamiento_activo: {', '.join(cfg.postprocesamiento_activo)}")
     
     # [Resumen de Objetivos]
     # Solo f3 y f4 son proporcionales (divididos por k); f2 (tolerancia) se mantiene absoluta.
@@ -592,5 +605,5 @@ def informar_configuracion(cfg: ConfiguracionExperimento) -> None:
     logger.info("      • Objetivos de optimización:")
     logger.info(f"          - f1 (Compacidad): Minimizar")
     logger.info(f"          - f2 (Tolerancia): Maximizar")
-    logger.info(f"          - f3 (Hamming Medio{suffix}): Maximizar")
-    logger.info(f"          - f4 (Disimilitud{suffix}): Minimizar")
+    logger.info(f"          - f3 (Disimilitud{suffix}): Maximizar")
+    logger.info(f"          - f4 (Balance{suffix}): Minimizar")

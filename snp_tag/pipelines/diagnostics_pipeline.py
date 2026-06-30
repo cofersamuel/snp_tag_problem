@@ -47,23 +47,23 @@ def ejecutar_pipeline_diagnostico(cfg: ConfiguracionExperimento) -> Tuple[np.nda
     Tuple[np.ndarray, List[str], np.ndarray, List[str], np.ndarray]
         Matriz haplotípica H, IDs de SNPs, posiciones, IDs de haplotipos y matriz de distancias de Hamming (dvals).
     """
-    imprimir_encabezado("DIAGNÓSTICO DE DATOS Y DESEQUILIBRIO (LD)")
+    imprimir_encabezado("DIAGNÓSTICO DEL DATASET")
     
-    imprimir_subseccion("Metadatos y Dimensiones del Dataset", icono="📊️")
+    imprimir_subseccion("Resumen de Datos", icono="📊️")
     H, snp_ids, posiciones, hap_ids = cargar_dataset_objetivo(cfg)
     
     fichero_rel = os.path.relpath(cfg.ruta_hinds2005) if cfg.origen_datos == 'hinds2005' else "N/A"
     logger.info(f"      • N_SNPS={len(snp_ids)} | N_PATRONES={len(hap_ids)} | FICHERO={fichero_rel}")
     
-    imprimir_subseccion("Visualización de la Estructura de Haplotipos", icono="🧬")
-    if 'diagnostico_datos' in cfg.graficas_activas:
+    imprimir_subseccion("Estructura de Haplotipos", icono="🧬")
+    if 'diagnostico_datos' in cfg.postprocesamiento_activo:
         graficar_mapa_calor_haplotipos(H, cfg.carpetas, cfg.modo_ejecucion)
         graficar_bloques_ld(H, cfg.carpetas, cfg.modo_ejecucion, cfg=cfg)
     else:
         logger.info("      • ⚠️  Gráficas de estructura de haplotipos omitidas (user_config.ini).")
     
-    imprimir_subseccion("Análisis de Variabilidad y Frecuencia Alélica", icono="📈")
-    if 'diagnostico_datos' in cfg.graficas_activas:
+    imprimir_subseccion("Variabilidad Alélica", icono="📈")
+    if 'diagnostico_datos' in cfg.postprocesamiento_activo:
         graficar_histograma_alelico(H, cfg.carpetas, cfg.modo_ejecucion)
         graficar_variabilidad_snps(H, cfg.carpetas, cfg.modo_ejecucion)
         graficar_conteo_alelos(H, cfg.carpetas, cfg.modo_ejecucion)
@@ -71,7 +71,7 @@ def ejecutar_pipeline_diagnostico(cfg: ConfiguracionExperimento) -> Tuple[np.nda
         logger.info("      • ⚠️  Gráficas de variabilidad omitidas (user_config.ini).")
     
     dvals = analizar_similitud_genotipica(H)
-    if 'diagnostico_datos' in cfg.graficas_activas:
+    if 'diagnostico_datos' in cfg.postprocesamiento_activo:
         graficar_histograma_hamming(dvals, cfg.carpetas, cfg.modo_ejecucion)
     
     # LD y Veredicto
@@ -80,7 +80,7 @@ def ejecutar_pipeline_diagnostico(cfg: ConfiguracionExperimento) -> Tuple[np.nda
     
     # Generar gráficos LD y capturar rutas
     rutas_ld = []
-    if 'diagnostico_datos' in cfg.graficas_activas:
+    if 'diagnostico_datos' in cfg.postprocesamiento_activo:
         rutas_ld = graficar_ld_detallado(corr_full, corrs, cfg.carpetas, cfg.modo_ejecucion)
     
     # Ejecutar reporte de diagnóstico con enlaces integrados

@@ -23,6 +23,7 @@ import seaborn as sns
 # MÓDULOS LOCALES (snp_tag)
 # =============================================================================
 from snp_tag.constants import METRICS_DISPLAY_NAMES, PREFERRED_ALGORITHMS_ORDER
+from snp_tag.utils.ai_exports import exportar_gemelo_ia_csv
 from snp_tag.utils.terminal import imprimir_grafico_guardado
 
 
@@ -116,7 +117,7 @@ def graficar_evolucion_generacional(df_gen: pd.DataFrame, dir_salida: Optional[s
                 ax.axis('off')
                 continue
                 
-            datos_metric = sub_algo[['generation', 'metodo', m_col]].copy()
+            datos_metric = sub_algo[['generation', 'init', 'crossover', m_col]].copy()
             datos_metric[m_col] = pd.to_numeric(datos_metric[m_col], errors='coerce')
             datos_metric = datos_metric.dropna(subset=[m_col])
             
@@ -124,16 +125,29 @@ def graficar_evolucion_generacional(df_gen: pd.DataFrame, dir_salida: Optional[s
                 ax.axis('off')
                 continue
                 
-            # Ya no se usa estimator='mean' pues los datos ya están filtrados por el run mediano
-            sns.lineplot(
-                data=datos_metric,
-                x='generation',
-                y=m_col,
-                hue='metodo',
-                style='metodo',
-                ax=ax,
-                linewidth=2,
-            )
+            INIT_COLORS = {'greedy_multi': '#1f77b4', 'greedy_ting': '#d62728', 'random_dense': '#2ca02c'}
+            CROSS_STYLES = {'1P': '-', '2P': '--', 'UX': ':', 'HUX': '-.'}
+            CROSS_MARKERS = {'1P': 'o', '2P': 's', 'UX': '^', 'HUX': 'D'}
+            
+            for init_name, color in INIT_COLORS.items():
+                for cross_idx, (cross_name, style) in enumerate(CROSS_STYLES.items()):
+                    subset = datos_metric[(datos_metric['init'] == init_name) & (datos_metric['crossover'] == cross_name)]
+                    if subset.empty:
+                        continue
+                    subset = subset.sort_values('generation')
+                    
+                    # Calcular el markevery desfasado para evitar solapamientos
+                    step = max(1, len(subset) // 10)
+                    offset = int((cross_idx / len(CROSS_STYLES)) * step)
+                    
+                    ax.plot(
+                        subset['generation'], subset[m_col],
+                        color=color, linestyle=style,
+                        marker=CROSS_MARKERS.get(cross_name, 'o'),
+                        markevery=(offset, step),
+                        markersize=5,
+                        linewidth=2.5, alpha=0.85
+                    )
 
             if m_col in limites_y:
                 ax.set_ylim(limites_y[m_col])
@@ -142,35 +156,136 @@ def graficar_evolucion_generacional(df_gen: pd.DataFrame, dir_salida: Optional[s
             ax.set_xlabel('Generación')
             ax.set_ylabel('Valor')
             
-            # Quitar leyenda individual de cada subplot para evitar solapamientos
-            legend = ax.get_legend()
-            if legend is not None:
-                legend.remove()
-
         # Ocultar ejes vacíos si hay menos de 9 métricas
         for j in range(len(metricas), len(axes)):
             axes[j].axis('off')
 
-        # Buscar la primera leyenda disponible para usarla como global
-        handles, labels = [], []
-        for ax in axes:
-            if hasattr(ax, 'get_legend_handles_labels') and ax.get_legend_handles_labels()[0]:
-                handles, labels = ax.get_legend_handles_labels()
-                break
-                
-        if handles and labels:
-            fig.legend(handles, labels, loc='center right', title='Configuración', 
-                       bbox_to_anchor=(1.18, 0.5), fontsize=10, title_fontsize=12)
+        from matplotlib.lines import Line2D
+        INIT_COLORS = {'greedy_multi': '#1f77b4', 'greedy_ting': '#d62728', 'random_dense': '#2ca02c'}
+        CROSS_STYLES = {'1P': '-', '2P': '--', 'UX': ':', 'HUX': '-.'}
+        CROSS_MARKERS = {'1P': 'o', '2P': 's', 'UX': '^', 'HUX': 'D'}
+        
+        legend_elements_init = [
+            Line2D([0], [0], color=c, lw=4, label=i) 
+            for i, c in INIT_COLORS.items() if i in sub_algo['init'].unique()
+        ]
+        legend_elements_cross = [
+            Line2D([0], [0], color='gray', linestyle=s, marker=CROSS_MARKERS.get(c, 'o'), lw=2, markersize=7, label=c) 
+            for c, s in CROSS_STYLES.items() if c in sub_algo['crossover'].unique()
+        ]
+        
+        if legend_elements_init:
+            fig.legend(handles=legend_elements_init, title='Inicialización', loc='center right', bbox_to_anchor=(1.15, 0.6), fontsize=10, title_fontsize=12)
+        if legend_elements_cross:
+            fig.legend(handles=legend_elements_cross, title='Cruce', loc='center right', bbox_to_anchor=(1.15, 0.4), fontsize=10, title_fontsize=12)
 
         fig.suptitle(f'Convergencia Generacional | {algoritmo}', fontsize=16, fontweight='bold')
         fig.tight_layout(rect=[0, 0, 1, 0.96])
 
         if dir_salida and etiqueta_modo:
-            ruta = os.path.join(dir_salida, f'convergencia_{algoritmo.lower()}_{etiqueta_modo}.png')
+            algoritmo_safe = algoritmo.lower().replace('/', '-')
+            ruta = os.path.join(dir_salida, f'convergencia_{algoritmo_safe}_{etiqueta_modo}.png')
             fig.savefig(ruta, dpi=dpi, bbox_inches='tight')
+            exportar_gemelo_ia_csv(ruta, df_datos=sub_algo[['generation', 'metodo'] + [m for m, _ in metricas if m in sub_algo.columns]])
             artefactos.append((ruta, f"Convergencia por métrica - {algoritmo}"))
             if emitir_log:
                 imprimir_grafico_guardado(ruta, f"Convergencia por métrica - {algoritmo}")
+        plt.close(fig)
+
+    return artefactos
+
+def graficar_convergencia_hipervolumen(df_gen: pd.DataFrame, dir_salida: Optional[str] = None, 
+                                     etiqueta_modo: Optional[str] = None, 
+                                     figsize: Tuple[int, int] = (10, 6), dpi: int = 300,
+                                     emitir_log: bool = True) -> List[Tuple[str, str]]:
+    """
+    Genera una figura individual mostrando únicamente la evolución del Hipervolumen 
+    para cada algoritmo.
+    """
+    if 'Hypervolume' not in df_gen.columns:
+        return []
+
+    df_plot = df_gen.copy()
+    df_plot = df_plot.dropna(subset=['algorithm', 'init', 'crossover', 'generation', 'Hypervolume'])
+    if df_plot.empty:
+        return []
+
+    df_plot['generation'] = pd.to_numeric(df_plot['generation'], errors='coerce')
+    df_plot['Hypervolume'] = pd.to_numeric(df_plot['Hypervolume'], errors='coerce')
+    df_plot = df_plot.dropna(subset=['generation', 'Hypervolume'])
+
+    g_min, g_max = float(df_plot['generation'].min()), float(df_plot['generation'].max())
+    y_min, y_max = float(df_plot['Hypervolume'].min()), float(df_plot['Hypervolume'].max())
+    pad = (y_max - y_min) * 0.05 if y_max > y_min else 1.0
+
+    algoritmos_presentes = sorted(df_plot['algorithm'].dropna().unique().tolist())
+    algoritmos_ordenados = [a for a in PREFERRED_ALGORITHMS_ORDER if a in algoritmos_presentes]
+    algoritmos_ordenados.extend([a for a in algoritmos_presentes if a not in algoritmos_ordenados])
+
+    sns.set_theme(style='whitegrid')
+    artefactos = []
+    
+    INIT_COLORS = {'greedy_multi': '#1f77b4', 'greedy_ting': '#d62728', 'random_dense': '#2ca02c'}
+    CROSS_STYLES = {'1P': '-', '2P': '--', 'UX': ':', 'HUX': '-.'}
+    CROSS_MARKERS = {'1P': 'o', '2P': 's', 'UX': '^', 'HUX': 'D'}
+
+    for algoritmo in algoritmos_ordenados:
+        sub_algo = df_plot[df_plot['algorithm'] == algoritmo].copy()
+        if sub_algo.empty:
+            continue
+            
+        fig, ax = plt.subplots(figsize=figsize)
+        
+        for init_name, color in INIT_COLORS.items():
+            for cross_idx, (cross_name, style) in enumerate(CROSS_STYLES.items()):
+                subset = sub_algo[(sub_algo['init'] == init_name) & (sub_algo['crossover'] == cross_name)]
+                if subset.empty:
+                    continue
+                subset = subset.sort_values('generation')
+                
+                # Calcular el markevery desfasado para evitar solapamientos
+                step = max(1, len(subset) // 10)
+                offset = int((cross_idx / len(CROSS_STYLES)) * step)
+                
+                ax.plot(
+                    subset['generation'], subset['Hypervolume'],
+                    color=color, linestyle=style, 
+                    marker=CROSS_MARKERS.get(cross_name, 'o'),
+                    markevery=(offset, step),
+                    markersize=6,
+                    linewidth=2.5, alpha=0.85
+                )
+
+        ax.set_ylim(y_min - pad, y_max + pad)
+        ax.set_xlim(g_min, g_max)
+        ax.set_title(f'Evolución del Hipervolumen - {algoritmo}', fontsize=14, fontweight='bold')
+        ax.set_xlabel('Generación', fontsize=12)
+        ax.set_ylabel('Hipervolumen', fontsize=12)
+
+        from matplotlib.lines import Line2D
+        legend_elements_init = [
+            Line2D([0], [0], color=c, lw=4, label=i) 
+            for i, c in INIT_COLORS.items() if i in sub_algo['init'].unique()
+        ]
+        legend_elements_cross = [
+            Line2D([0], [0], color='gray', linestyle=s, marker=CROSS_MARKERS.get(c, 'o'), lw=2, markersize=8, label=c) 
+            for c, s in CROSS_STYLES.items() if c in sub_algo['crossover'].unique()
+        ]
+        
+        if legend_elements_init:
+            leg1 = fig.legend(handles=legend_elements_init, title='Inicialización', loc='center left', bbox_to_anchor=(1.02, 0.6), fontsize=10, title_fontsize=12)
+        if legend_elements_cross:
+            fig.legend(handles=legend_elements_cross, title='Cruce', loc='center left', bbox_to_anchor=(1.02, 0.4), fontsize=10, title_fontsize=12)
+
+        fig.tight_layout(rect=[0, 0, 0.9, 1])
+
+        if dir_salida and etiqueta_modo:
+            algoritmo_safe = algoritmo.lower().replace('/', '-')
+            ruta = os.path.join(dir_salida, f'convergencia_hv_{algoritmo_safe}_{etiqueta_modo}.png')
+            fig.savefig(ruta, dpi=dpi, bbox_inches='tight')
+            artefactos.append((ruta, f"Convergencia Hipervolumen - {algoritmo}"))
+            if emitir_log:
+                imprimir_grafico_guardado(ruta, f"Convergencia Hipervolumen - {algoritmo}")
         plt.close(fig)
 
     return artefactos

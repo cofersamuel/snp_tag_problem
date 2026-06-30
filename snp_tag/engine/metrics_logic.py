@@ -32,14 +32,11 @@ from snp_tag.config import (cargar_params_tunables_desde_ini,
                             resolver_modo_evaluacion,
                             resolver_modo_normalizacion)
 
-# Cargar el modo de evaluación desde la configuración una sola vez
-_PARAMS_TUNABLES_GLOBALES = cargar_params_tunables_desde_ini()
-_MODO_EVALUACION_GLOBAL = resolver_modo_evaluacion(_PARAMS_TUNABLES_GLOBALES.get('modo_evaluacion', 'absoluta'))
-
 
 def decodificar_objetivos_reales(
     F_crudo: np.ndarray,
     modo_transformacion_objetivos: str = 'neg',
+    modo_evaluacion: str = 'absoluta',
     epsilon: float = 1e-9,
 ):
     """
@@ -60,25 +57,25 @@ def decodificar_objetivos_reales(
         min_cobertura = -F[:, 1]
         hamming_prom_real = -F[:, 2]
 
-    if _MODO_EVALUACION_GLOBAL == 'proportional':
-        # Solo la distancia Hamming necesita deshacerse (sigue dividida por k en la evaluación).
-        # La tolerancia ya se almacena en valor absoluto; no requiere multiplicar por k.
-        hamming_prom_real = hamming_prom_real * F[:, 0]
-        
-    tolerancia_real = min_cobertura - 1.0
+    # Restaurar métricas físicas reales si se corrió en modo proporcional
+    compacidad = F[:, 0]
+    balance_var = F[:, 3]
+
+    tolerancia_real = min_cobertura
 
     return {
-        'compacidad': F[:, 0],
+        'compacidad': compacidad,
         'tolerancia_real': tolerancia_real,
         'min_cobertura': min_cobertura,
         'hamming_prom_real': hamming_prom_real,
-        'balance_var': F[:, 3],
+        'balance_var': balance_var,
     }
 
 
 def mascara_soluciones_factibles(
     F_crudo: np.ndarray,
     modo_transformacion_objetivos: str = 'neg',
+    modo_evaluacion: str = 'absoluta',
     umbral_min_cobertura: float = 1.0,
     epsilon: float = 1e-9,
 ) -> np.ndarray:
@@ -86,6 +83,7 @@ def mascara_soluciones_factibles(
     objetivos = decodificar_objetivos_reales(
         F_crudo,
         modo_transformacion_objetivos=modo_transformacion_objetivos,
+        modo_evaluacion=modo_evaluacion,
         epsilon=epsilon,
     )
     return objetivos['min_cobertura'] >= (umbral_min_cobertura - epsilon)
@@ -94,6 +92,7 @@ def mascara_soluciones_factibles(
 def filtrar_soluciones_factibles(
     F_crudo: np.ndarray,
     modo_transformacion_objetivos: str = 'neg',
+    modo_evaluacion: str = 'absoluta',
     umbral_min_cobertura: float = 1.0,
     epsilon: float = 1e-9,
 ) -> np.ndarray:
@@ -106,12 +105,13 @@ def filtrar_soluciones_factibles(
     mask = mascara_soluciones_factibles(
         F,
         modo_transformacion_objetivos=modo_transformacion_objetivos,
+        modo_evaluacion=modo_evaluacion,
         umbral_min_cobertura=umbral_min_cobertura,
         epsilon=epsilon,
     )
     return F[mask]
 
-def calcular_puntos_ideales_nadires_globales(resultados_ejecucion, modo_transformacion_objetivos: str = 'neg'):
+def calcular_puntos_ideales_nadires_globales(resultados_ejecucion, modo_transformacion_objetivos: str = 'neg', modo_evaluacion: str = 'absoluta'):
     """
     Determina los límites globales (ideal y nadir) a partir de todos los frentes.
     """
@@ -122,6 +122,7 @@ def calcular_puntos_ideales_nadires_globales(resultados_ejecucion, modo_transfor
         F_factibles = filtrar_soluciones_factibles(
             rr.F_final,
             modo_transformacion_objetivos=modo_transformacion_objetivos,
+            modo_evaluacion=modo_evaluacion,
         )
         if len(F_factibles) > 0:
             frentes_finales.append(F_factibles)
@@ -155,11 +156,11 @@ def obtener_referencias_estaticas_dataset(
     L = float(max(1, n_snps_total))
     if hamming_pares is not None and len(hamming_pares) > 0:
         max_min_cobertura = float(hamming_pares.min())
-        max_tol = max_min_cobertura - 1.0
+        max_tol = max_min_cobertura
         max_ham = float(hamming_pares.mean())
         max_var = float(np.var(hamming_pares)) if len(hamming_pares) > 1 else (L**2)/4.0
     else:
-        max_min_cobertura, max_tol, max_ham, max_var = L, L - 1.0, L, (L**2)/4.0
+        max_min_cobertura, max_tol, max_ham, max_var = L, L, L, (L**2)/4.0
 
     is_prop = (modo_normalizacion == 'static_proportional_limits')
     if is_prop:
@@ -199,17 +200,24 @@ def calcular_metricas_convergencia(F_norm):
     minsum_val = float(F_norm.sum(axis=1).min())
     return range_val, summin_val, minsum_val
 
-def calcular_metricas_crudas(F_crudo, n_snps_total: int = 1032, modo_transformacion_objetivos: str = 'neg'):
+def calcular_metricas_crudas(F_crudo, n_snps_total: int = 1032, modo_transformacion_objetivos: str = 'neg', modo_evaluacion: str = 'absoluta'):
     """
     Extrae indicadores físicos en escala real (independientes de la normalización).
     """
     objetivos_reales = decodificar_objetivos_reales(
         F_crudo,
         modo_transformacion_objetivos=modo_transformacion_objetivos,
+        modo_evaluacion=modo_evaluacion,
     )
     compacidad = objetivos_reales['compacidad']
     tolerancia_real = objetivos_reales['tolerancia_real']
     hamming_prom_real = objetivos_reales['hamming_prom_real']
+    
+    if str(modo_evaluacion).strip().lower() == 'proportional':
+        # Restauramos su magnitud absoluta exclusivamente para la exportación de esta métrica
+        hamming_absoluto = hamming_prom_real * compacidad
+    else:
+        hamming_absoluto = hamming_prom_real
     
     seguro_comp = np.where(compacidad <= 0, np.nan, compacidad)
     tasa_tol = tolerancia_real / seguro_comp
@@ -217,8 +225,7 @@ def calcular_metricas_crudas(F_crudo, n_snps_total: int = 1032, modo_transformac
     return {
         'MaxToleranceRate': float(np.nanmax(tasa_tol)),
         'AvgToleranceRate': float(np.nanmean(tasa_tol)),
-        'AvgHammingDistance': float(np.nanmean(hamming_prom_real)),
-        'avg_h_norm': float(np.nanmean(hamming_prom_real)) / max(1, n_snps_total)
+        'AvgHammingDistance': float(np.nanmean(hamming_absoluto))
     }
 
 # Decorador de caché que almacena hasta 8 retornos para evitar instanciar repetidamente el indicador para las mismas dimensiones
@@ -247,7 +254,7 @@ def calcular_hipervolumen(F_norm):
     return float(hv(F_norm))
 
 
-def _calcular_referencias_por_algoritmo(resultados_ejecucion, modo_transformacion_objetivos: str = 'neg'):
+def _calcular_referencias_por_algoritmo(resultados_ejecucion, modo_transformacion_objetivos: str = 'neg', modo_evaluacion: str = 'absoluta'):
     """Calcula referencias ideal/denominador por algoritmo."""
     grupos = defaultdict(list)
     for rr in resultados_ejecucion:
@@ -258,6 +265,7 @@ def _calcular_referencias_por_algoritmo(resultados_ejecucion, modo_transformacio
         ideal_a, nadir_a = calcular_puntos_ideales_nadires_globales(
             rrs,
             modo_transformacion_objetivos=modo_transformacion_objetivos,
+            modo_evaluacion=modo_evaluacion,
         )
         refs[algoritmo] = (ideal_a, nadir_a - ideal_a + 1e-9)
     return refs
@@ -269,6 +277,7 @@ def _calcular_referencias_por_modo(
     n_snps_total=1032,
     hamming_pares=None,
     modo_transformacion_objetivos='neg',
+    modo_evaluacion='absoluta',
 ):
     """Devuelve referencias para Range/SumMin/MinSum según el modo configurado."""
     modo = resolver_modo_normalizacion(modo_normalizacion)
@@ -276,6 +285,7 @@ def _calcular_referencias_por_modo(
         return _calcular_referencias_por_algoritmo(
             resultados_ejecucion,
             modo_transformacion_objetivos=modo_transformacion_objetivos,
+            modo_evaluacion=modo_evaluacion,
         )
 
     if modo in ('static_dataset_limits', 'static_proportional_limits'):
@@ -291,14 +301,15 @@ def _calcular_referencias_por_modo(
     ideal_g, nadir_g = calcular_puntos_ideales_nadires_globales(
         resultados_ejecucion,
         modo_transformacion_objetivos=modo_transformacion_objetivos,
+        modo_evaluacion=modo_evaluacion,
     )
     denom_g = nadir_g - ideal_g + 1e-9
     algoritmos = sorted({str(rr.algoritmo) for rr in resultados_ejecucion})
     return {alg: (ideal_g, denom_g) for alg in algoritmos}
 
 
-def extraer_frente_referencia_empirico(resultados_ejecucion, modo_transformacion_objetivos='neg'):
-    """Construye el Frente de Referencia Empírico combinando los frentes finales de todos los algoritmos."""
+def extraer_frente_referencia_empirico(resultados_ejecucion, modo_transformacion_objetivos='neg', modo_evaluacion='absoluta'):
+    """Construye el Frente de Referencia Empírico de forma incremental (por lotes) para evitar picos masivos de RAM."""
     todos_frentes = []
     for rr in resultados_ejecucion:
         if rr.F_final is None or len(rr.F_final) == 0:
@@ -306,25 +317,39 @@ def extraer_frente_referencia_empirico(resultados_ejecucion, modo_transformacion
         F_factibles = filtrar_soluciones_factibles(
             rr.F_final,
             modo_transformacion_objetivos=modo_transformacion_objetivos,
+            modo_evaluacion=modo_evaluacion,
         )
         if len(F_factibles) > 0:
+            if len(F_factibles) > 1:
+                F_factibles = np.unique(F_factibles, axis=0)
             todos_frentes.append(F_factibles)
     
     if not todos_frentes:
         return None
 
-    F_global = np.vstack(todos_frentes)
-    if len(F_global) > 1:
-        F_global = np.unique(F_global, axis=0)
-    
     nds = NonDominatedSorting()
-    fronts = nds.do(F_global, only_non_dominated_front=True)
-    return F_global[fronts[0]]
+    lote_size = 50
+    F_actual = None
+    
+    for i in range(0, len(todos_frentes), lote_size):
+        bloque = todos_frentes[i:i+lote_size]
+        if F_actual is not None:
+            bloque.append(F_actual)
+            
+        F_combinado = np.vstack(bloque)
+        if len(F_combinado) > 1:
+            F_combinado = np.unique(F_combinado, axis=0)
+            
+        fronts = nds.do(F_combinado, only_non_dominated_front=True)
+        F_actual = F_combinado[fronts]
+        
+    return F_actual
 
 def evaluar_metricas_finales(resultados_ejecucion, n_snps_total=1032, 
                              modo_normalizacion='static_dataset_limits',
                              hamming_pares=None,
-                             modo_transformacion_objetivos='neg'):
+                             modo_transformacion_objetivos='neg',
+                             modo_evaluacion='absoluta'):
     """
     Evalúa todas las métricas de rendimiento para un conjunto de resultados de ejecución.
     """
@@ -335,6 +360,7 @@ def evaluar_metricas_finales(resultados_ejecucion, n_snps_total=1032,
     ideal_g, nadir_g = calcular_puntos_ideales_nadires_globales(
         resultados_ejecucion,
         modo_transformacion_objetivos=modo_transformacion_objetivos,
+        modo_evaluacion=modo_evaluacion,
     )
     denom_g = nadir_g - ideal_g + 1e-9
     refs_algo = _calcular_referencias_por_modo(
@@ -343,11 +369,13 @@ def evaluar_metricas_finales(resultados_ejecucion, n_snps_total=1032,
         n_snps_total=n_snps_total,
         hamming_pares=hamming_pares,
         modo_transformacion_objetivos=modo_transformacion_objetivos,
+        modo_evaluacion=modo_evaluacion,
     )
 
     F_referencia_global = extraer_frente_referencia_empirico(
         resultados_ejecucion, 
-        modo_transformacion_objetivos=modo_transformacion_objetivos
+        modo_transformacion_objetivos=modo_transformacion_objetivos,
+        modo_evaluacion=modo_evaluacion,
     )
     igd_plus_metric = None
     gd_plus_metric = None
@@ -373,6 +401,7 @@ def evaluar_metricas_finales(resultados_ejecucion, n_snps_total=1032,
         F_crudo = filtrar_soluciones_factibles(
             F_total,
             modo_transformacion_objetivos=modo_transformacion_objetivos,
+            modo_evaluacion=modo_evaluacion,
         )
         if len(F_crudo) > 1:
             # Evita frentes con puntos repetidos (muy común en colapsos de MOEA/D)
@@ -400,6 +429,7 @@ def evaluar_metricas_finales(resultados_ejecucion, n_snps_total=1032,
             F_crudo,
             n_snps_total,
             modo_transformacion_objetivos=modo_transformacion_objetivos,
+            modo_evaluacion=modo_evaluacion,
         )
         
         filas.append({
@@ -433,22 +463,22 @@ def _construir_filas_generacionales_por_ejecucion(
     n_snps_total=1032,
     modo_transformacion_objetivos='neg',
     paso_generacional_metricas=10,
+    modo_evaluacion='absoluta',
 ):
     """Construye filas de métricas por generación para una ejecución individual."""
     filas = []
-    historial = getattr(rr, 'historial_F', None)
-    if historial is None or len(historial) == 0:
+    ruta = getattr(rr, 'ruta_checkpoint', None)
+    if not ruta or not os.path.exists(ruta):
         return filas
 
-    ultimo_idx = len(historial) - 1
-    for idx_gen, F_crudo in enumerate(historial):
-        es_primero = (idx_gen == 0)
-        es_ultimo = (idx_gen == ultimo_idx)
-        es_paso = (paso_generacional_metricas > 0) and (idx_gen % paso_generacional_metricas == 0)
-        
-        if not (es_primero or es_ultimo or es_paso):
-            continue
+    try:
+        with np.load(ruta) as data:
+            indices = data['gen_indices']
+            matrices = [data[f'hist_F_{i}'] for i in range(len(indices))]
+    except Exception:
+        return filas
 
+    for idx_gen, F_crudo in zip(indices, matrices):
         if F_crudo is None or len(F_crudo) == 0:
             continue
 
@@ -459,6 +489,7 @@ def _construir_filas_generacionales_por_ejecucion(
         F_crudo = filtrar_soluciones_factibles(
             F_crudo,
             modo_transformacion_objetivos=modo_transformacion_objetivos,
+            modo_evaluacion=modo_evaluacion,
         )
         if len(F_crudo) > 1:
             F_crudo = np.unique(np.asarray(F_crudo, dtype=float), axis=0)
@@ -478,6 +509,7 @@ def _construir_filas_generacionales_por_ejecucion(
             F_crudo,
             n_snps_total,
             modo_transformacion_objetivos=modo_transformacion_objetivos,
+            modo_evaluacion=modo_evaluacion,
         )
 
         filas.append({
@@ -501,7 +533,7 @@ def _construir_filas_generacionales_por_ejecucion(
 
 def _evaluar_metrica_generacional_individual(args):
     """Wrapper picklable para paralelizar métricas generacionales."""
-    rr, ideal_algo, denom_algo, ideal_global, denom_global, igd_metric, gd_metric, n_snps_total, modo_transformacion_objetivos, paso_generacional_metricas = args
+    rr, ideal_algo, denom_algo, ideal_global, denom_global, igd_metric, gd_metric, n_snps_total, modo_transformacion_objetivos, paso_generacional_metricas, modo_evaluacion = args
     t0 = time.time()
     df = pd.DataFrame(
         _construir_filas_generacionales_por_ejecucion(
@@ -515,6 +547,7 @@ def _evaluar_metrica_generacional_individual(args):
             n_snps_total=n_snps_total,
             modo_transformacion_objetivos=modo_transformacion_objetivos,
             paso_generacional_metricas=paso_generacional_metricas,
+            modo_evaluacion=modo_evaluacion,
         )
     )
     return df, time.time() - t0
@@ -524,7 +557,8 @@ def construir_metricas_generacionales(resultados_ejecucion, ideal_global, nadir_
                                     modo_normalizacion='static_dataset_limits',
                                     hamming_pares=None,
                                     modo_transformacion_objetivos='neg',
-                                    paso_generacional_metricas=10):
+                                    paso_generacional_metricas=10,
+                                    modo_evaluacion='absoluta'):
     """
     Procesa el historial de cada réplica para extraer métricas por generación.
     """
@@ -539,15 +573,17 @@ def construir_metricas_generacionales(resultados_ejecucion, ideal_global, nadir_
         n_snps_total=n_snps_total,
         hamming_pares=hamming_pares,
         modo_transformacion_objetivos=modo_transformacion_objetivos,
+        modo_evaluacion=modo_evaluacion,
     )
 
-    ejecuciones_validas = [rr for rr in resultados_ejecucion if getattr(rr, 'historial_F', None)]
+    ejecuciones_validas = [rr for rr in resultados_ejecucion if getattr(rr, 'ruta_checkpoint', None) is not None]
     if not ejecuciones_validas:
         return pd.DataFrame()
 
     F_referencia_global = extraer_frente_referencia_empirico(
         resultados_ejecucion, 
-        modo_transformacion_objetivos=modo_transformacion_objetivos
+        modo_transformacion_objetivos=modo_transformacion_objetivos,
+        modo_evaluacion=modo_evaluacion,
     )
     igd_plus_metric = None
     gd_plus_metric = None
@@ -565,38 +601,43 @@ def construir_metricas_generacionales(resultados_ejecucion, ideal_global, nadir_
 
     completadas = 0
     tablas = []
+    batch_size = 50
 
-    with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
-        future_to_rr = {
-            executor.submit(
-                _evaluar_metrica_generacional_individual,
-                (
-                    rr,
-                    refs_algo[str(rr.algoritmo)][0],
-                    refs_algo[str(rr.algoritmo)][1],
-                    ideal_global,
-                    denom_global,
-                    igd_plus_metric,
-                    gd_plus_metric,
-                    n_snps_total,
-                    modo_transformacion_objetivos,
-                    paso_generacional_metricas,
-                ),
-            ): rr for rr in ejecuciones_validas
-        }
+    for i in range(0, total_ejecuciones, batch_size):
+        lote = ejecuciones_validas[i:i + batch_size]
+        with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
+            future_to_rr = {
+                executor.submit(
+                    _evaluar_metrica_generacional_individual,
+                    (
+                        rr,
+                        refs_algo[str(rr.algoritmo)][0],
+                        refs_algo[str(rr.algoritmo)][1],
+                        ideal_global,
+                        denom_global,
+                        igd_plus_metric,
+                        gd_plus_metric,
+                        n_snps_total,
+                        modo_transformacion_objetivos,
+                        paso_generacional_metricas,
+                        modo_evaluacion,
+                    ),
+                ): rr for rr in lote
+            }
 
-        for future in concurrent.futures.as_completed(future_to_rr):
-            rr = future_to_rr[future]
-            try:
-                df_res, duracion_ind = future.result()
-                tablas.append(df_res)
-            except Exception as e:
-                print(f"      • ⚠️  Error en métricas generacionales [{rr.algoritmo}-{rr.inicializacion}-{rr.crossover}] ejecución {rr.replica}: {e}")
-                continue
+            for future in concurrent.futures.as_completed(future_to_rr):
+                rr = future_to_rr[future]
+                try:
+                    df_res, duracion_ind = future.result()
+                    if not df_res.empty:
+                        tablas.append(df_res)
+                except Exception as e:
+                    print(f"      • ⚠️  Error en métricas generacionales [{rr.algoritmo}-{rr.inicializacion}-{rr.crossover}] ejecución {rr.replica}: {e}")
+                    continue
 
-            completadas += 1
-            total_config = conteos_replica[(str(rr.algoritmo), str(rr.inicializacion), str(rr.crossover))]
-            print(f"      • [Progreso: {completadas:>{ancho}}/{total_ejecuciones}] | [{rr.algoritmo}-{rr.inicializacion}-{rr.crossover}] ejecución {rr.replica}/{total_config} ({duracion_ind:.1f} s)")
+                completadas += 1
+                total_config = conteos_replica[(str(rr.algoritmo), str(rr.inicializacion), str(rr.crossover))]
+                print(f"      • [Progreso: {completadas:>{ancho}}/{total_ejecuciones}] | [{rr.algoritmo}-{rr.inicializacion}-{rr.crossover}] ejecución {rr.replica}/{total_config} ({duracion_ind:.1f} s)")
 
     if not tablas:
         return pd.DataFrame()

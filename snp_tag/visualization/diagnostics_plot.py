@@ -22,6 +22,7 @@ import seaborn as sns
 # MÓDULOS LOCALES (snp_tag)
 # =============================================================================
 from snp_tag.engine.diagnostics_logic import detectar_bloques_ld
+from snp_tag.utils.ai_exports import exportar_gemelo_ia_csv
 from snp_tag.utils.terminal import imprimir_grafico_guardado
 
 
@@ -49,6 +50,7 @@ def graficar_mapa_calor_haplotipos(H: np.ndarray, carpetas: Dict[str, str], etiq
     plt.tight_layout()
     ruta = os.path.join(carpetas['datos'], f'heatmap_haplotipos_{etiqueta_modo}.png')
     plt.savefig(ruta, dpi=dpi)
+    exportar_gemelo_ia_csv(ruta, array_datos=H)
     imprimir_grafico_guardado(ruta, "Mapa de calor de haplotipos")
     plt.close()
 
@@ -75,6 +77,7 @@ def graficar_histograma_hamming(dvals: np.ndarray, carpetas: Dict[str, str], eti
     plt.tight_layout()
     ruta = os.path.join(carpetas['datos'], f'histograma_hamming_{etiqueta_modo}.png')
     plt.savefig(ruta, dpi=dpi)
+    exportar_gemelo_ia_csv(ruta, array_datos=dvals.reshape(-1, 1), columnas=['hamming_distance'])
     imprimir_grafico_guardado(ruta, "Distribución de distancias de Hamming")
     plt.close()
 
@@ -103,6 +106,7 @@ def graficar_variabilidad_snps(H: np.ndarray, carpetas: Dict[str, str], etiqueta
     plt.tight_layout()
     ruta = os.path.join(carpetas['datos'], f'variabilidad_snps_{etiqueta_modo}.png')
     plt.savefig(ruta, dpi=dpi)
+    exportar_gemelo_ia_csv(ruta, array_datos=desvios.reshape(-1, 1), columnas=['std_por_snp'])
     imprimir_grafico_guardado(ruta, "Variabilidad por SNP")
     plt.close()
 
@@ -130,6 +134,7 @@ def graficar_conteo_alelos(H: np.ndarray, carpetas: Dict[str, str], etiqueta_mod
     plt.tight_layout()
     ruta = os.path.join(carpetas['datos'], f'conteo_alelos_{etiqueta_modo}.png')
     plt.savefig(ruta, dpi=dpi)
+    exportar_gemelo_ia_csv(ruta, array_datos=conteos.reshape(-1, 1), columnas=['conteo_alelos_1'])
     imprimir_grafico_guardado(ruta, "Alelos dominantes por haplotipo")
     plt.close()
 
@@ -157,6 +162,7 @@ def graficar_histograma_alelico(H: np.ndarray, carpetas: Dict[str, str], etiquet
     plt.tight_layout()
     ruta = os.path.join(carpetas['datos'], f'histograma_alelico_{etiqueta_modo}.png')
     plt.savefig(ruta, dpi=dpi)
+    exportar_gemelo_ia_csv(ruta, array_datos=freqs.reshape(-1, 1), columnas=['frecuencia_alelo_1'])
     imprimir_grafico_guardado(ruta, "Distribución de frecuencia alélica")
     plt.close()
 
@@ -189,6 +195,7 @@ def graficar_ld_detallado(corr_full: np.ndarray, corrs: np.ndarray, carpetas: Di
     plt.tight_layout()
     ruta_hm = os.path.join(carpetas['datos'], f'heatmap_correlacion_completa_{etiqueta_modo}.png')
     plt.savefig(ruta_hm, dpi=dpi)
+    exportar_gemelo_ia_csv(ruta_hm, array_datos=np.abs(corr_full))
     
     # 2. Histograma
     plt.figure(figsize=(10, 6))
@@ -199,6 +206,7 @@ def graficar_ld_detallado(corr_full: np.ndarray, corrs: np.ndarray, carpetas: Di
     plt.tight_layout()
     ruta_hist = os.path.join(carpetas['datos'], f'histograma_correlaciones_ld_{etiqueta_modo}.png')
     plt.savefig(ruta_hist, dpi=dpi)
+    exportar_gemelo_ia_csv(ruta_hist, array_datos=np.abs(corrs).reshape(-1, 1), columnas=['abs_correlation'])
     
     # 3. CDF
     abs_c = np.sort(np.abs(corrs))
@@ -212,6 +220,7 @@ def graficar_ld_detallado(corr_full: np.ndarray, corrs: np.ndarray, carpetas: Di
     plt.tight_layout()
     ruta_cdf = os.path.join(carpetas['datos'], f'cdf_correlacion_absoluta_ld_{etiqueta_modo}.png')
     plt.savefig(ruta_cdf, dpi=dpi)
+    exportar_gemelo_ia_csv(ruta_cdf, array_datos=np.column_stack([abs_c, y]), columnas=['abs_correlation', 'cumulative_probability'])
     plt.close('all')
     
     return {
@@ -293,5 +302,6 @@ def graficar_bloques_ld(H: np.ndarray, carpetas: Dict[str, str], etiqueta_modo: 
     
     ruta = os.path.join(carpetas['datos'], f'bloques_ld_haplotipos_{etiqueta_modo}.png')
     plt.savefig(ruta, dpi=dpi)
+    exportar_gemelo_ia_csv(ruta, array_datos=H_ord)
     imprimir_grafico_guardado(ruta, f"Estructura LD ({n_bloques} bloques)")
     plt.close()

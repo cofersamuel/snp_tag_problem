@@ -1,0 +1,481 @@
+\chapter{Resultados y Discusión}
+
+\section{Experimento 1: Objetivos Absolutos}
+
+En esta sección se presentan y discuten los resultados obtenidos en el primer experimento. En él, se evalúa el comportamiento de los EAs bajo la formulación absoluta de la búsqueda de etiquetas SNP, optimizando los cuatro objetivos matemáticos en sus escalas físicas originales. Con el fin de estructurar el análisis, el estudio se desglosa en tres subapartados: el análisis de los frentes de Pareto agregados, la evaluación estadística individual de las métricas de rendimiento y el análisis de la convergencia generacional de las poblaciones.
+
+\subsection{Frentes de Pareto}
+\label{sec:frentes_pareto_abs}
+
+En esta subsección se expone el análisis visual del frente de Pareto agregado para cada algoritmo evaluado. 
+
+Como aclaración inicial, debe señalarse la ausencia del algoritmo MOEA/D en los resultados. Aunque este algoritmo basado en descomposición fue contemplado en el diseño experimental, la implementación interna de la librería \texttt{pymoo} \cite{pymoo} carece de soporte nativo para el manejo de restricciones durante la ejecución de su versión base. Si bien existen variantes en la literatura científica que dotan a MOEA/D de mecanismos para gestionar este tipo de espacios \cite{jan2010moea}, la implementación oficial del marco de trabajo utilizado resulta incompatible con la inecuación matemática ($G(X) \le 0$) impuesta para garantizar la factibilidad biológica del problema de selección de etiquetas SNP \cite{bafna2003haplotypes}. Por consiguiente, este algoritmo debió ser excluido de las simulaciones.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{"../../exp/full_31/ABS 20260625T071958/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_agregados_nsga2_full_31.png"}
+    \caption[Frente de Pareto agregado: NSGA-II]{Frente de Pareto agregado generado por el algoritmo NSGA-II. Tamaño de la población del frente: 2637 soluciones.}
+    \label{fig:pareto_nsga2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{"../../exp/full_31/ABS 20260625T071958/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_agregados_spea2_full_31.png"}
+    \caption[Frente de Pareto agregado: SPEA2]{Frente de Pareto agregado generado por el algoritmo SPEA2. Tamaño de la población del frente: 2640 soluciones.}
+    \label{fig:pareto_spea2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{"../../exp/full_31/ABS 20260625T071958/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_agregados_nsga3_full_31.png"}
+    \caption[Frente de Pareto agregado: NSGA-III]{Frente de Pareto agregado generado por el algoritmo NSGA-III. Tamaño de la población del frente: 308 soluciones.}
+    \label{fig:pareto_nsga3}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{"../../exp/full_31/ABS 20260625T071958/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_agregados_unsga3_full_31.png"}
+    \caption[Frente de Pareto agregado: U-NSGA-III]{Frente de Pareto agregado generado por el algoritmo U-NSGA-III. Tamaño de la población del frente: 303 soluciones.}
+    \label{fig:pareto_unsga3}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{"../../exp/full_31/ABS 20260625T071958/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_agregados_rvea_full_31.png"}
+    \caption[Frente de Pareto agregado: RVEA]{Frente de Pareto agregado generado por el algoritmo RVEA. Tamaño de la población del frente: 292 soluciones.}
+    \label{fig:pareto_rvea}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{"../../exp/full_31/ABS 20260625T071958/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_agregados_smsemoa_full_31.png"}
+    \caption[Frente de Pareto agregado: SMS-EMOA]{Frente de Pareto agregado generado por el algoritmo SMS-EMOA. Tamaño de la población del frente: 2359 soluciones.}
+    \label{fig:pareto_smsemoa}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{"../../exp/full_31/ABS 20260625T071958/2_comparativa/1_frentes/frentes_pareto/frentes_pareto_agregados_agemoea2_full_31.png"}
+    \caption[Frente de Pareto agregado: AGE-MOEA-II]{Frente de Pareto agregado generado por el algoritmo AGE-MOEA-II. Tamaño de la población del frente: 2640 soluciones.}
+    \label{fig:pareto_agemoea2}
+\end{figure}
+
+El análisis de los frentes de Pareto agregados revela una clara jerarquía en el impacto de los distintos componentes sobre el espacio de soluciones del problema de selección de etiquetas SNP.
+
+En primer lugar, se observa que las estrategias de inicialización poblacional determinan la región del espacio objetivo hacia la que converge cada frente de manera predominante, evidenciando una correlación directa entre los cuatro objetivos matemáticos evaluados. La estrategia \textit{greedy\_multi} concentra las soluciones en la zona de máxima compacidad (generando soluciones con un número reducido de ~30 SNP de media), aunque a costa de minimizar simultáneamente los niveles del resto de objetivos (de media): la tolerancia se desploma a ~6 fallos, la disimilitud a ~15 y el balance a ~10. Esta configuración restringe la diversidad de la búsqueda y aproxima a los individuos al límite estricto de la factibilidad biológica ($f_2 = 1$). Por el contrario, la inicialización \textit{random\_dense} orienta la búsqueda hacia el extremo opuesto del hiperespacio, hallando soluciones con valores medios muy elevados en tolerancia (~73), disimilitud (~133) y balance (~446), pero penalizando fuertemente la compacidad (requiriendo la selección de una cantidad excesiva de ~345 SNP). Finalmente, la estrategia \textit{greedy\_ting} actúa como un punto de compromiso, compensando el rendimiento conjunto en los cuatro objetivos matemáticos (compacidad de ~232 SNP, tolerancia de ~44, disimilitud de ~89 y balance de ~260) y permitiendo explorar la zona central del frente de Pareto.
+
+En segundo lugar, el rendimiento algorítmico presenta variaciones evidentes según el paradigma utilizado. Los algoritmos evolutivos basados en dominancia de Pareto (NSGA-II y SPEA2) y en geometría de proximidad (AGE-MOEA-II) muestran una mayor capacidad de retención de individuos no dominados, generando los frentes con la cardinalidad más alta del estudio (~220 soluciones válidas de media por ejecución). De igual modo, SMS-EMOA mantiene un nivel de densidad poblacional altamente competitivo en base a su optimización de hipervolumen, promediando ~196 soluciones. En contraste, los algoritmos de muchos objetivos o MaOEA (NSGA-III, U-NSGA-III y RVEA), basados en la descomposición del espacio mediante vectores de referencia, evidencian severas limitaciones en este escenario: al proyectar dichas direcciones de forma uniforme sobre un espacio de búsqueda fuertemente sesgado por la inecuación de factibilidad, muchas de esas líneas de referencia no logran asociarse a soluciones válidas. Como resultado empírico, estos algoritmos sufren una pérdida drástica de individuos y producen frentes con una densidad poblacional marcadamente inferior (promediando ~26 soluciones en NSGA-III, ~25 en U-NSGA-III y cayendo hasta el mínimo de ~24 soluciones válidas en RVEA).
+
+Finalmente, el análisis cuantitativo de los frentes confirma la ausencia de diferencias significativas atribuibles a los operadores de cruce. Al evaluar los valores medios globales de las soluciones generadas por cada variante, los resultados empíricos resultan virtualmente idénticos en los cuatro objetivos: los cruces de un punto y dos puntos alcanzan una compacidad promedio de ~201 y ~202 SNP (con tolerancias de ~39 y ~40, disimilitudes de ~77 y ~78, y balances de ~238 y ~243). De forma análoga, el cruce uniforme y el medio uniforme convergen en compacidades medias de ~205 y ~201 SNP (con tolerancias de ~43, disimilitudes de ~81 y ~80, y balances de ~237 y ~238). Estas cifras constatan que las distribuciones de los cuatro operadores se encuentran superpuestas en el espacio objetivo, lo que indica que, para el problema de selección de etiquetas SNP, el mecanismo de recombinación de material genético queda eclipsado por el profundo sesgo espacial que impone la inicialización poblacional.
+
+\subsection{Dinámica de convergencia}
+
+Para garantizar que las trayectorias evolutivas mostradas constituyan una representación fidedigna del comportamiento típico de los algoritmos, se ha llevado a cabo un riguroso proceso de filtrado estadístico previo a su visualización. De las 31 ejecuciones independientes por configuración, se ha optado por seleccionar la réplica mediana en función de su valor final de hipervolumen.
+
+El hipervolumen se consolida como la métrica idónea para este análisis de convergencia generacional debido a su naturaleza integral. Al penalizar simultáneamente tanto la lejanía respecto al frente óptimo (falta de convergencia) como la concentración de soluciones (falta de diversidad), el crecimiento continuo de esta métrica es una garantía matemática de que la población evoluciona de forma positiva.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{"../../exp/full_31/ABS 20260625T071958/2_comparativa/2_metricas_convergencia/convergencia_hv_nsga2_full_31.png"}
+    \caption[Dinámica de convergencia: NSGA-II]{Evolución generacional del hipervolumen para el algoritmo NSGA-II.}
+    \label{fig:conv_nsga2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{"../../exp/full_31/ABS 20260625T071958/2_comparativa/2_metricas_convergencia/convergencia_hv_spea2_full_31.png"}
+    \caption[Dinámica de convergencia: SPEA2]{Evolución generacional del hipervolumen para el algoritmo SPEA2.}
+    \label{fig:conv_spea2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{"../../exp/full_31/ABS 20260625T071958/2_comparativa/2_metricas_convergencia/convergencia_hv_nsga3_full_31.png"}
+    \caption[Dinámica de convergencia: NSGA-III]{Evolución generacional del hipervolumen para el algoritmo NSGA-III.}
+    \label{fig:conv_nsga3}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{"../../exp/full_31/ABS 20260625T071958/2_comparativa/2_metricas_convergencia/convergencia_hv_unsga3_full_31.png"}
+    \caption[Dinámica de convergencia: U-NSGA-III]{Evolución generacional del hipervolumen para el algoritmo U-NSGA-III.}
+    \label{fig:conv_unsga3}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{"../../exp/full_31/ABS 20260625T071958/2_comparativa/2_metricas_convergencia/convergencia_hv_rvea_full_31.png"}
+    \caption[Dinámica de convergencia: RVEA]{Evolución generacional del hipervolumen para el algoritmo RVEA.}
+    \label{fig:conv_rvea}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{"../../exp/full_31/ABS 20260625T071958/2_comparativa/2_metricas_convergencia/convergencia_hv_smsemoa_full_31.png"}
+    \caption[Dinámica de convergencia: SMS-EMOA]{Evolución generacional del hipervolumen para el algoritmo SMS-EMOA.}
+    \label{fig:conv_smsemoa}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{"../../exp/full_31/ABS 20260625T071958/2_comparativa/2_metricas_convergencia/convergencia_hv_agemoea2_full_31.png"}
+    \caption[Dinámica de convergencia: AGE-MOEA-II]{Evolución generacional del hipervolumen para el algoritmo AGE-MOEA-II.}
+    \label{fig:conv_agemoea2}
+\end{figure}
+
+La inspección conjunta de las siete trayectorias revela fenómenos estructurales que caracterizan la dinámica evolutiva del problema de selección de etiquetas SNP.
+
+\subsubsection{Análisis algorítmico}
+
+La capacidad para mantener un progreso continuo durante el proceso evolutivo divide a los algoritmos en dos perfiles. Por un lado, la dinámica de la mayoría de los enfoques (NSGA-II, AGE-MOEA-II, NSGA-III, U-NSGA-III y SPEA2) se caracteriza por presentar una curva estabilizada en el tramo final de la evolución. Independientemente de los valores absolutos que alcancen, sus trazas generacionales muestran una forma notablemente aplanada durante las últimas cien iteraciones, evidenciando que la búsqueda ha madurado y el ritmo de mejora se ha ralentizado con el paso de las generaciones.
+
+Por otro lado, en el caso de SMS-EMOA, el algoritmo sufre de convergencia prematura provocada por una pérdida de diversidad genética: sus configuraciones con \textit{Greedy Ting} alcanzan el 95\% de su rendimiento final antes de la generación 71, tras lo cual la convergencia se paraliza. Este colapso se debe a su estrategia de evolución de estado estacionario ($\mu+1$) operando sobre un espacio combinatorio altamente discreto. Como detallan Beume et al. en la propuesta original de SMS-EMOA, la arquitectura $\mu+1$ se adoptó estrictamente para reducir el alto coste computacional que exige el cálculo del hipervolumen, admitiendo la carencia de operadores de variación especializados para gestionar la diversidad~\cite{beume2007sms}. 
+
+Al generar un único individuo por iteración, los operadores de cruce producen descendencia que hereda una mezcla genética de sus progenitores, empujando las nuevas soluciones hacia el centro del espacio de búsqueda. Este colapso de la varianza poblacional resulta fatal en ausencia de un mecanismo explícito de preservación de nichos~\cite{deb2001multi}. Dado que SMS-EMOA confía exclusivamente en la contribución marginal al hipervolumen, la población entra en un bucle de homogeneización perjudicial. 
+
+La literatura reciente ya ha documentado empíricamente este fallo de SMS-EMOA en problemas puramente combinatorios y discretos (\textit{knapsack problems}): el análisis integral de Ishibuchi et al.~\cite{ishibuchi2015behavior} demuestra que permitir a algoritmos como SMS-EMOA elegir progenitores de toda la población de forma global agrava severamente la pérdida de diversidad. Sus estudios concluyen que, debido a su estructura espacial, la selección global desplaza el frente hacia regiones centrales estancadas; para evitar que algoritmos basados en hipervolumen se paralicen en estos espacios discretos, es estrictamente necesario recombinar soluciones locales muy similares (vecindarios), protegiendo la diversidad frente a la convergencia central. El análisis de las ejecuciones confirma este fenómeno de forma precisa: independientemente del operador de cruce utilizado, el grueso de la población de SMS-EMOA (entre el $85\%$ y el $100\%$) queda atrapada permanentemente en un estrato central sumamente estrecho, perdiendo el material genético necesario para expandirse hacia los extremos.
+
+Finalmente, el comportamiento de RVEA constituye la única divergencia estructural del experimento. Con la inicialización \textit{Greedy Ting}, su hipervolumen experimenta un decrecimiento sistemático: las configuraciones pierden de media en torno a un $40$\% respecto a su estado inicial. A diferencia de otros algoritmos basados en vectores, RVEA evalúa a los individuos utilizando la Distancia Penalizada por Ángulo (APD). Como detallan los propios creadores del algoritmo (Cheng et al.), la arquitectura de RVEA asume deliberadamente que no es necesario normalizar el espacio de objetivos al rango $[0, 1]$ porque la adaptación de los vectores de referencia soluciona las diferencias de escala~\cite{cheng2016reference}.
+
+Sin embargo, aunque esta adaptación corrige el cálculo de los ángulos, la componente base de la APD sigue siendo la distancia euclidiana bruta al punto ideal. Dado que el espacio objetivo de este problema presenta escalas abismalmente distintas —con el Balance ($f_4 \in [0, 2140]$) y la Compacidad ($f_1 \in [1, 772]$) superando masivamente a la Disimilitud ($f_3 \in [0, 256]$) y a la Tolerancia ($f_2 \in [0, 129]$)—, la asunción teórica de Cheng fracasa: la distancia euclidiana bruta (sin escalar) queda irremediablemente dominada por las magnitudes mayores. Para evitar la gigantesca penalización de la métrica APD, el algoritmo se ve forzado a reducir obsesivamente el Balance y la Compacidad. La experimentación confirma empíricamente este fallo estructural: al promediar las 31 réplicas generadas, el $93.2\%$ de la población de RVEA colapsa irreversiblemente hacia soluciones con paneles diminutos (por debajo de las 70 etiquetas SNP). Al concentrarse exclusivamente en el origen del espacio objetivo para minimizar las distancias brutas de $f_4$ y $f_1$, RVEA ignora por completo la exploración del resto del frente de Pareto y sufre una pérdida casi total de diversidad.
+
+Pero las consecuencias de este defecto arquitectónico son aún más graves: al colapsar hacia el origen (buscando paneles enanos), el algoritmo cruza la frontera de factibilidad biológica del problema. Como se formuló previamente, los paneles extremadamente pequeños son incapaces de distinguir a todos los pares de haplotipos de la muestra, lo que provoca que su tolerancia caiga a cero ($f_2 = 0$) e infrinjan la restricción matemática del problema ($G(X)$). El análisis empírico corrobora esta hipótesis: al finalizar las ejecuciones, una abrumadora media de $202.7$ individuos de la población final de RVEA (el $92\%$) son soluciones biológicamente infactibles. Mientras que NSGA-II o SMS-EMOA logran sostener frentes compuestos íntegramente por $220$ soluciones válidas, RVEA tiene una alta población con soluciones inválidas simplemente porque satisfacen las presiones matemáticas de su fórmula métrica no normalizada. Al aplicar los filtros de factibilidad y dominancia para extraer el frente de Pareto definitivo, RVEA sufre una purga masiva que reduce su cardinalidad útil a una media general de apenas $24$ soluciones.
+
+\subsubsection{Análisis de las inicializaciones}
+
+Las estrategias de inicialización establecen un punto de partida cuantificable desde la generación cero. Tanto \textit{Greedy Ting} como \textit{Random Dense} inician con valores medios de hipervolumen en torno a $0{,}255$, mientras que \textit{Greedy Multi} parte de $\approx 0{,}023$ en todos los algoritmos. Esta diferencia de magnitud se mantiene a lo largo de la evolución: tras 500 generaciones, las configuraciones con \textit{Greedy Multi} apenas alcanzan una media de $0{,}045$, mientras que las otras dos inicializaciones superan los $0{,}40$ en los algoritmos con mayor hipervolumen final. Se aprecia un efecto catapulta en todos los algoritmos (salvo RVEA) con las inicializaciones \textit{Greedy Ting} y \textit{Random Dense}, ya que ambas proveen a la población inicial de un conjunto de soluciones que elevan drásticamente el hipervolumen en las primeras etapas, ahorrando cientos de generaciones de exploración básica frente al arranque de \textit{Greedy Multi}.
+
+\subsubsection{Análisis de los operadores de cruce}
+
+Al observar las trazas de convergencia, se evidencia que los operadores de cruce tienen un impacto secundario en la evolución del hipervolumen a lo largo de las generaciones en comparación con la elección algorítmica o la estrategia de inicialización. Las curvas generadas por los cruces uniformes (UX y HUX) y los cruces por puntos (1P y 2P) se solapan fuertemente durante la mayor parte del proceso evolutivo para un mismo algoritmo e inicialización. Esta superposición denota que, en este dominio combinatorio, la velocidad de convergencia está dominada por el punto de partida genético y la gestión de la presión selectiva. 
+
+Sin embargo, aunque su efecto en la aceleración de la búsqueda sea secundario, el mecanismo de recombinación sí afecta al rendimiento final, un fenómeno que se analizará en profundidad en la siguiente sección en la que se analizan los resultados de las métricas.
+
+\subsubsection{Justificación empírica del criterio de parada}
+
+El análisis de la dinámica de convergencia en el tramo final de las ejecuciones (generaciones 400 a 500) proporciona la validación empírica para el criterio de parada establecido en el diseño experimental. Si bien los algoritmos más robustos como NSGA-II o AGE-MOEA-II logran evadir el estancamiento asintótico total y mantienen una pendiente de mejora continua, las ganancias absolutas de hipervolumen en las últimas cien generaciones resultan marginales desde una perspectiva práctica. Por ejemplo, las configuraciones líderes de NSGA-II incrementan su hipervolumen en apenas un $+0{,}002$ a $+0{,}005$ en este tramo final, lo que supone mejoras inferiores al $1$\% sobre su rendimiento acumulado. Estos datos evidencian que extender la evolución a un número mayor de iteraciones (por ejemplo, 1000 generaciones) duplicaría el coste computacional y energético del proceso para lograr incrementos prácticamente despreciables en la calidad del frente de Pareto. Por consiguiente, el límite de 500 generaciones se consolida empíricamente como un punto de corte óptimo que garantiza un equilibrio estricto entre la exhaustividad de la búsqueda y la economía computacional.
+
+\subsection{Análisis estadístico de las métricas}
+% Presentación y discusión de resultados individuales (medias, varianzas, boxplots).
+
+Para adaptar el volumen de datos empíricos a las dimensiones del documento (véase la Tabla \ref{tab:resultados_metricas}), se ha establecido un sistema de abreviaturas para identificar cada configuración y métrica. Las configuraciones algorítmicas se estructuran bajo la nomenclatura \textit{Algoritmo-Inicialización-Cruce}. Específicamente, los algoritmos se denotan como NS2 (NSGA-II), SP2 (SPEA2), SMS (SMS-EMOA), NS3 (NSGA-III), US3 (U-NSGA-III), RV (RVEA) y AG2 (AGE-MOEA-II). Las estrategias de inicialización se abrevian como GM (\textit{Greedy Multi}), GT (\textit{Greedy Ting}) y RD (\textit{Random Dense}), mientras que los operadores de recombinación se indican mediante 1P (un punto), 2P (dos puntos), UX (uniforme) y HUX (medio uniforme). De forma análoga, para las métricas se utilizan los acrónimos HV (Hipervolumen), IGD+ (Error de generación invertido plus), GD+ (Error de generación plus), Rng (\textit{Range}), MSum (\textit{MinSum}), SMin (\textit{SumMin}), AvgT (Tolerancia media), MaxT (Tolerancia máxima) y AvgHD (Distancia media de Hamming).
+
+\begingroup
+\tiny
+\setlength{\tabcolsep}{0.5pt}
+\begin{longtable}{@{}lccccccccc@{}}
+\caption[Resultados empíricos de las métricas de evaluación]{Resultados empíricos globales del experimento absoluto (valores promedio y desviación típica en el subíndice a lo largo de 31 ejecuciones independientes). Se resalta en negrita el \textit{Top 5} de configuraciones algorítmicas con mejor rendimiento para cada métrica individual.}
+\label{tab:resultados_metricas} \\
+\toprule
+\textbf{Config} & \textbf{HV} & \textbf{IGD+} & \textbf{GD+} & \textbf{Rng} & \textbf{MSum} & \textbf{SMin} & \textbf{AvgT} & \textbf{MaxT} & \textbf{AvgHD} \\
+\midrule
+\endfirsthead
+\multicolumn{10}{c}{{\bfseries \tablename\ \thetable{} -- continua desde la página anterior}} \\
+\toprule
+\textbf{Config} & \textbf{HV} & \textbf{IGD+} & \textbf{GD+} & \textbf{Rng} & \textbf{MSum} & \textbf{SMin} & \textbf{AvgT} & \textbf{MaxT} & \textbf{AvgHD} \\
+\midrule
+\endhead
+\midrule \multicolumn{10}{r}{{Continúa en la siguiente página...}} \\
+\endfoot
+\bottomrule
+\endlastfoot
+AG2-GM-1P & $0.0407_{0.0025}$ & $0.5105_{0.0000}$ & $0.0006_{0.0000}$ & $0.2083_{0.0151}$ & $1.8949_{0.0082}$ & $1.8373_{0.0114}$ & $0.1916_{0.0085}$ & $0.2832_{0.0064}$ & $13.7818_{0.7384}$ \\
+AG2-GM-2P & $0.0434_{0.0032}$ & $0.5105_{0.0000}$ & $0.0006_{0.0000}$ & $0.2266_{0.0203}$ & $1.8881_{0.0097}$ & $1.8249_{0.0148}$ & $0.1940_{0.0125}$ & $\mathbf{0.2858}_{0.0076}$ & $14.7577_{1.0659}$ \\
+AG2-GM-HUX & $0.0544_{0.0044}$ & $0.4778_{0.0000}$ & $0.0007_{0.0000}$ & $0.2938_{0.0257}$ & $1.8598_{0.0118}$ & $1.7771_{0.0182}$ & $0.2060_{0.0121}$ & $\mathbf{0.2904}_{0.0068}$ & $18.3386_{1.5383}$ \\
+AG2-GM-UX & $0.0545_{0.0033}$ & $0.4806_{0.0000}$ & $0.0007_{0.0000}$ & $0.2957_{0.0196}$ & $1.8605_{0.0094}$ & $1.7763_{0.0139}$ & $0.2041_{0.0123}$ & $\mathbf{0.2917}_{0.0049}$ & $18.4525_{1.5493}$ \\
+AG2-GT-1P & $0.4466_{0.0108}$ & $0.0483_{0.0000}$ & $0.0518_{0.0000}$ & $\mathbf{2.2363}_{0.0840}$ & $1.5172_{0.0154}$ & $0.6820_{0.0431}$ & $0.1559_{0.0110}$ & $0.2281_{0.0049}$ & $97.6506_{7.9429}$ \\
+AG2-GT-2P & $0.4604_{0.0071}$ & $0.0471_{0.0000}$ & $0.0481_{0.0000}$ & $2.2358_{0.0891}$ & $1.5084_{0.0142}$ & $0.6657_{0.0400}$ & $0.1615_{0.0113}$ & $0.2308_{0.0049}$ & $96.7914_{9.3306}$ \\
+AG2-GT-HUX & $0.4254_{0.0109}$ & $0.0479_{0.0000}$ & $0.0356_{0.0000}$ & $1.7962_{0.1612}$ & $1.5053_{0.0142}$ & $0.8411_{0.0577}$ & $0.1848_{0.0088}$ & $0.2380_{0.0070}$ & $97.4389_{7.4398}$ \\
+AG2-GT-UX & $0.4253_{0.0074}$ & $0.0494_{0.0000}$ & $0.0358_{0.0000}$ & $1.7621_{0.1236}$ & $1.5043_{0.0146}$ & $0.8565_{0.0387}$ & $0.1852_{0.0087}$ & $0.2416_{0.0076}$ & $98.3737_{7.9853}$ \\
+AG2-RD-1P & $0.4147_{0.0118}$ & $0.1730_{0.0000}$ & $0.0498_{0.0000}$ & $1.1808_{0.0953}$ & $1.4959_{0.0112}$ & $1.0512_{0.0403}$ & $0.1951_{0.0059}$ & $0.2320_{0.0045}$ & $133.0931_{4.0078}$ \\
+AG2-RD-2P & $0.4419_{0.0088}$ & $0.1559_{0.0000}$ & $0.0438_{0.0000}$ & $1.3269_{0.0818}$ & $1.4808_{0.0154}$ & $0.9695_{0.0315}$ & $0.1977_{0.0066}$ & $0.2369_{0.0059}$ & $133.5316_{3.7001}$ \\
+AG2-RD-HUX & $0.4774_{0.0098}$ & $0.1555_{0.0000}$ & $0.0243_{0.0000}$ & $1.3561_{0.0882}$ & $1.4319_{0.0128}$ & $0.9076_{0.0326}$ & $0.2098_{0.0056}$ & $0.2503_{0.0047}$ & $140.2693_{3.5150}$ \\
+AG2-RD-UX & $0.4740_{0.0107}$ & $0.1459_{0.0000}$ & $0.0237_{0.0000}$ & $1.3404_{0.0758}$ & $1.4360_{0.0131}$ & $0.9163_{0.0305}$ & $0.2089_{0.0054}$ & $0.2497_{0.0050}$ & $139.3612_{4.1172}$ \\
+NS2-GM-1P & $0.0464_{0.0035}$ & $0.4998_{0.0000}$ & $0.0007_{0.0000}$ & $0.2450_{0.0219}$ & $1.8790_{0.0100}$ & $1.8111_{0.0157}$ & $0.2094_{0.0056}$ & $0.2773_{0.0069}$ & $15.5201_{0.9672}$ \\
+NS2-GM-2P & $0.0496_{0.0028}$ & $0.4961_{0.0000}$ & $0.0006_{0.0000}$ & $0.2646_{0.0168}$ & $1.8701_{0.0077}$ & $1.7969_{0.0119}$ & $0.2085_{0.0058}$ & $0.2788_{0.0070}$ & $16.4445_{0.8397}$ \\
+NS2-GM-HUX & $0.0622_{0.0039}$ & $0.4570_{0.0000}$ & $0.0006_{0.0000}$ & $0.3409_{0.0224}$ & $1.8427_{0.0093}$ & $1.7451_{0.0150}$ & $0.2131_{0.0072}$ & $0.2773_{0.0064}$ & $20.4263_{1.0454}$ \\
+NS2-GM-UX & $0.0616_{0.0039}$ & $0.4618_{0.0000}$ & $0.0006_{0.0000}$ & $0.3374_{0.0220}$ & $1.8439_{0.0099}$ & $1.7475_{0.0153}$ & $0.2118_{0.0062}$ & $0.2780_{0.0068}$ & $20.2299_{0.9388}$ \\
+NS2-GT-1P & $0.4482_{0.0070}$ & $0.0549_{0.0000}$ & $0.0316_{0.0000}$ & $\mathbf{2.3449}_{0.0494}$ & $1.5349_{0.0191}$ & $\mathbf{0.6153}_{0.0218}$ & $0.1788_{0.0044}$ & $0.2240_{0.0061}$ & $97.0434_{2.0802}$ \\
+NS2-GT-2P & $0.4648_{0.0073}$ & $0.0497_{0.0000}$ & $0.0275_{0.0000}$ & $\mathbf{2.4152}_{0.0501}$ & $1.5196_{0.0156}$ & $\mathbf{0.5809}_{0.0208}$ & $0.1874_{0.0039}$ & $0.2321_{0.0054}$ & $99.6762_{2.0808}$ \\
+NS2-GT-HUX & $\mathbf{0.4996}_{0.0084}$ & $\mathbf{0.0275}_{0.0000}$ & $0.0217_{0.0000}$ & $\mathbf{2.4181}_{0.0558}$ & $1.4614_{0.0118}$ & $\mathbf{0.5344}_{0.0260}$ & $0.2113_{0.0031}$ & $0.2462_{0.0040}$ & $99.4749_{2.2906}$ \\
+NS2-GT-UX & $\mathbf{0.4990}_{0.0114}$ & $\mathbf{0.0273}_{0.0000}$ & $0.0218_{0.0000}$ & $\mathbf{2.4229}_{0.0716}$ & $1.4637_{0.0141}$ & $\mathbf{0.5326}_{0.0348}$ & $0.2100_{0.0028}$ & $0.2437_{0.0052}$ & $99.4514_{2.4288}$ \\
+NS2-RD-1P & $0.4245_{0.0107}$ & $0.1705_{0.0000}$ & $0.0414_{0.0000}$ & $1.3112_{0.0816}$ & $1.5088_{0.0138}$ & $0.9911_{0.0344}$ & $0.2072_{0.0043}$ & $0.2252_{0.0049}$ & $137.2867_{3.8403}$ \\
+NS2-RD-2P & $0.4533_{0.0079}$ & $0.1461_{0.0000}$ & $0.0350_{0.0000}$ & $1.4891_{0.0810}$ & $1.4989_{0.0176}$ & $0.8957_{0.0292}$ & $0.2097_{0.0041}$ & $0.2300_{0.0045}$ & $137.5939_{2.7474}$ \\
+NS2-RD-HUX & $\mathbf{0.5324}_{0.0062}$ & $0.1061_{0.0000}$ & $0.0190_{0.0000}$ & $1.9523_{0.0633}$ & $1.4452_{0.0111}$ & $\mathbf{0.6324}_{0.0245}$ & $0.2187_{0.0033}$ & $0.2370_{0.0044}$ & $141.2676_{2.5742}$ \\
+NS2-RD-UX & $\mathbf{0.5304}_{0.0060}$ & $0.1044_{0.0000}$ & $0.0191_{0.0000}$ & $1.9463_{0.0794}$ & $1.4443_{0.0101}$ & $0.6372_{0.0267}$ & $0.2177_{0.0038}$ & $0.2363_{0.0048}$ & $140.7115_{3.2394}$ \\
+NS3-GM-1P & $0.0381_{0.0025}$ & $0.5299_{0.0000}$ & $0.0004_{0.0000}$ & $0.1888_{0.0168}$ & $1.8998_{0.0078}$ & $1.8496_{0.0122}$ & $0.1922_{0.0066}$ & $0.2741_{0.0094}$ & $13.1330_{0.9202}$ \\
+NS3-GM-2P & $0.0402_{0.0022}$ & $0.5254_{0.0000}$ & $0.0005_{0.0000}$ & $0.2034_{0.0139}$ & $1.8942_{0.0072}$ & $1.8393_{0.0104}$ & $0.1947_{0.0083}$ & $0.2750_{0.0066}$ & $14.0935_{0.7138}$ \\
+NS3-GM-HUX & $0.0485_{0.0039}$ & $0.4868_{0.0000}$ & $0.0003_{0.0000}$ & $0.2570_{0.0228}$ & $1.8732_{0.0105}$ & $1.8020_{0.0165}$ & $0.2020_{0.0054}$ & $0.2767_{0.0071}$ & $17.2147_{1.1917}$ \\
+NS3-GM-UX & $0.0468_{0.0029}$ & $0.5059_{0.0000}$ & $\mathbf{0.0002}_{0.0000}$ & $0.2459_{0.0174}$ & $1.8769_{0.0083}$ & $1.8094_{0.0128}$ & $0.1990_{0.0065}$ & $0.2727_{0.0052}$ & $16.6132_{0.9474}$ \\
+NS3-GT-1P & $0.4067_{0.0077}$ & $0.0639_{0.0000}$ & $0.0480_{0.0000}$ & $2.0889_{0.0625}$ & $1.5179_{0.0147}$ & $0.7372_{0.0279}$ & $0.1576_{0.0050}$ & $0.2254_{0.0048}$ & $95.0190_{3.7725}$ \\
+NS3-GT-2P & $0.4183_{0.0109}$ & $0.0577_{0.0000}$ & $0.0430_{0.0000}$ & $2.1169_{0.0970}$ & $1.5004_{0.0124}$ & $0.7223_{0.0409}$ & $0.1620_{0.0062}$ & $0.2301_{0.0048}$ & $96.3634_{3.7573}$ \\
+NS3-GT-HUX & $0.4175_{0.0101}$ & $\mathbf{0.0449}_{0.0000}$ & $0.0195_{0.0000}$ & $1.9896_{0.0648}$ & $1.4691_{0.0116}$ & $0.7550_{0.0329}$ & $0.1981_{0.0087}$ & $0.2479_{0.0063}$ & $90.4366_{2.6294}$ \\
+NS3-GT-UX & $0.4195_{0.0102}$ & $0.0458_{0.0000}$ & $0.0205_{0.0000}$ & $2.0000_{0.0688}$ & $1.4757_{0.0136}$ & $0.7479_{0.0348}$ & $0.1970_{0.0057}$ & $0.2448_{0.0062}$ & $90.4066_{2.3985}$ \\
+NS3-RD-1P & $0.3975_{0.0094}$ & $0.1897_{0.0000}$ & $0.0475_{0.0000}$ & $1.0580_{0.0762}$ & $1.4909_{0.0137}$ & $1.0922_{0.0290}$ & $0.2019_{0.0047}$ & $0.2295_{0.0041}$ & $135.4138_{3.6047}$ \\
+NS3-RD-2P & $0.4200_{0.0086}$ & $0.1715_{0.0000}$ & $0.0402_{0.0000}$ & $1.1814_{0.0747}$ & $1.4743_{0.0162}$ & $1.0279_{0.0253}$ & $0.2013_{0.0068}$ & $0.2338_{0.0046}$ & $136.8947_{3.4465}$ \\
+NS3-RD-HUX & $0.4774_{0.0067}$ & $0.1343_{0.0000}$ & $0.0106_{0.0000}$ & $1.3819_{0.0672}$ & $\mathbf{1.4228}_{0.0117}$ & $0.8795_{0.0272}$ & $0.2242_{0.0041}$ & $0.2524_{0.0041}$ & $141.1451_{3.3407}$ \\
+NS3-RD-UX & $0.4750_{0.0071}$ & $0.1365_{0.0000}$ & $0.0112_{0.0000}$ & $1.3518_{0.0719}$ & $1.4228_{0.0120}$ & $0.8878_{0.0258}$ & $0.2241_{0.0051}$ & $0.2503_{0.0043}$ & $\mathbf{141.4280}_{3.7931}$ \\
+RV-GM-1P & $0.0255_{0.0020}$ & $0.5777_{0.0000}$ & $0.0008_{0.0000}$ & $0.0997_{0.0159}$ & $1.9446_{0.0077}$ & $1.9162_{0.0115}$ & $0.1428_{0.0059}$ & $0.2370_{0.0104}$ & $8.3650_{0.7493}$ \\
+RV-GM-2P & $0.0272_{0.0016}$ & $0.5683_{0.0000}$ & $0.0009_{0.0000}$ & $0.1132_{0.0120}$ & $1.9379_{0.0070}$ & $1.9060_{0.0092}$ & $0.1454_{0.0073}$ & $0.2388_{0.0152}$ & $9.0644_{0.6136}$ \\
+RV-GM-HUX & $0.0288_{0.0018}$ & $0.5586_{0.0000}$ & $0.0011_{0.0000}$ & $0.1277_{0.0138}$ & $1.9346_{0.0078}$ & $1.8975_{0.0102}$ & $0.1396_{0.0078}$ & $0.2263_{0.0166}$ & $9.9283_{0.6371}$ \\
+RV-GM-UX & $0.0292_{0.0018}$ & $0.5552_{0.0000}$ & $0.0011_{0.0000}$ & $0.1309_{0.0133}$ & $1.9334_{0.0067}$ & $1.8951_{0.0096}$ & $0.1398_{0.0061}$ & $0.2268_{0.0114}$ & $10.0315_{0.6666}$ \\
+RV-GT-1P & $0.2010_{0.0533}$ & $0.1338_{0.0000}$ & $0.0623_{0.0000}$ & $1.3125_{0.2598}$ & $1.7755_{0.0646}$ & $1.2436_{0.1655}$ & $0.0989_{0.0101}$ & $0.1675_{0.0145}$ & $48.7421_{8.1252}$ \\
+RV-GT-2P & $0.1600_{0.0296}$ & $0.1698_{0.0000}$ & $0.0556_{0.0000}$ & $1.0813_{0.1555}$ & $1.8094_{0.0367}$ & $1.3795_{0.0922}$ & $0.0963_{0.0072}$ & $0.1660_{0.0108}$ & $42.3259_{4.6603}$ \\
+RV-GT-HUX & $0.2372_{0.0284}$ & $0.1666_{0.0000}$ & $0.0569_{0.0000}$ & $1.5395_{0.1624}$ & $1.7694_{0.0365}$ & $1.1351_{0.0889}$ & $0.1402_{0.0084}$ & $0.1799_{0.0082}$ & $60.3590_{6.5566}$ \\
+RV-GT-UX & $0.2497_{0.0104}$ & $0.1695_{0.0000}$ & $0.0590_{0.0000}$ & $1.6096_{0.0594}$ & $1.7689_{0.0307}$ & $1.0923_{0.0302}$ & $0.1408_{0.0066}$ & $0.1784_{0.0082}$ & $62.1604_{3.0826}$ \\
+RV-RD-1P & $0.2778_{0.0177}$ & $0.2188_{0.0000}$ & $0.0520_{0.0000}$ & $0.5283_{0.0951}$ & $1.5869_{0.0163}$ & $1.3962_{0.0471}$ & $0.2001_{0.0039}$ & $0.2187_{0.0048}$ & $103.0816_{3.1091}$ \\
+RV-RD-2P & $0.2835_{0.0211}$ & $0.1978_{0.0000}$ & $0.0466_{0.0000}$ & $0.5872_{0.1044}$ & $1.5774_{0.0140}$ & $1.3679_{0.0548}$ & $0.2032_{0.0057}$ & $0.2255_{0.0047}$ & $99.2656_{4.1110}$ \\
+RV-RD-HUX & $0.2648_{0.0295}$ & $0.1842_{0.0000}$ & $0.0217_{0.0000}$ & $0.4563_{0.1443}$ & $1.5604_{0.0193}$ & $1.3938_{0.0718}$ & $0.2279_{0.0068}$ & $0.2448_{0.0082}$ & $89.7360_{5.5927}$ \\
+RV-RD-UX & $0.2745_{0.0296}$ & $0.1807_{0.0000}$ & $0.0226_{0.0000}$ & $0.4981_{0.1372}$ & $1.5548_{0.0198}$ & $1.3698_{0.0719}$ & $0.2274_{0.0043}$ & $0.2447_{0.0054}$ & $90.9076_{5.2603}$ \\
+SMS-GM-1P & $0.0334_{0.0018}$ & $0.5472_{0.0000}$ & $0.0003_{0.0000}$ & $0.1570_{0.0122}$ & $1.9153_{0.0063}$ & $1.8730_{0.0091}$ & $0.2079_{0.0138}$ & $0.2624_{0.0108}$ & $12.9502_{0.9915}$ \\
+SMS-GM-2P & $0.0344_{0.0017}$ & $0.5450_{0.0000}$ & $\mathbf{0.0002}_{0.0000}$ & $0.1647_{0.0122}$ & $1.9132_{0.0056}$ & $1.8680_{0.0088}$ & $0.2038_{0.0108}$ & $0.2597_{0.0100}$ & $13.2147_{0.8189}$ \\
+SMS-GM-HUX & $0.0366_{0.0012}$ & $0.5402_{0.0000}$ & $\mathbf{0.0001}_{0.0000}$ & $0.1816_{0.0078}$ & $1.9072_{0.0045}$ & $1.8564_{0.0060}$ & $0.1926_{0.0079}$ & $0.2513_{0.0079}$ & $15.0452_{0.8323}$ \\
+SMS-GM-UX & $0.0370_{0.0016}$ & $0.5392_{0.0000}$ & $\mathbf{0.0001}_{0.0000}$ & $0.1849_{0.0107}$ & $1.9061_{0.0058}$ & $1.8543_{0.0080}$ & $0.1937_{0.0080}$ & $0.2524_{0.0085}$ & $15.2503_{0.7776}$ \\
+SMS-GT-1P & $0.4107_{0.0089}$ & $0.0536_{0.0000}$ & $0.0187_{0.0000}$ & $2.0720_{0.0436}$ & $1.5409_{0.0250}$ & $0.7485_{0.0224}$ & $0.2152_{0.0065}$ & $0.2535_{0.0065}$ & $88.3773_{12.8533}$ \\
+SMS-GT-2P & $0.4207_{0.0104}$ & $\mathbf{0.0426}_{0.0000}$ & $0.0129_{0.0000}$ & $2.0793_{0.0493}$ & $1.5153_{0.0284}$ & $0.7390_{0.0248}$ & $0.2249_{0.0056}$ & $0.2626_{0.0064}$ & $93.3076_{13.0883}$ \\
+SMS-GT-HUX & $0.3974_{0.0073}$ & $0.0539_{0.0000}$ & $0.0055_{0.0000}$ & $1.9987_{0.0338}$ & $1.5334_{0.0162}$ & $0.7960_{0.0170}$ & $\mathbf{0.2484}_{0.0036}$ & $0.2768_{0.0046}$ & $81.1267_{4.5083}$ \\
+SMS-GT-UX & $0.3989_{0.0056}$ & $0.0555_{0.0000}$ & $0.0057_{0.0000}$ & $2.0039_{0.0317}$ & $1.5315_{0.0163}$ & $0.7943_{0.0155}$ & $\mathbf{0.2472}_{0.0050}$ & $0.2766_{0.0067}$ & $82.2846_{7.8586}$ \\
+SMS-RD-1P & $0.3775_{0.0073}$ & $0.2046_{0.0000}$ & $0.0296_{0.0000}$ & $0.7692_{0.0589}$ & $1.4480_{0.0122}$ & $1.1810_{0.0203}$ & $0.2281_{0.0041}$ & $0.2400_{0.0040}$ & $138.4100_{4.5656}$ \\
+SMS-RD-2P & $0.4109_{0.0094}$ & $0.1821_{0.0000}$ & $0.0204_{0.0000}$ & $0.9041_{0.0685}$ & $1.4250_{0.0082}$ & $1.0921_{0.0280}$ & $\mathbf{0.2328}_{0.0029}$ & $0.2458_{0.0033}$ & $141.2443_{3.8572}$ \\
+SMS-RD-HUX & $0.4032_{0.0074}$ & $0.1908_{0.0000}$ & $0.0014_{0.0000}$ & $0.6519_{0.0628}$ & $\mathbf{1.3839}_{0.0074}$ & $1.1377_{0.0220}$ & $\mathbf{0.2422}_{0.0020}$ & $0.2526_{0.0025}$ & $\mathbf{143.7604}_{2.5243}$ \\
+SMS-RD-UX & $0.4031_{0.0075}$ & $0.1854_{0.0000}$ & $0.0013_{0.0000}$ & $0.6644_{0.0474}$ & $\mathbf{1.3838}_{0.0056}$ & $1.1379_{0.0195}$ & $\mathbf{0.2435}_{0.0020}$ & $0.2540_{0.0025}$ & $\mathbf{142.9051}_{3.8364}$ \\
+SP2-GM-1P & $0.0426_{0.0039}$ & $0.5074_{0.0000}$ & $0.0004_{0.0000}$ & $0.2067_{0.0216}$ & $1.8875_{0.0109}$ & $1.8331_{0.0162}$ & $0.1819_{0.0084}$ & $\mathbf{0.2871}_{0.0059}$ & $14.8169_{1.5534}$ \\
+SP2-GM-2P & $0.0441_{0.0037}$ & $0.5013_{0.0000}$ & $0.0004_{0.0000}$ & $0.2108_{0.0185}$ & $1.8846_{0.0101}$ & $1.8289_{0.0144}$ & $0.1815_{0.0081}$ & $0.2846_{0.0078}$ & $16.0402_{1.5322}$ \\
+SP2-GM-HUX & $0.0623_{0.0047}$ & $0.4573_{0.0000}$ & $0.0008_{0.0000}$ & $0.3241_{0.0251}$ & $1.8425_{0.0114}$ & $1.7518_{0.0176}$ & $0.1884_{0.0086}$ & $\mathbf{0.2874}_{0.0060}$ & $21.8665_{1.5934}$ \\
+SP2-GM-UX & $0.0598_{0.0053}$ & $0.4533_{0.0000}$ & $0.0006_{0.0000}$ & $0.3026_{0.0297}$ & $1.8480_{0.0128}$ & $1.7647_{0.0205}$ & $0.1889_{0.0060}$ & $0.2851_{0.0058}$ & $21.4587_{1.6196}$ \\
+SP2-GT-1P & $0.4134_{0.0123}$ & $0.0737_{0.0000}$ & $0.0498_{0.0000}$ & $1.8148_{0.0916}$ & $1.5338_{0.0182}$ & $0.8740_{0.0410}$ & $0.1491_{0.0066}$ & $0.2257_{0.0045}$ & $107.0584_{4.3972}$ \\
+SP2-GT-2P & $0.3951_{0.0164}$ & $0.0914_{0.0000}$ & $0.0403_{0.0000}$ & $1.6101_{0.0799}$ & $1.5414_{0.0211}$ & $0.9664_{0.0433}$ & $0.1565_{0.0091}$ & $0.2284_{0.0062}$ & $109.2904_{5.5008}$ \\
+SP2-GT-HUX & $0.4065_{0.0157}$ & $0.0609_{0.0000}$ & $0.0301_{0.0000}$ & $1.9242_{0.0990}$ & $1.5345_{0.0218}$ & $0.8180_{0.0489}$ & $0.1658_{0.0059}$ & $0.2328_{0.0056}$ & $105.2696_{3.7676}$ \\
+SP2-GT-UX & $0.4010_{0.0124}$ & $0.0622_{0.0000}$ & $0.0308_{0.0000}$ & $1.8588_{0.1237}$ & $1.5369_{0.0174}$ & $0.8495_{0.0551}$ & $0.1647_{0.0070}$ & $0.2335_{0.0058}$ & $105.3209_{3.8065}$ \\
+SP2-RD-1P & $0.3970_{0.0093}$ & $0.1984_{0.0000}$ & $0.0512_{0.0000}$ & $1.1716_{0.0788}$ & $1.5144_{0.0170}$ & $1.0898_{0.0288}$ & $0.1825_{0.0080}$ & $0.2230_{0.0051}$ & $140.5589_{4.0022}$ \\
+SP2-RD-2P & $0.4024_{0.0089}$ & $0.1817_{0.0000}$ & $0.0410_{0.0000}$ & $1.1491_{0.0615}$ & $1.5002_{0.0159}$ & $1.0827_{0.0288}$ & $0.1860_{0.0055}$ & $0.2289_{0.0052}$ & $139.6179_{4.0015}$ \\
+SP2-RD-HUX & $0.4309_{0.0093}$ & $0.2086_{0.0000}$ & $0.0257_{0.0000}$ & $1.2916_{0.0695}$ & $1.4788_{0.0143}$ & $1.0036_{0.0310}$ & $0.1906_{0.0037}$ & $0.2332_{0.0047}$ & $\mathbf{152.5332}_{3.9698}$ \\
+SP2-RD-UX & $0.4277_{0.0116}$ & $0.1931_{0.0000}$ & $0.0256_{0.0000}$ & $1.2693_{0.0852}$ & $1.4804_{0.0154}$ & $1.0130_{0.0406}$ & $0.1913_{0.0056}$ & $0.2330_{0.0041}$ & $\mathbf{151.4892}_{3.7471}$ \\
+US3-GM-1P & $0.0389_{0.0029}$ & $0.5182_{0.0000}$ & $0.0005_{0.0000}$ & $0.1937_{0.0174}$ & $1.8977_{0.0090}$ & $1.8460_{0.0134}$ & $0.1897_{0.0104}$ & $0.2692_{0.0088}$ & $13.2354_{0.8632}$ \\
+US3-GM-2P & $0.0397_{0.0026}$ & $0.5209_{0.0000}$ & $0.0005_{0.0000}$ & $0.2008_{0.0160}$ & $1.8961_{0.0089}$ & $1.8419_{0.0125}$ & $0.1939_{0.0080}$ & $0.2739_{0.0092}$ & $13.9122_{0.7325}$ \\
+US3-GM-HUX & $0.0473_{0.0028}$ & $0.4950_{0.0000}$ & $0.0003_{0.0000}$ & $0.2482_{0.0182}$ & $1.8768_{0.0079}$ & $1.8080_{0.0125}$ & $0.1997_{0.0081}$ & $0.2751_{0.0092}$ & $16.8667_{0.9267}$ \\
+US3-GM-UX & $0.0492_{0.0033}$ & $0.4967_{0.0000}$ & $\mathbf{0.0003}_{0.0000}$ & $0.2595_{0.0203}$ & $1.8704_{0.0085}$ & $1.7993_{0.0142}$ & $0.2028_{0.0050}$ & $0.2776_{0.0069}$ & $17.3653_{1.1781}$ \\
+US3-GT-1P & $0.4055_{0.0103}$ & $0.0618_{0.0000}$ & $0.0489_{0.0000}$ & $2.0892_{0.0797}$ & $1.5183_{0.0151}$ & $0.7360_{0.0328}$ & $0.1556_{0.0062}$ & $0.2243_{0.0042}$ & $95.1674_{3.7150}$ \\
+US3-GT-2P & $0.4227_{0.0104}$ & $0.0566_{0.0000}$ & $0.0423_{0.0000}$ & $2.1450_{0.0893}$ & $1.4927_{0.0117}$ & $0.7059_{0.0389}$ & $0.1645_{0.0058}$ & $0.2320_{0.0049}$ & $95.9644_{3.7913}$ \\
+US3-GT-HUX & $0.4169_{0.0086}$ & $\mathbf{0.0440}_{0.0000}$ & $0.0199_{0.0000}$ & $2.0009_{0.0652}$ & $1.4767_{0.0097}$ & $0.7517_{0.0321}$ & $0.1958_{0.0067}$ & $0.2465_{0.0060}$ & $90.2841_{2.6722}$ \\
+US3-GT-UX & $0.4175_{0.0081}$ & $0.0456_{0.0000}$ & $0.0208_{0.0000}$ & $1.9998_{0.0591}$ & $1.4719_{0.0107}$ & $0.7494_{0.0268}$ & $0.1931_{0.0080}$ & $0.2471_{0.0062}$ & $89.9231_{1.9250}$ \\
+US3-RD-1P & $0.3951_{0.0069}$ & $0.1995_{0.0000}$ & $0.0489_{0.0000}$ & $1.0591_{0.0723}$ & $1.4963_{0.0159}$ & $1.0972_{0.0256}$ & $0.1997_{0.0047}$ & $0.2284_{0.0039}$ & $134.2899_{4.1104}$ \\
+US3-RD-2P & $0.4201_{0.0109}$ & $0.1767_{0.0000}$ & $0.0399_{0.0000}$ & $1.1680_{0.0665}$ & $1.4698_{0.0136}$ & $1.0296_{0.0318}$ & $0.2024_{0.0055}$ & $0.2343_{0.0041}$ & $136.2632_{4.4190}$ \\
+US3-RD-HUX & $0.4756_{0.0080}$ & $0.1397_{0.0000}$ & $0.0113_{0.0000}$ & $1.3565_{0.0648}$ & $\mathbf{1.4222}_{0.0081}$ & $0.8890_{0.0265}$ & $0.2241_{0.0034}$ & $0.2515_{0.0045}$ & $141.0328_{3.5547}$ \\
+US3-RD-UX & $\mathbf{0.4775}_{0.0067}$ & $0.1366_{0.0000}$ & $0.0106_{0.0000}$ & $1.3774_{0.0554}$ & $\mathbf{1.4211}_{0.0126}$ & $0.8813_{0.0229}$ & $0.2246_{0.0047}$ & $0.2519_{0.0042}$ & $141.3071_{3.0488}$ \\
+\end{longtable}
+\endgroup
+
+\subsubsection{Métricas de rendimiento integral}
+
+Esta categoría evalúa conjuntamente la convergencia y la diversidad de las soluciones encontradas, abarcando las métricas de hipervolumen e IGD+.
+
+\paragraph{Hipervolumen (HV)}
+
+\subparagraph{Análisis por configuración global}
+
+El análisis de la métrica hipervolumen (HV) expone una estratificación del rendimiento de las configuraciones. Tomando como referencia la configuración líder (NS2-RD-HUX) y aplicando el test de significancia estadística Dunn-Holm ($p > 0.05$), se identifica un extenso grupo de equivalencia compuesto por las 26 configuraciones de mayor rendimiento (detallado en el Anexo~\ref{anexo:elite_hv}). En este bloque de equivalencia, se pueden apreciar patrones definidos: 14 configuraciones emplean \textit{Random Dense} y 12 utilizan \textit{Greedy Ting}, descartando por completo el uso de \textit{Greedy Multi}. Asimismo, 21 de estas configuraciones óptimas operan con cruces uniformes (HUX o UX), frente a una presencia marginal de los cruces por puntos.
+
+\subparagraph{Análisis por algoritmo}
+
+Desde la perspectiva de los algoritmos evolutivos aislados, el test de significancia permite estructurar el rendimiento en niveles diferenciados. Resulta sumamente destacable que NSGA-II exhiba el mayor rendimiento a pesar de estar diseñado originalmente para problemas multi-objetivo (MO). Este rendimiento se explica por el comportamiento de su operador de distancia de agrupamiento (\textit{crowding distance}). Al escalar a cuatro objetivos, se produce una pérdida drástica de presión por el mecanismo de ordenación de frentes: el análisis de las trazas poblacionales confirma que, para la generación 50 (apenas el 10\% de la ejecución), el 100\% absoluto de la población de NSGA-II colapsa en el primer frente de Pareto en todas las ejecuciones independientes.
+
+Como consecuencia, la \textit{crowding distance} asume el protagonismo total de la selección, la cual actúa como un estimador de proximidad robusto~\cite{ishibuchi2015behavior}. Si bien los estudios clásicos advierten que este operador pierde eficacia en problemas continuos de muchos objetivos (al empujar agresivamente las soluciones hacia los extremos vaciando el centro del frente)~\cite{purshouse2003evolutionary, ishibuchi2008evolutionary, deb2013evolutionary}, la literatura especializada documenta un comportamiento radicalmente distinto en espacios discretos~\cite{ishibuchi2008performance, ishibuchi2015behavior}. En consecuencia, NSGA-II logra una expansión notable que maximiza el hipervolumen sin perder densidad competitiva en las regiones centrales del frente.
+
+El segundo escalón de rendimiento es ocupado de forma individual por AGE-MOEA-II, cuya estimación de la geometría de proximidad logra un balance competitivo en las métricas estudiadas. Este resultado es coherente con el diseño original del algoritmo, concebido para operar sobre topologías irregulares y discontinuas, características de los problemas combinatorios de Ingeniería de Software Basada en Búsqueda (SBSE)~\cite{panichella2022adaptive}. A diferencia de los enfoques basados en vectores, AGE-MOEA-II no asume una geometría predefinida, sino que estima la curvatura del frente de Pareto de forma adaptativa.
+
+En un tercer estrato de equivalencia estadística se agrupan los MaOEA (U-NSGA-III y NSGA-III) junto con un algoritmo clásico como SPEA2. El rendimiento relativo de NSGA-III y U-NSGA-III evidencia las limitaciones de los enfoques basados en vectores de referencia en este espacio discreto. Estos algoritmos distribuyen sus vectores asumiendo que el frente de Pareto forma una superficie continua y uniforme (un \textit{simplex})~\cite{deb2013evolutionary}. Sin embargo, la topología discreta del problema de selección de etiquetas SNP presenta un frente de Pareto discontinuo. 
+
+Consecuentemente, una fracción de los vectores de referencia apunta hacia regiones del espacio objetivo donde no existen soluciones factibles. Esta distribución dirige la presión selectiva hacia áreas vacías, resultando en frentes de Pareto finales con una cardinalidad reducida. Al finalizar el proceso, exportan una media de 42 soluciones por ejecución frente al límite poblacional de 220, un grado de reducción espacial que se identificó en el análisis de los frentes agregados (Subsección~\ref{sec:frentes_pareto_abs}).
+
+Por el contrario, SPEA2 no presupone ninguna forma geométrica inicial. Su estimador de densidad, basado en el $k$-ésimo vecino más cercano, evalúa la separación real entre las soluciones existentes. Esta capacidad de adaptación a la topología discreta permite a este algoritmo soportar la dimensionalidad de cuatro objetivos e igualar el rendimiento de los MaOEA, lo que sugiere que la distribución uniforme de vectores de referencia resulta menos efectiva fuera de los entornos continuos~\cite{ishibuchi2015behavior}.
+
+Por su parte, SMS-EMOA ocupa el penúltimo estrato de rendimiento de la clasificación. Su bajo desempeño en la métrica de hipervolumen es una consecuencia directa del estancamiento prematuro derivado de su pérdida de diversidad genética, lo que penaliza severamente la expansión del frente de Pareto. Finalmente, RVEA se posiciona en el último estrato estadístico de forma significativa. En este caso, la deficiencia de la métrica APD (que asume una homogeneidad de escalas inexistente en este problema) fuerza a la población a converger masivamente hacia el origen del espacio objetivo. Este desplazamiento provoca que el algoritmo cruce la frontera de factibilidad biológica; al finalizar las ejecuciones, el $92\%$ de sus individuos representa soluciones inválidas (con tolerancia cero), reduciendo su cardinalidad útil a una media de apenas 24 soluciones factibles y relegando al algoritmo evolutivo a la última posición absoluta.
+
+\subparagraph{Análisis por inicialización}
+
+Al evaluar las estrategias de inicialización de forma aislada, el test estadístico confirma los patrones identificados en la dinámica de convergencia. La inicialización \textit{Random Dense} se sitúa en el primer nivel de significancia al inyectar la máxima diversidad estocástica desde la generación cero. En el segundo escalón se posiciona \textit{Greedy Ting}, la cual logra un rendimiento destacado gracias a su efecto de impulso inicial, aunque con menor diversidad genética potencial que el enfoque puramente aleatorio. El nivel inferior es ocupado invariablemente por \textit{Greedy Multi}, cuyo arranque casi nulo limita severamente la expansión del frente y el rendimiento integral de los algoritmos.
+
+\subparagraph{Análisis por cruce}
+
+El análisis del operador de cruce estructura los resultados en tres niveles. El primer estrato de significancia agrupa a los cruces uniformes (UX y HUX), los cuales carecen de diferencias estadísticas entre sí pero superan al resto de operadores. La alta tasa de intercambio de estos cruces confiere una mayor capacidad para explorar el espacio combinatorio del problema evaluando combinaciones individuales. 
+
+En el segundo nivel se ubica el cruce de dos puntos (2P), que demuestra superioridad estadística frente al cruce de un punto (1P), situado en el tercer nivel. La estructura de estos operadores posicionales limita la recombinación en cromosomas de alta dimensionalidad en comparación con los operadores uniformes.
+
+\paragraph{Distancia Generacional Invertida Plus (IGD+)}
+
+\subparagraph{Análisis por configuración global}
+
+El análisis descriptivo revela un liderazgo claro de las configuraciones sustentadas en la inicialización \textit{Greedy Ting}. El primer puesto lo ocupa la configuración NSGA-II con \textit{Greedy Ting} y el cruce uniforme (NS2-GT-UX), alcanzando un valor mínimo de $0{,}0273$. 
+
+Mediante el enfoque \textit{Many-to-One} comparando contra la configuración líder, el test estadístico confirma que el primer nivel de significancia está compuesto mayoritariamente por variantes que utilizan esta estrategia de inicialización, logrando un rendimiento superior independientemente del algoritmo subyacente (más detalles de este grupo de control se encuentran en el Anexo~\ref{anexo:elite_igd}).
+
+Estos resultados confirman los ofrecidos por la métrica del hipervolumen, ya que ambas 
+\subparagraph{Análisis por algoritmo}
+
+La evaluación estadística desde la perspectiva algorítmica (véase la Figura~\ref{fig:heatmap_dunn_igd_alg} en el Anexo~\ref{anexo:significancia_abs}) estructura los resultados en distintos niveles. En el estrato superior destaca NSGA-II, el cual presenta el mejor rendimiento global sin diferencias estadísticamente significativas frente a AGE-MOEA-II. Este último actúa como puente estadístico, puesto que su desempeño empírico también resulta equivalente al de los algoritmos de muchos objetivos basados en vectores de referencia (NSGA-III y U-NSGA-III), los cuales conforman un segundo bloque estadístico.
+
+En un estrato inferior de significancia se posicionan SPEA2 y SMS-EMOA (equivalentes estadísticamente entre sí), mostrando mayores dificultades para aproximarse de forma homogénea al frente empírico. Finalmente, RVEA ocupa de forma estricta la última posición, presentando los valores de distancia más elevados de todo el experimento.
+
+\subparagraph{Análisis por inicialización}
+
+La evaluación de las estrategias de inicialización (véase la Figura~\ref{fig:heatmap_dunn_igd_init} en el Anexo~\ref{anexo:significancia_abs}) sitúa a \textit{Greedy Ting} en el primer nivel de significancia estadística, superando de forma estricta al resto de opciones. Este rendimiento superior se fundamenta en su topología híbrida: la inyección de soluciones deterministas en los extremos geométricos del problema asegura que el frente de referencia quede cubierto desde las primeras generaciones, minimizando así las distancias medidas por IGD+.
+
+En el segundo nivel se posiciona \textit{Random Dense}, cuya alta diversidad estocástica favorece una exploración amplia pero con tendencia a poblar la zona central del espacio de búsqueda. Por último, \textit{Greedy Multi} queda relegado al estrato inferior. Al forzar a la población a converger prematuramente hacia un clúster diminuto en el espacio objetivo, la inmensa mayoría de los puntos del frente de referencia carecen de soluciones cercanas, lo que provoca que la métrica IGD+ penalice drásticamente su rendimiento.
+
+\subparagraph{Análisis por cruce}
+
+El análisis estadístico de los operadores de cruce (véase la Figura~\ref{fig:heatmap_dunn_igd_cross} en el Anexo~\ref{anexo:significancia_abs}) revela una distribución en tres niveles de rendimiento diferenciados. El primer estrato de significancia agrupa a los cruces uniformes (UX y HUX), los cuales carecen de diferencias estadísticas entre sí pero logran las menores distancias globales. 
+
+En el segundo nivel se ubica de forma aislada el cruce de dos puntos (2P), seguido en la última posición por el cruce de un punto (1P). Este escalonamiento empírico demuestra que, en cromosomas de alta dimensionalidad como los requeridos para el problema de selección de etiquetas SNP, una alta tasa de recombinación genética resulta fundamental para evitar el estancamiento y alcanzar de forma integral el frente óptimo.
+
+\subsubsection{Métricas geométricas puras}
+
+Esta subsección analiza de forma aislada la convergencia de las soluciones respecto al frente de referencia o la diversidad de los frentes de Pareto, usando el indicador GD+ y el rango.
+
+\paragraph{Distancia Generacional Plus (GD+)}
+
+\subparagraph{Análisis por configuración global}
+
+El análisis descriptivo revela un liderazgo absoluto de las configuraciones sustentadas en la inicialización \textit{Greedy Multi}. El primer puesto lo ocupa la configuración SMS-EMOA con \textit{Greedy Multi} y el cruce uniforme (SMS-GM-UX), alcanzando un valor mínimo de $0{,}0001$.
+
+Mediante el enfoque \textit{Many-to-One} comparando contra la configuración líder, el bloque de alto rendimiento está compuesto íntegramente por variantes que utilizan \textit{Greedy Multi} (véase los detalles del grupo de control en el Anexo~\ref{anexo:elite_gd}). Este resultado es diametralmente opuesto al observado en IGD+: mientras que \textit{Greedy Multi} maximiza la convergencia puntual al colapsar la población hacia una región muy reducida del espacio objetivo, lo que sitúa los puntos generados extremadamente cerca del frente de referencia, esa misma concentración impide la cobertura global del frente. Esto ilustra una de las tensiones fundamentales entre las métricas de convergencia pura (GD+) y las métricas de convergencia-diversidad conjunta (IGD+ o HV) descritas en la literatura~\cite{ishibuchi2018modified}.
+
+\subparagraph{Análisis por algoritmo}
+
+La evaluación estadística de los algoritmos estructura los resultados en cuatro estratos con solapamiento. SMS-EMOA ocupa de forma estricta el primer nivel, con diferencias significativas frente a todos los competidores. Este resultado se explica por el mecanismo de selección de SMS-EMOA, basado en la contribución marginal al hipervolumen~\cite{beume2007sms}: al eliminar en cada generación únicamente al individuo con menor aportación a la densidad del frente, el algoritmo favorece una convergencia precisa hacia las regiones de mayor calidad pese a descuidar la diversidad.
+
+En el segundo estrato se agrupan estadísticamente AGE-MOEA-II y SPEA2, superando a NSGA-II, NSGA-III y U-NSGA-III ($p < 0{,}001$). Estos tres últimos forman un tercer bloque equivalente entre sí, pero estadísticamente diferenciados de RVEA, el cual ocupa la última posición con los valores de GD+ más elevados.
+
+\subparagraph{Análisis por inicialización}
+
+La evaluación de las estrategias de inicialización sitúa a \textit{Greedy Multi} en el primer nivel, con diferencias estadísticamente significativas frente a las demás estrategias. La media de GD+ para \textit{Greedy Multi} es de $0{,}0005$, frente a $0{,}0291$ para \textit{Random Dense} y $0{,}0344$ para \textit{Greedy Ting}.
+
+Este comportamiento empírico se explica por el diseño de \textit{Greedy Multi}: al concentrar todos los individuos en la solución voraz de menor compacidad, la población inicial ya reside en una región de altísima calidad. Las distancias al frente de referencia son mínimas desde la generación cero, y la evolución las reduce aún más. En contrapartida, tanto \textit{Random Dense} como \textit{Greedy Ting} distribuyen la población a lo largo de todo el espacio objetivo, lo que implica que parte de los individuos parten de posiciones alejadas del frente de referencia, pero poseen de mayor diversidad.
+
+\textit{Random Dense} y \textit{Greedy Ting} se distinguen estadísticamente entre sí ($p = 5{,}6 \times 10^{-6}$), con \textit{Random Dense} obteniendo un GD+ medio inferior ($0{,}0291$ frente a $0{,}0344$).
+
+\subparagraph{Análisis por cruce}
+
+El análisis estadístico de los operadores de cruce establece tres niveles diferenciados. En el primer estrato se sitúan los cruces uniformes HUX y UX, que no presentan diferencias entre sí pero superan estadísticamente al resto de operadores. En el segundo nivel se ubica el cruce de dos puntos, mientras que el cruce de un punto (1P) ocupa el tercer nivel, diferenciándose también de 2P.
+
+La jerarquía observada replica la estructura encontrada en IGD+ y en hipervolumen. Los operadores uniformes, al intercambiar bits de forma independiente con alta probabilidad, generan una recombinación más intensa y distribuida a lo largo del cromosoma, lo que favorece tanto la exploración como la convergencia hacia regiones óptimas.
+
+\paragraph{Rango}
+
+\subparagraph{Análisis por configuración global}
+
+El análisis descriptivo revela un dominio claro de las configuraciones basadas en el algoritmo NSGA-II con la estrategia \textit{Greedy Ting}. La configuración NS2-GT-UX presenta el valor máximo del experimento ($2{,}4229$), seguida de cerca por el resto de variantes NSGA-II con la misma inicialización. 
+
+Mediante el enfoque \textit{Many-to-One} se agrupan estadísticamente las configuraciones; se identifica un primer nivel de significancia compuesto íntegramente por algoritmos que utilizan \textit{Greedy Ting}, confirmando la influencia crítica de la estrategia de inicialización poblacional para la cobertura del espacio de búsqueda (véase la matriz de significancia en la Figura~\ref{fig:heatmap_range_config}, y los detalles del grupo de control en el Anexo~\ref{anexo:elite_range}).
+
+\subparagraph{Análisis por algoritmo}
+
+La evaluación estadística desde la perspectiva algorítmica (véase la Figura~\ref{fig:heatmap_range_algorithm} en el Anexo~\ref{anexo:significancia_abs}) revela que NSGA-II obtiene la primera posición absoluta con diferencias estadísticamente significativas frente a todos sus competidores, mostrando empíricamente la mayor capacidad para mantener una dispersión elevada de las soluciones, atribuida a su operador de distancia de agrupamiento (\textit{crowding distance}). Por detrás de él, se consolida un grupo de alto rendimiento formado por AGE-MOEA-II, U-NSGA-III, NSGA-III y SPEA2 (sin diferencias significativas entre ellos). Cabe destacar que SPEA2 actúa como puente estadístico en la comparativa de todos contra todos, ya que también resulta estadísticamente equivalente a SMS-EMOA, situado en un estrato inferior. Finalmente, RVEA ocupa la última posición de forma significativa, registrando los valores más bajos del experimento, lo que refleja una exploración concentrada en una zona limitada del espacio objetivo.
+
+\subparagraph{Análisis por inicialización}
+
+La evaluación de las estrategias de inicialización (véase la Figura~\ref{fig:heatmap_range_init} en el Anexo~\ref{anexo:significancia_abs}) consolida a \textit{Greedy Ting} en el primer nivel de significancia estadística, superando de forma estricta a \textit{Random Dense} y a \textit{Greedy Multi}. Esta superioridad empírica se explica por su efecto topológico: su naturaleza híbrida inyecta soluciones ancla deterministas en la población inicial que aseguran la cobertura temprana de los extremos geométricos del frente de Pareto. Al combinar estos anclajes periféricos con individuos construidos mediante selección voraz y por aleatoriedad, la estrategia garantiza desde la primera generación un despliegue amplio a lo largo del hiperespacio, facilitando la expansión simétrica de los algoritmos hacia los extremos de compacidad y tolerancia.
+
+En niveles de significancia inferiores se ubican el resto de estrategias. \textit{Random Dense} sitúa la población en un extremo de alta compacidad (activa en torno al 50\% de los SNPs por cada individuo), limitando la capacidad de alcanzar soluciones de alta tolerancia. Por su parte, \textit{Greedy Multi} concentra la búsqueda en el extremo de paneles diminutos, impidiendo la generación de un frente extenso.
+
+\subparagraph{Análisis por cruce}
+
+El análisis estadístico de los operadores de cruce (véase la Figura~\ref{fig:heatmap_range_crossover} en el Anexo~\ref{anexo:significancia_abs}) revela que los cruces uniformes (UX y HUX) obtienen el mayor rendimiento para la retención del rango, formando un primer grupo de significancia junto con el cruce de dos puntos (2P), con el cual no presentan diferencias estadísticas. Cabe destacar que el operador 2P actúa como puente estadístico, ya que su rendimiento también resulta equivalente al del cruce de un punto (1P), el cual se sitúa en el estrato inferior y es superado significativamente por los cruces uniformes. La causa empírica de este fenómeno radica en que la alta tasa de intercambio genético de los operadores uniformes incrementa la capacidad exploratoria del algoritmo evolutivo en las regiones periféricas del espacio de búsqueda.
+
+
+
+
+
+\subsubsection{Métricas de topología local}
+
+Esta sección evalúa la calidad de soluciones individuales clave en regiones específicas del frente de Pareto, analizando el balance central (MinSum) y la convergencia marginal extrema (SumMin).
+
+\paragraph{Balance Central (MinSum)}
+
+El indicador MinSum evalúa la calidad de la solución de compromiso global: mide la suma de los valores objetivos normalizados de la solución que mejor equilibra todos los criterios simultáneamente. A diferencia de IGD+ o Rango, esta métrica no evalúa la extensión del frente, sino la idoneidad de su punto de equilibrio central. Menores valores representan soluciones con un balance más ajustado entre todos los objetivos.
+
+\subparagraph{Análisis por configuración global}
+
+El análisis descriptivo sitúa en el primer puesto a la configuración SMS-EMOA con \textit{Random Dense} y cruce uniforme (SMS-RD-UX), con un valor medio de $1{,}3838$. El bloque de alto rendimiento identificado mediante el enfoque \textit{Many-to-One} comprende 25 configuraciones estadísticamente equivalentes a la líder (véase el Anexo~\ref{anexo:elite_minsum}), combinando las estrategias \textit{Random Dense} y \textit{Greedy Ting} con varios algoritmos y operadores de cruce, con la única excepción de \textit{Greedy Multi}, que queda completamente excluida de este grupo. Este patrón pone de manifiesto que la diversidad del frente de Pareto resulta determinante para encontrar soluciones de compromiso de alta calidad: una inicialización que explora regiones diversas del espacio objetivo permite a los algoritmos identificar el punto de equilibrio óptimo, algo que la concentración extrema de \textit{Greedy Multi} impide sistemáticamente.
+
+\subparagraph{Análisis por algoritmo}
+
+La evaluación estadística de los algoritmos revela que AGEMOEA2, NSGA-II, NSGA-III, U-NSGA-III y SMS-EMOA forman un primer bloque estadísticamente equivalente. SPEA2 actúa como puente estadístico entre este bloque y el nivel inferior: resulta equivalente a SMS-EMOA pero significativamente peor que los cuatro algoritmos restantes del primer estrato. RVEA ocupa de forma estricta el último nivel, con diferencias significativas frente a todos los demás algoritmos. El resultado de RVEA refleja su orientación hacia la búsqueda guiada por vectores de referencia en el espacio de objetivos: este mecanismo favorece la cobertura de regiones extremas del frente pero no la convergencia hacia el punto de equilibrio central.
+
+\subparagraph{Análisis por inicialización}
+
+La evaluación de las estrategias de inicialización establece tres niveles diferenciados. \textit{Random Dense} ocupa el primer nivel de forma estadísticamente estricta, con una media de $1{,}4734$, seguida de \textit{Greedy Ting} en el segundo nivel ($1{,}5474$). \textit{Greedy Multi} queda relegada al tercer nivel con el valor más elevado ($1{,}8885$).
+
+La superioridad de \textit{Random Dense} se fundamenta en la distribución de su población inicial: al activar en torno al $50\%$ de los SNPs por individuo, los puntos de partida se concentran en la zona de alta compacidad relativa, que coincide con la región donde los frentes de Pareto tienden a situar el balance óptimo entre los cuatro objetivos del problema. \textit{Greedy Ting}, por su parte, alcanza una cobertura amplia desde los extremos geométricos, pero sus puntos ancla en los extremos de muy baja y muy alta tolerancia alejan la media de la zona de equilibrio. La penalización de \textit{Greedy Multi} es consecuencia directa de su concentración en paneles de compacidad mínima, lejos del punto de equilibrio central del frente empírico.
+
+\subparagraph{Análisis por cruce}
+
+El análisis estadístico de los operadores de cruce establece tres niveles diferenciados. Los cruces uniformes HUX y UX se agrupan en el primer estrato sin diferencias entre sí, mientras que el cruce de dos puntos (2P) ocupa el segundo nivel y el cruce de un punto (1P) el tercero. La causa empírica es consistente con los resultados de las métricas anteriores: los operadores uniformes generan una recombinación más intensa a nivel de locus individual, lo que facilita la combinación de características óptimas de ambos padres para aproximarse al balance central del frente.
+\paragraph{Convergencia Marginal (SumMin)}
+
+\subparagraph{Análisis por configuración global}
+
+El análisis descriptivo sitúa en el primer puesto a la configuración NSGA-II con \textit{Greedy Ting} y cruce uniforme (NS2-GT-UX), con un valor medio de $0{,}5326$. Este liderazgo demuestra que SumMin no evalúa la mejor solución individual: para encontrar ese óptimo puntual se requiere tanto diversidad como convergencia, y la inicialización \textit{Greedy Ting} proporciona ambas condiciones al desplegar individuos en todo el espacio objetivo desde la primera generación.
+
+El bloque de alto rendimiento identificado mediante el enfoque \textit{Many-to-One} comprende 28 configuraciones estadísticamente equivalentes a la líder (véase el Anexo~\ref{anexo:elite_summin}). La totalidad del bloque emplea \textit{Greedy Ting} o \textit{Random Dense}, mientras que \textit{Greedy Multi} queda excluida por completo, lo que confirma que la concentración extrema de esta estrategia impide encontrar soluciones premiadas por esta métrica.
+
+\subparagraph{Análisis por algoritmo}
+
+La evaluación estadística de los algoritmos establece cuatro niveles con solapamiento. NSGA-II ocupa de forma estricta el primer nivel, con diferencias significativas frente a todos los demás algoritmos. Este resultado se atribuye a su operador de \textit{crowding distance}, que mantiene la presión de selección hacia las soluciones más aisladas del frente, favoreciendo la exploración de la región de mínima suma objetiva.
+
+En el segundo nivel se agrupan AGE-MOEA-II, NSGA-III y U-NSGA-III, equivalentes entre sí pero inferiores a NSGA-II. SMS-EMOA y SPEA2 forman un tercer nivel, donde ambos son equivalentes entre sí. Finalmente, RVEA ocupa de forma estricta el último nivel, inferior a todos los demás algoritmos, reflejando las limitaciones de su mecanismo de búsqueda por vectores de referencia para la convergencia puntual.
+
+\subparagraph{Análisis por inicialización}
+
+La evaluación de las estrategias de inicialización establece tres niveles estrictamente ordenados. \textit{Greedy Ting} ocupa el primer nivel con una media de $0{,}8089$, seguida de \textit{Random Dense} en el segundo nivel ($1{,}0375$). \textit{Greedy Multi} queda relegada al tercer nivel con el valor más elevado ($1{,}8270$).
+
+\subparagraph{Análisis por cruce}
+
+El análisis estadístico de los operadores de cruce establece tres niveles. Los cruces uniformes HUX y UX forman el primer estrato sin diferencias entre sí. El cruce de dos puntos (2P) ocupa el segundo nivel, mientras que el cruce de un punto (1P) cierra el tercero. Este escalonamiento es consistente con el patrón observado en el resto de métricas del experimento y se explica por la mayor capacidad de recombinación de los operadores uniformes en cromosomas de alta dimensionalidad.
+
+
+\subsubsection{Métricas de dominio biológico}
+
+Este grupo comprende métricas de dominio específico que evalúan la utilidad práctica de las soluciones de etiquetas SNP encontradas, analizando la tasa de eficiencia media de tolerancia (AvgT) y la diversidad de genotipos seleccionados mediante la distancia media de Hamming (AvgHD).
+
+\paragraph{Tasa de Eficiencia de Tolerancia Media (AvgT)}
+
+\subparagraph{Análisis por configuración global}
+
+La comparación Many-to-One sitúa en el primer grupo a SMSEMOA con \textit{Greedy Ting} y cruce HUX. Ese grupo de equivalencia incluye la variante con UX, varias configuraciones de SMSEMOA con \textit{Random Dense} y cruces uniformes o de dos puntos, una configuración de AGE-MOEA-II con \textit{Random Dense}, y configuraciones concretas de NSGA-II, NSGA-III, U-NSGA-III y RVEA. El bloque está dominado por \textit{Random Dense} y por cruces uniformes, mientras que \textit{Greedy Ting} queda restringida a un núcleo más pequeño y \textit{Greedy Multi} aparece solo de forma residual. El bloque de mayor rendimiento agrupa 24 configuraciones sin diferencias significativas respecto a la líder, recogidas en el Anexo~\ref{anexo:elite_avgt} TODO no hagas un anexo solo para esta métricia, todas las configuraciones de alto rendimiento deben ir en el mismo anexo, cada una en su sección correspondinete.
+
+La métrica premia configuraciones que preservan tolerancias altas sin forzar una compresión excesiva de la población. Por ello, las soluciones mejor situadas no son las más concentradas, sino aquellas que conservan diversidad suficiente para sostener tolerancias medias altas en distintas zonas del espacio objetivo.
+
+\subparagraph{Análisis por algoritmo}
+
+La comparación por algoritmo separa cuatro niveles. En el nivel superior se sitúan SMSEMOA y SPEA2, sin diferencias significativas entre sí. En el segundo nivel aparece NSGA-II. El tercer nivel agrupa a AGE-MOEA-II y NSGA-III DUDA creo que son estadísticamente diferentes, revísalo. , mientras que U-NSGA-III y RVEA forman el nivel inferior de forma conjunta. DUDA no se generan el proyecto ranking csv por algoritmo?
+
+La posición de SMSEMOA y SPEA2 es coherente con la naturaleza de la métrica. Ambos algoritmos mantienen una presión selectiva suficiente para conservar individuos con tolerancias medias altas, sin imponer la estructura geométrica rígida que caracteriza a los algoritmos de muchos objetivos basados en vectores de referencia. NSGA-II queda en un nivel intermedio por su capacidad para retener diversidad, mientras que AGE-MOEA-II y NSGA-III muestran un comportamiento también competitivo, pero más dependiente de la distribución inicial de la población.
+
+RVEA cierra el bloque estadístico. Su comportamiento en AvgT reproduce la sensibilidad observada en otras métricas cuando la presión selectiva depende de una geometría de referencia demasiado rígida para un espacio discreto con restricciones de factibilidad.
+
+\subparagraph{Análisis por cruce}
+
+El análisis por cruce organiza los resultados en tres niveles. HUX y UX forman el estrato superior y no presentan diferencias significativas entre sí. El cruce de dos puntos ocupa el nivel intermedio, mientras que el cruce de un punto queda en el último nivel. DUDA creo que 2p actúa como puente estadístico
+
+Esta jerarquía es coherente con el comportamiento de AvgT. Los cruces uniformes permiten recombinar loci individuales sin destruir por completo la estructura genética que sostiene la tolerancia, por lo que conservan mejor las soluciones con valores altos de la métrica. El cruce de dos puntos conserva parte de esa capacidad, pero el cruce de un punto limita más la recombinación útil y reduce la probabilidad de mantener tolerancias medias elevadas.
+
+\paragraph{Distancia de Hamming Promedio (AvgHD)}
+
+
+
+\section{Experimento 2: Objetivos Proporcionales}
+\subsection{Frentes de Pareto}
+% Análisis visual del frente mediano representativo.
+\subsection{Análisis estadístico de las métricas}
+% Presentación y discusión de resultados individuales (medias, varianzas, boxplots).
+\subsection{Dinámica de convergencia}
+% Evolución generacional de las métricas.
+
+
+\section{Discusión y Comparativa Global}
+\subsection{Impacto de los objetivos planteados}
+% Comparativa sobre cómo cambian radicalmente las soluciones al evaluar en absoluto frente a proporcional.
+\subsection{Rendimiento global}
+% Síntesis general y ránkings para determinar qué combinación de algoritmo, inicialización y cruce es universalmente la más robusta para el problema de la selección de etiquetas SNP.

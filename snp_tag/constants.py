@@ -7,7 +7,7 @@ por todo el pipeline, mitigando el uso de "magic strings".
 
 # Orden preferido de algoritmos para la visualización conjunta
 PREFERRED_ALGORITHMS_ORDER = [
-    'NSGA3', 'MOEAD_TCHE', 'MOEAD_PBI', 'MOEAD_WS', 'NSGA2', 'SPEA2',
+    'NSGA3', 'MOEA/D_TCHE', 'MOEA/D_PBI', 'MOEA/D_WS', 'NSGA2', 'SPEA2',
     'AGEMOEA2', 'SMSEMOA', 'RVEA'
 ]
 
@@ -29,13 +29,13 @@ BASE_METRICS = [
 
 # Mapeo de identificador de métrica a título descriptivo para gráficos
 METRICS_DISPLAY_NAMES = {
-    'Range': 'Rango (Range): Diversidad Geométrica',
-    'MinSum': 'MinSum: Convergencia Central',
-    'SumMin': 'SumMin: Convergencia Marginal',
+    'Range': 'Rango',
+    'MinSum': 'MinSum',
+    'SumMin': 'SumMin',
     'MaxToleranceRate': 'Tasa de Tolerancia Máxima',
     'AvgToleranceRate': 'Tasa de Tolerancia Promedio',
     'AvgHammingDistance': 'Distancia Hamming Promedio',
-    'Hypervolume': 'Hipervolumen (HV)',
-    'IGD+': 'Distancia Generacional Invertida Plus (IGD+)',
-    'GD+': 'Distancia Generacional Plus (GD+)'
+    'Hypervolume': 'Hipervolumen',
+    'IGD+': 'IGD+',
+    'GD+': 'GD+'
 }

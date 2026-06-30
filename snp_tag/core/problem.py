@@ -19,17 +19,14 @@ def transformar_objetivos_a_minimizacion(
     varianza: np.ndarray,
     modo_transformacion: str = 'neg',
     epsilon: float = 1e-9,
-    mask_infactible: np.ndarray | None = None,
-    penalizacion_infactible: float = 1e3,
 ) -> np.ndarray:
     """
     Convierte objetivos de maximización a minimización según el modo configurado.
     """
     modo = str(modo_transformacion or 'neg').strip().lower()
     if modo == 'inverse':
-        # En inverse, aislamos las divisiones por cero (infactibles).
-        # Les asignamos 0.0 temporalmente; la máscara de infactibilidad 
-        # se encargará después de anclarlos por encima del peor factible.
+        # En inverse, las divisiones por cero dan 0.0. Al usar constraints formales,
+        # pymoo sabrá que son infactibles mediante out['G'].
         f2 = np.divide(1.0, min_cobertura, out=np.zeros_like(min_cobertura, dtype=float), where=(min_cobertura > 0))
         f3 = np.divide(1.0, hamming_med, out=np.zeros_like(hamming_med, dtype=float), where=(hamming_med > 0))
     else:
@@ -42,22 +39,6 @@ def transformar_objetivos_a_minimizacion(
         f3,
         varianza,
     ]).astype(float)
-
-    # Penalización dinámica y estricta
-    if mask_infactible is not None and np.any(mask_infactible):
-        deficit = 1.0 - np.minimum(min_cobertura[mask_infactible], 1.0)
-        
-        # Anclar la base de la penalización al peor individuo factible de la generación
-        # para garantizar que ningún infactible domine a un factible, sin explotar a 1e9.
-        if np.any(~mask_infactible):
-            peor_factible = np.max(F[~mask_infactible, :], axis=0)
-        else:
-            peor_factible = 0.0
-            
-        base_penalizacion = np.maximum(penalizacion_infactible, peor_factible)
-        
-        # Sobrescribir todos los objetivos de los infactibles para asegurar dominancia pura
-        F[mask_infactible, :] = base_penalizacion + deficit[:, None]
 
     return F
 
@@ -107,8 +88,6 @@ def evaluar_poblacion_vectorizado(
         # f4: Varianza (Balance)
         varianza = D.var(axis=1)
 
-    mask_infactible = min_cobertura < 1.0
-
     # Retorno en formato de minimización (PyMoo standard)
     F = transformar_objetivos_a_minimizacion(
         k,
@@ -116,7 +95,6 @@ def evaluar_poblacion_vectorizado(
         hamming_med,
         varianza,
         modo_transformacion=modo_transformacion,
-        mask_infactible=mask_infactible,
     )
     if devolver_min_cobertura:
         return F, min_cobertura
@@ -180,7 +158,7 @@ class ProblemaTagSNP(Problem):
                 self._escala_f3 = max(1.0, float(D_completa.mean()))
             self._escala_f4 = max(1.0, float(D_completa.var()))
         
-        super().__init__(n_var=n_var, n_obj=4, n_ieq_constr=0, xl=0, xu=1, vtype=bool)
+        super().__init__(n_var=n_var, n_obj=4, n_ieq_constr=1, xl=0, xu=1, vtype=bool)
 
     def _evaluate(self, X, out, *args, **kwargs):
         """
@@ -205,6 +183,10 @@ class ProblemaTagSNP(Problem):
             cap_tolerancia=self.cap_tolerancia,
         )
         
+        # Exportar restricción: g(x) <= 0.
+        # Es decir, 1.0 - min_cobertura <= 0
+        out['G'] = (1.0 - min_cobertura).reshape(-1, 1)
+
         if self.normalizar_busqueda:
             F_escalado = F_crudo.copy()
             F_escalado[:, 0] /= self._escala_f1

@@ -1,0 +1,17 @@
+% --- Extraído de 03_estado_del_arte.tex ---
+    \item \textbf{Implementación clínica mediante MCDM:} Además de las métricas empleadas, este trabajo aporta un módulo final de Toma de Decisiones Multicriterio (\textit{Multi-Criteria Decision Making}, MCDM). Esta adición contribuye a la aplicabilidad real del problema genético, ya que permite extraer de forma automática las soluciones de compromiso óptimas ---basándose en tres criterios matemáticos: funciones de escalarización (\textit{ASF}) \cite{wierzbicki1980use}, el punto de inflexión (\textit{Knee Point}) \cite{rachmawati2009multiobjective} y pesos relativos (\textit{Pseudo-Weights}) \cite{deb2001multiobjective}--- de entre los cientos de individuos generados por los algoritmos.
+
+% --- Extraído de 04_metodologia.tex ---
+\subsection{Selección de la mejor solución: toma de decisiones multicriterio (MCDM)}
+
+Una vez obtenido el frente de Pareto final unificado, se aplica un motor de toma de decisiones multicriterio (MCDM) para seleccionar las soluciones de compromiso más viables. Para evitar los sesgos metodológicos de emplear una única aproximación, el conjunto de soluciones no dominadas se filtra aplicando simultáneamente tres estrategias:
+
+\begin{enumerate}
+    \item \textbf{Achievement Scalarizing Function (ASF):} Minimiza la distancia de Chebyshev ponderada respecto al punto ideal, seleccionando la solución que mejor se ajusta a un conjunto de pesos u objetivos preferenciales.
+    \item \textbf{Pseudo-pesos (\textit{Pseudo-Weights}):} Evalúa la posición relativa de cada individuo en el hiperplano del frente normalizado para extraer soluciones con un rendimiento equilibrado en todas las dimensiones de manera equitativa.
+    \item \textbf{Detección de puntos de inflexión (\textit{High Trade-off / Knee Points}):} Identifica los ``codos'' de la superficie de Pareto, localizando aquellas soluciones donde ceder una cantidad mínima en un objetivo proporciona una mejora sustancial y desproporcionada en los demás.
+\end{enumerate}
+
+% --- Extraído de 05_resultados.tex ---
+\subsection{Toma de Decisiones Multicriterio (MCDM)}
+% Aplicación del método MCDM.

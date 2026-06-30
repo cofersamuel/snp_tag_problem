@@ -55,6 +55,12 @@ scripts/
 didactic contents/
 snp_tag/scratch/
 
+*.npz
+*.pdf
+ 
+# Imágenes generadas dentro de los resultados guardados
+ejecuciones_guardadas/**/*.png
+
 # LaTeX auxiliary files
 *.aux
 *.out
@@ -68,3 +74,5 @@ automation/telemetry_credentials.env
 automation/archives/
 automation/results/
 scratch/
+*.xlsx#
+*.~lock.*

@@ -1,0 +1,15 @@
+\chapter{Objetivos}
+
+\section{Objetivo principal}
+
+El objetivo principal de este proyecto es evaluar el rendimiento y realizar una comparativa rigurosa entre múltiples configuraciones de EAs aplicados al problema de la selección de etiquetas SNP. Dicha evaluación se lleva a cabo utilizando el entorno de optimización \textit{pymoo} \cite{pymoo}, analizando el impacto conjunto que ejerce el algoritmo, la estrategia de inicialización poblacional y el operador de cruce sobre la calidad de los frentes de Pareto obtenidos bajo un conjunto de métricas analíticas concretas.
+
+\section{Objetivos específicos}
+
+Para asegurar la consecución de la meta principal, el trabajo se desglosa en los siguientes objetivos específicos:
+\begin{itemize}
+    \item Evaluar el impacto empírico que supone modelar las funciones objetivo del problema de diferentes modos: en un caso utilizando cuatro objetivos independientes y en el otro también dichos objetivos, pero dividiendo dos de ellos por el número de etiquetas SNP \cite{ting2010multi, moqa2022assessing}.
+    \item Contrastar las capacidades de convergencia y de mantenimiento de la diversidad de un conjunto de EAs considerados referentes en la literatura actual.
+    \item Analizar si la aplicación de estrategias de inicialización poblacional voraces \cite{ting2010multi, moqa2022assessing} supone una mejora real y estadísticamente significativa frente a los métodos de inicialización aleatoria clásicos.
+    \item Medir la influencia directa que ejercen los distintos operadores genéticos de cruce sobre el comportamiento de los algoritmos.
+\end{itemize}

@@ -1,0 +1,279 @@
+\chapter{Configuraciones de Alto Rendimiento por Métrica}\label{anexo:elite}
+
+Este anexo detalla las configuraciones algorítmicas que conforman los bloques de élite para las métricas de Hipervolumen y Rango en el primer experimento (Objetivos Absolutos). Estas variantes carecen de diferencias estadísticas significativas respecto a sus respectivas configuraciones líderes según el test de Dunn-Holm ($p > 0.05$).
+
+\section{Hipervolumen}\label{anexo:elite_hv}
+
+La siguiente tabla detalla las 26 configuraciones algorítmicas que conforman el bloque de élite para la métrica de hipervolumen. Todas estas variantes carecen de diferencias estadísticas significativas respecto a la configuración líder (NSGA2-random\_dense-HUX).
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{llc}
+        \toprule
+        \textbf{Ranking} & \textbf{Configuración} & \textbf{Hipervolumen Medio} \\
+        \midrule
+        1 & NSGA2-random\_dense-HUX & 0.5324 \\
+        2 & NSGA2-random\_dense-UX & 0.5304 \\
+        3 & NSGA2-greedy\_ting-HUX & 0.4996 \\
+        4 & NSGA2-greedy\_ting-UX & 0.4990 \\
+        5 & UNSGA3-random\_dense-UX & 0.4775 \\
+        6 & AGEMOEA2-random\_dense-HUX & 0.4774 \\
+        7 & NSGA3-random\_dense-HUX & 0.4774 \\
+        8 & UNSGA3-random\_dense-HUX & 0.4756 \\
+        9 & NSGA3-random\_dense-UX & 0.4750 \\
+        10 & AGEMOEA2-random\_dense-UX & 0.4740 \\
+        11 & NSGA2-greedy\_ting-2P & 0.4648 \\
+        12 & AGEMOEA2-greedy\_ting-2P & 0.4604 \\
+        13 & NSGA2-random\_dense-2P & 0.4533 \\
+        14 & NSGA2-greedy\_ting-1P & 0.4482 \\
+        15 & AGEMOEA2-greedy\_ting-1P & 0.4466 \\
+        16 & AGEMOEA2-random\_dense-2P & 0.4419 \\
+        17 & SPEA2-random\_dense-HUX & 0.4309 \\
+        18 & SPEA2-random\_dense-UX & 0.4277 \\
+        19 & AGEMOEA2-greedy\_ting-HUX & 0.4254 \\
+        20 & AGEMOEA2-greedy\_ting-UX & 0.4253 \\
+        21 & NSGA2-random\_dense-1P & 0.4245 \\
+        22 & UNSGA3-greedy\_ting-2P & 0.4227 \\
+        23 & SMSEMOA-greedy\_ting-2P & 0.4207 \\
+        24 & UNSGA3-random\_dense-2P & 0.4201 \\
+        25 & NSGA3-random\_dense-2P & 0.4200 \\
+        26 & NSGA3-greedy\_ting-UX & 0.4195 \\
+        \bottomrule
+    \end{tabular}
+    \caption[Bloque de élite de Hipervolumen]{Las 26 configuraciones que conforman el bloque de élite de hipervolumen.}
+    \label{tab:elite_hv}
+\end{table}
+
+\section{Distancia Generacional Invertida Plus (IGD+)}\label{anexo:elite_igd}
+
+La siguiente tabla detalla las configuraciones algorítmicas que conforman el bloque de élite para la métrica IGD+. Estas variantes carecen de diferencias estadísticas significativas respecto a la configuración líder (NSGA2-greedy\_ting-UX).
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Algoritmo} & \textbf{Inicialización} & \textbf{Cruce} & \textbf{IGD+ Medio} \\
+        \midrule
+        NSGA2 & greedy\_ting & UX & 0.0273 \\
+        NSGA2 & greedy\_ting & HUX & 0.0275 \\
+        SMSEMOA & greedy\_ting & 2P & 0.0426 \\
+        UNSGA3 & greedy\_ting & HUX & 0.0440 \\
+        NSGA3 & greedy\_ting & HUX & 0.0449 \\
+        UNSGA3 & greedy\_ting & UX & 0.0456 \\
+        NSGA3 & greedy\_ting & UX & 0.0458 \\
+        AGEMOEA2 & greedy\_ting & 2P & 0.0471 \\
+        AGEMOEA2 & greedy\_ting & HUX & 0.0479 \\
+        AGEMOEA2 & greedy\_ting & 1P & 0.0483 \\
+        AGEMOEA2 & greedy\_ting & UX & 0.0494 \\
+        NSGA2 & greedy\_ting & 2P & 0.0497 \\
+        SMSEMOA & greedy\_ting & 1P & 0.0536 \\
+        SMSEMOA & greedy\_ting & HUX & 0.0539 \\
+        NSGA2 & greedy\_ting & 1P & 0.0549 \\
+        SMSEMOA & greedy\_ting & UX & 0.0555 \\
+        UNSGA3 & greedy\_ting & 2P & 0.0566 \\
+        NSGA3 & greedy\_ting & 2P & 0.0577 \\
+        SPEA2 & greedy\_ting & HUX & 0.0609 \\
+        UNSGA3 & greedy\_ting & 1P & 0.0618 \\
+        SPEA2 & greedy\_ting & UX & 0.0622 \\
+        NSGA3 & greedy\_ting & 1P & 0.0639 \\
+        SPEA2 & greedy\_ting & 1P & 0.0737 \\
+        SPEA2 & greedy\_ting & 2P & 0.0914 \\
+        NSGA2 & random\_dense & UX & 0.1044 \\
+        NSGA2 & random\_dense & HUX & 0.1061 \\
+        \bottomrule
+    \end{tabular}
+    \caption[Bloque de élite de IGD+]{Configuraciones algorítmicas que conforman el bloque de élite para la métrica IGD+.}
+    \label{tab:elite_igd}
+\end{table}
+
+\section{Distancia Generacional Plus (GD+)}\label{anexo:elite_gd}
+
+La siguiente tabla detalla las configuraciones algorítmicas que conforman el bloque de élite para la métrica GD+. Estas variantes carecen de diferencias estadísticas significativas respecto a la configuración líder (SMSEMOA-greedy\_multi-UX).
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Algoritmo} & \textbf{Inicialización} & \textbf{Cruce} & \textbf{GD+ Medio} \\
+        \midrule
+        SMSEMOA & greedy\_multi & UX & 0.0001 \\
+        SMSEMOA & greedy\_multi & HUX & 0.0001 \\
+        SMSEMOA & greedy\_multi & 2P & 0.0002 \\
+        NSGA3 & greedy\_multi & UX & 0.0002 \\
+        UNSGA3 & greedy\_multi & UX & 0.0003 \\
+        SMSEMOA & greedy\_multi & 1P & 0.0003 \\
+        NSGA3 & greedy\_multi & HUX & 0.0003 \\
+        UNSGA3 & greedy\_multi & HUX & 0.0003 \\
+        SPEA2 & greedy\_multi & 1P & 0.0004 \\
+        NSGA3 & greedy\_multi & 1P & 0.0004 \\
+        SPEA2 & greedy\_multi & 2P & 0.0004 \\
+        NSGA3 & greedy\_multi & 2P & 0.0005 \\
+        UNSGA3 & greedy\_multi & 1P & 0.0005 \\
+        UNSGA3 & greedy\_multi & 2P & 0.0005 \\
+        NSGA2 & greedy\_multi & HUX & 0.0006 \\
+        AGEMOEA2 & greedy\_multi & 1P & 0.0006 \\
+        NSGA2 & greedy\_multi & UX & 0.0006 \\
+        SPEA2 & greedy\_multi & UX & 0.0006 \\
+        NSGA2 & greedy\_multi & 2P & 0.0006 \\
+        AGEMOEA2 & greedy\_multi & 2P & 0.0006 \\
+        NSGA2 & greedy\_multi & 1P & 0.0007 \\
+        AGEMOEA2 & greedy\_multi & UX & 0.0007 \\
+        AGEMOEA2 & greedy\_multi & HUX & 0.0007 \\
+        SPEA2 & greedy\_multi & HUX & 0.0008 \\
+        RVEA & greedy\_multi & 1P & 0.0008 \\
+        RVEA & greedy\_multi & 2P & 0.0009 \\
+        \bottomrule
+    \end{tabular}
+    \caption[Bloque de élite de GD+]{Configuraciones algorítmicas que conforman el bloque de élite para la métrica GD+.}
+    \label{tab:elite_gd}
+\end{table}
+
+\section{Balance Central (MinSum)}\label{anexo:elite_minsum}
+
+La siguiente tabla detalla las configuraciones algorítmicas que conforman el bloque de élite para la métrica MinSum. Estas variantes carecen de diferencias estadísticas significativas respecto a la configuración líder (SMSEMOA-random\_dense-UX).
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Algoritmo} & \textbf{Inicialización} & \textbf{Cruce} & \textbf{MinSum Medio} \\
+        \midrule
+        SMSEMOA & random\_dense & UX & 1.3838 \\
+        SMSEMOA & random\_dense & HUX & 1.3839 \\
+        UNSGA3 & random\_dense & UX & 1.4211 \\
+        UNSGA3 & random\_dense & HUX & 1.4222 \\
+        NSGA3 & random\_dense & HUX & 1.4228 \\
+        NSGA3 & random\_dense & UX & 1.4228 \\
+        SMSEMOA & random\_dense & 2P & 1.4250 \\
+        AGEMOEA2 & random\_dense & HUX & 1.4319 \\
+        AGEMOEA2 & random\_dense & UX & 1.4360 \\
+        NSGA2 & random\_dense & UX & 1.4443 \\
+        NSGA2 & random\_dense & HUX & 1.4452 \\
+        SMSEMOA & random\_dense & 1P & 1.4480 \\
+        NSGA2 & greedy\_ting & HUX & 1.4614 \\
+        NSGA2 & greedy\_ting & UX & 1.4637 \\
+        NSGA3 & greedy\_ting & HUX & 1.4691 \\
+        UNSGA3 & random\_dense & 2P & 1.4698 \\
+        UNSGA3 & greedy\_ting & UX & 1.4719 \\
+        NSGA3 & random\_dense & 2P & 1.4743 \\
+        NSGA3 & greedy\_ting & UX & 1.4757 \\
+        UNSGA3 & greedy\_ting & HUX & 1.4767 \\
+        SPEA2 & random\_dense & HUX & 1.4788 \\
+        SPEA2 & random\_dense & UX & 1.4804 \\
+        AGEMOEA2 & random\_dense & 2P & 1.4808 \\
+        NSGA3 & random\_dense & 1P & 1.4909 \\
+        UNSGA3 & greedy\_ting & 2P & 1.4927 \\
+        \bottomrule
+    \end{tabular}
+    \caption[Bloque de élite de MinSum]{Configuraciones algorítmicas que conforman el bloque de élite para la métrica MinSum.}
+    \label{tab:elite_minsum}
+\end{table}
+
+\section{Convergencia Marginal (SumMin)}\label{anexo:elite_summin}
+
+La siguiente tabla detalla las configuraciones algorítmicas que conforman el bloque de élite para la métrica SumMin. Estas variantes carecen de diferencias estadísticas significativas respecto a la configuración líder (NSGA2-greedy\_ting-UX).
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Algoritmo} & \textbf{Inicialización} & \textbf{Cruce} & \textbf{SumMin Medio} \\
+        \midrule
+        NSGA2 & greedy\_ting & UX & 0.5326 \\
+        NSGA2 & greedy\_ting & HUX & 0.5344 \\
+        NSGA2 & greedy\_ting & 2P & 0.5809 \\
+        NSGA2 & greedy\_ting & 1P & 0.6153 \\
+        NSGA2 & random\_dense & HUX & 0.6324 \\
+        NSGA2 & random\_dense & UX & 0.6372 \\
+        AGEMOEA2 & greedy\_ting & 2P & 0.6657 \\
+        AGEMOEA2 & greedy\_ting & 1P & 0.6820 \\
+        UNSGA3 & greedy\_ting & 2P & 0.7059 \\
+        NSGA3 & greedy\_ting & 2P & 0.7223 \\
+        UNSGA3 & greedy\_ting & 1P & 0.7360 \\
+        NSGA3 & greedy\_ting & 1P & 0.7372 \\
+        SMSEMOA & greedy\_ting & 2P & 0.7390 \\
+        NSGA3 & greedy\_ting & UX & 0.7479 \\
+        SMSEMOA & greedy\_ting & 1P & 0.7485 \\
+        UNSGA3 & greedy\_ting & UX & 0.7494 \\
+        UNSGA3 & greedy\_ting & HUX & 0.7517 \\
+        NSGA3 & greedy\_ting & HUX & 0.7550 \\
+        SMSEMOA & greedy\_ting & UX & 0.7943 \\
+        SMSEMOA & greedy\_ting & HUX & 0.7960 \\
+        SPEA2 & greedy\_ting & HUX & 0.8180 \\
+        AGEMOEA2 & greedy\_ting & HUX & 0.8411 \\
+        SPEA2 & greedy\_ting & UX & 0.8495 \\
+        AGEMOEA2 & greedy\_ting & UX & 0.8565 \\
+        SPEA2 & greedy\_ting & 1P & 0.8740 \\
+        NSGA3 & random\_dense & HUX & 0.8795 \\
+        UNSGA3 & random\_dense & UX & 0.8813 \\
+        NSGA3 & random\_dense & UX & 0.8878 \\
+        \bottomrule
+    \end{tabular}
+    \caption[Bloque de élite de SumMin]{Configuraciones algorítmicas que conforman el bloque de élite para la métrica SumMin.}
+    \label{tab:elite_summin}
+\end{table}
+
+\section{Rango}\label{anexo:elite_range}
+
+La siguiente tabla detalla las configuraciones algorítmicas que conforman el bloque de élite para la métrica Range. Estas variantes carecen de diferencias estadísticas significativas respecto a la configuración líder (NSGA2-greedy\_ting-UX).
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Algoritmo} & \textbf{Inicialización} & \textbf{Cruce} & \textbf{Range Medio} \\
+        \midrule
+        NSGA2 & greedy\_ting & UX & 2.4229 \\
+        NSGA2 & greedy\_ting & HUX & 2.4181 \\
+        NSGA2 & greedy\_ting & 2P & 2.4152 \\
+        NSGA2 & greedy\_ting & 1P & 2.3449 \\
+        AGEMOEA2 & greedy\_ting & 1P & 2.2363 \\
+        AGEMOEA2 & greedy\_ting & 2P & 2.2358 \\
+        UNSGA3 & greedy\_ting & 2P & 2.1450 \\
+        NSGA3 & greedy\_ting & 2P & 2.1169 \\
+        \bottomrule
+    \end{tabular}
+    \caption[Bloque de élite de Range]{Configuraciones algorítmicas que conforman el bloque de élite para la métrica Range.}
+    \label{tab:range_ranking}
+\end{table}
+
+\section{Tasa de Eficiencia de Tolerancia Media (AvgT)}\label{anexo:elite_avgt}
+
+La siguiente tabla detalla las configuraciones algorítmicas que conforman el bloque de élite para la métrica AvgT. Estas variantes carecen de diferencias estadísticas significativas respecto a la configuración líder (SMSEMOA-greedy\_ting-HUX).
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Algoritmo} & \textbf{Inicialización} & \textbf{Cruce} & \textbf{AvgT Medio} \\
+        \midrule
+        SMSEMOA & greedy\_ting & HUX & 0.2484 \\
+        SMSEMOA & greedy\_ting & UX & 0.2472 \\
+        SMSEMOA & random\_dense & UX & 0.2435 \\
+        SMSEMOA & random\_dense & HUX & 0.2422 \\
+        SMSEMOA & random\_dense & 2P & 0.2328 \\
+        SMSEMOA & random\_dense & 1P & 0.2281 \\
+        RVEA & random\_dense & HUX & 0.2279 \\
+        RVEA & random\_dense & UX & 0.2274 \\
+        SMSEMOA & greedy\_ting & 2P & 0.2249 \\
+        UNSGA3 & random\_dense & UX & 0.2246 \\
+        NSGA3 & random\_dense & HUX & 0.2242 \\
+        NSGA3 & random\_dense & UX & 0.2241 \\
+        UNSGA3 & random\_dense & HUX & 0.2241 \\
+        NSGA2 & random\_dense & HUX & 0.2187 \\
+        NSGA2 & random\_dense & UX & 0.2177 \\
+        SMSEMOA & greedy\_ting & 1P & 0.2152 \\
+        NSGA2 & greedy\_multi & HUX & 0.2131 \\
+        NSGA2 & greedy\_multi & UX & 0.2118 \\
+        NSGA2 & greedy\_ting & HUX & 0.2113 \\
+        NSGA2 & greedy\_ting & UX & 0.2100 \\
+        AGEMOEA2 & random\_dense & HUX & 0.2098 \\
+        NSGA2 & random\_dense & 2P & 0.2097 \\
+        NSGA2 & greedy\_multi & 1P & 0.2094 \\
+        AGEMOEA2 & random\_dense & UX & 0.2089 \\
+        NSGA2 & greedy\_multi & 2P & 0.2085 \\
+        \bottomrule
+    \end{tabular}
+    \caption[Bloque de élite de AvgT]{Configuraciones algorítmicas que conforman el bloque de élite para la métrica AvgT.}
+    \label{tab:elite_avgt}
+\end{table}

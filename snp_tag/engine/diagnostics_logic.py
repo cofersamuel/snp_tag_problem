@@ -167,7 +167,7 @@ def ejecutar_diagnostico_ld(H: np.ndarray, cfg: ConfiguracionExperimento, rutas_
     n_bloques = len(segmentos)
     
     # 1. Caracterización Global
-    imprimir_subseccion("Caracterización Global de Correlación (LD)", icono="🔗")
+    imprimir_subseccion("Caracterización de LD", icono="🔗")
     print(f"      • \033[1mCorrelación media absoluta (global |r|)\033[0m: {media_ld:.4f}")
     print(f"      • \033[1mTotal de pares evaluados\033[0m: {len(corrs)}")
     

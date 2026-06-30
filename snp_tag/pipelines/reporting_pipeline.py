@@ -32,14 +32,13 @@ from snp_tag.utils.terminal import (imprimir_encabezado,
                                     imprimir_subseccion,
                                     obtener_enlace_terminal)  # Funciones para formateo en consola.
 from snp_tag.visualization.convergence_plot import \
-    graficar_evolucion_generacional  # Función para graficar convergencia generacional.
+    graficar_evolucion_generacional, graficar_convergencia_hipervolumen  # Función para graficar convergencia generacional.
 from snp_tag.visualization.fronts_plot import (
     graficar_coordenadas_paralelas_pareto,
     graficar_correlacion_objetivos_pareto, graficar_frentes_pareto,
     graficar_frentes_pareto_agregados)  # Funciones para graficar los frentes de Pareto.
 from snp_tag.visualization.mcdm_plot import analizar_decision_mcdm  # Función del módulo de toma de decisiones multi-criterio.
-from snp_tag.visualization.stats_plot import (graficar_analisis_estadistico,
-                                              graficar_analisis_kruskal_dunn,
+from snp_tag.visualization.stats_plot import (graficar_analisis_kruskal_dunn,
                                               graficar_boxplot_metricas,
                                               graficar_media_std_metricas,
                                               graficar_violin_metricas)  # Gráficas estadísticas y tests.
@@ -54,6 +53,7 @@ def _tarea_plot_frentes(
     semilla: int,
     limites_ejes: Optional[Dict[str, Tuple[float, float]]] = None,
     modo_transformacion_objetivos: str = 'neg',
+    modo_evaluacion: str = 'absoluta',
 ) -> Dict[str, Any]:
     """
     Dispatcher serializable para paralelizar tareas de graficado de frentes.
@@ -91,6 +91,7 @@ def _tarea_plot_frentes(
             dpi=dpi,  # Resolución gráfica configurada para las imágenes.
             emitir_log=False,  # Evita que se emitan logs repetitivos durante el paralelismo.
             modo_transformacion_objetivos=modo_transformacion_objetivos,  # Indica el modo de transformación de objetivos.
+            modo_evaluacion=modo_evaluacion,  # Modo de evaluación (absoluto/proporcional).
         )  # Fin de la llamada a la función de correlación.
     elif tipo_tarea == 'parallel':  # Comprueba si la tarea solicita coordenadas paralelas.
         salida['artefactos'] = graficar_coordenadas_paralelas_pareto(  # Llama a la función de coordenadas paralelas.
@@ -101,6 +102,7 @@ def _tarea_plot_frentes(
             dpi=dpi,  # Calidad visual en DPI.
             emitir_log=False,  # Apaga los logs internos para no ensuciar la salida.
             modo_transformacion_objetivos=modo_transformacion_objetivos,  # Orientación matemática.
+            modo_evaluacion=modo_evaluacion,  # Modo de evaluación (absoluto/proporcional).
         )  # Fin de la llamada a coordenadas paralelas.
     elif tipo_tarea == 'all_fronts':  # Verifica si la tarea actual es generar todos los frentes.
         artefactos = []  # Inicializa la lista local de artefactos generados.
@@ -125,10 +127,11 @@ def _tarea_plot_frentes(
                         emitir_log=False,  # Desactiva la escritura redundante en consola.
                         limites_ejes=limites_ejes,  # Límites fijos globales de visualización.
                         modo_transformacion_objetivos=modo_transformacion_objetivos,  # Orientación de optimización.
+                        modo_evaluacion=modo_evaluacion,  # Modo de evaluación (absoluto/proporcional).
                     )  # Fin del graficado de frentes individuales.
                 )  # Fin de la extensión de la lista.
                 # Construye el nombre físico para el gráfico de frentes agregados del algoritmo.
-                nombre_agg = f'frentes_pareto_agregados_{algo.lower()}_{etiqueta_modo}.png'
+                nombre_agg = f'frentes_pareto_agregados_{algo.lower().replace("/", "-")}_{etiqueta_modo}.png'
                 # Define diferenciar por estilo de trazo según operador de cruce (crossover) si existe.
                 style_col = 'crossover' if 'crossover' in df_algo.columns else None
                 # Llama al graficador agregado para superponer todas las inicializaciones de un algoritmo.
@@ -144,6 +147,7 @@ def _tarea_plot_frentes(
                         emitir_log=False,  # No escribe logs en consola.
                         limites_ejes=limites_ejes,  # Límites unificados de los ejes.
                         modo_transformacion_objetivos=modo_transformacion_objetivos,  # Orientación matemática.
+                        modo_evaluacion=modo_evaluacion,  # Modo de evaluación.
                     )  # Fin de frentes de Pareto agregados.
                 )  # Fin de la extensión.
         
@@ -165,6 +169,7 @@ def _tarea_plot_frentes(
                     emitir_log=False,  # Apaga salida estándar a consola.
                     limites_ejes=limites_ejes,  # Límites unificados de objetivos.
                     modo_transformacion_objetivos=modo_transformacion_objetivos,  # Orientación del espacio.
+                    modo_evaluacion=modo_evaluacion,  # Modo de evaluación.
                 )  # Fin de la llamada global.
             )  # Fin de la extensión.
         salida['artefactos'] = artefactos  # Asocia todos los archivos de frentes creados al diccionario de salida.
@@ -218,6 +223,7 @@ def ejecutar_reportes_visualizacion(
     df_final: pd.DataFrame,
     df_gen: pd.DataFrame,
     df_fronts_total: pd.DataFrame,
+    is_postprocessing: bool = False,
 ) -> None:
     """
     Ejecuta y orquesta exclusivamente la fase de reportes y generación de artefactos visuales.
@@ -233,7 +239,7 @@ def ejecutar_reportes_visualizacion(
     df_fronts_total : pd.DataFrame
         Matrices enlazadas del frente no-dominado global.
     """
-    imprimir_encabezado("REPORTES Y VISUALIZACIÓN")  # Imprime el banner del módulo en terminal.
+    imprimir_encabezado("REPORTES")  # Imprime el banner del módulo en terminal.
 
     if df_fronts_total is None:  # Valida que el DataFrame consolidado de frentes no sea nulo.
         df_fronts_total = pd.DataFrame()  # Inicializa como DataFrame vacío si era None.
@@ -263,7 +269,7 @@ def ejecutar_reportes_visualizacion(
         # Asigna el progreso generacional original o inicializa vacío si fuese nulo.
         df_gen_mediano = df_gen.copy() if df_gen is not None else pd.DataFrame()
 
-    imprimir_subseccion("Distribución y Correlación de Frentes de Pareto", icono="🔍")  # Encabezado en terminal.
+    imprimir_subseccion("Visualización de Frentes de Pareto", icono="🔍")  # Encabezado en terminal.
     t0_frentes = time.time()  # Toma la marca temporal de inicio de procesamiento de frentes.
 
     cols_fronts = {  # Columnas canónicas obligatorias que debe poseer el set de frentes para ser válido.
@@ -300,6 +306,7 @@ def ejecutar_reportes_visualizacion(
                 ['f1_compactness', 'f2_transformed_tolerance', 'f3_transformed_hamming_avg', 'f4_balance_var']
             ].to_numpy(dtype=float),
             modo_transformacion_objetivos=cfg.modo_transformacion_objetivos,
+            modo_evaluacion=cfg.modo_evaluacion,
         )
         # Mapea las claves conceptuales de visualización a las columnas físicas decodificadas.
         mapping_objetivos = {
@@ -319,9 +326,9 @@ def ejecutar_reportes_visualizacion(
 
         max_workers = calcular_max_workers_paralelo()  # Obtiene el número óptimo de subprocesos concurrentes.
         tareas_plot = []  # Lista vacía para albergar identificadores de trabajos gráficos concurrentes.
-        if 'frentes' in cfg.graficas_activas: tareas_plot.append('all_fronts')  # Agrega tarea de frentes de Pareto.
-        if 'correlacion' in cfg.graficas_activas: tareas_plot.append('correlation')  # Agrega tarea de correlación.
-        if 'paralelas' in cfg.graficas_activas: tareas_plot.append('parallel')  # Agrega tarea de coordenadas paralelas.
+        if 'frentes' in cfg.postprocesamiento_activo: tareas_plot.append('all_fronts')  # Agrega tarea de frentes de Pareto.
+        if 'correlacion' in cfg.postprocesamiento_activo: tareas_plot.append('correlation')  # Agrega tarea de correlación.
+        if 'paralelas' in cfg.postprocesamiento_activo: tareas_plot.append('parallel')  # Agrega tarea de coordenadas paralelas.
         
         if tareas_plot:  # Lanza el pool si hay al menos una tarea gráfica configurada.
             # Inicializa el gestor de paralelismo por procesos concurrentes.
@@ -338,6 +345,7 @@ def ejecutar_reportes_visualizacion(
                         cfg.semilla_maestra,
                         limites_ejes,
                         cfg.modo_transformacion_objetivos,
+                        cfg.modo_evaluacion,
                     )
                     for t in tareas_plot
                 ]
@@ -352,17 +360,17 @@ def ejecutar_reportes_visualizacion(
         else:  # Si no hay gráficos configurados.
             resultados_tareas = {}  # Inicializa el mapeo como vacío.
 
-        if 'correlacion' in cfg.graficas_activas:  # Si se habilitó el gráfico de correlación.
-            imprimir_subseccion("Correlación de Objetivos", icono="🔗")  # Informa la sección actual en consola.
+        if 'correlacion' in cfg.postprocesamiento_activo:  # Si se habilitó el gráfico de correlación.
+            imprimir_subseccion("Correlación", icono="🔗")  # Informa la sección actual en consola.
             for ruta, descripcion in resultados_tareas.get('correlation', []):  # Itera sobre los archivos generados.
                 imprimir_grafico_guardado(ruta, descripcion)  # Imprime la ruta de la imagen en consola.
 
-        if 'paralelas' in cfg.graficas_activas:  # Si se configuró coordenadas paralelas.
+        if 'paralelas' in cfg.postprocesamiento_activo:  # Si se configuró coordenadas paralelas.
             imprimir_subseccion("Coordenadas Paralelas", icono="📈")  # Encabezado en terminal.
             for ruta, descripcion in resultados_tareas.get('parallel', []):  # Itera sobre las imágenes.
                 imprimir_grafico_guardado(ruta, descripcion)  # Muestra en consola el aviso de guardado.
 
-        if 'frentes' in cfg.graficas_activas:  # Si se habilitó la generación de frentes.
+        if 'frentes' in cfg.postprocesamiento_activo:  # Si se habilitó la generación de frentes.
             imprimir_subseccion("Frentes de Pareto", icono="🎯")  # Encabezado en terminal.
             for ruta, descripcion in resultados_tareas.get('all_fronts', []):  # Recorre la lista de gráficos de frentes.
                 imprimir_grafico_guardado(ruta, descripcion)  # Informa el archivo guardado en el logger.
@@ -370,8 +378,8 @@ def ejecutar_reportes_visualizacion(
     # Muestra en logs el tiempo exacto que tomó realizar todas las tareas gráficas de frentes de Pareto.
     logger.info(f"      • Tiempo bloque 'Frentes de Pareto': {time.time() - t0_frentes:.1f}s")
 
-    imprimir_subseccion("Análisis de Convergencia Progresiva", icono="🔄")  # Encabezado en consola.
-    if 'convergencia' in cfg.graficas_activas:  # Verifica si la gráfica de convergencia está activa.
+    imprimir_subseccion("Convergencia", icono="🔄")  # Encabezado en consola.
+    if 'convergencia' in cfg.postprocesamiento_activo:  # Verifica si la gráfica de convergencia está activa.
         # Procesa únicamente si se disponen de registros generacionales y posee columnas clave.
         if not df_gen_mediano.empty and {'algorithm', 'init', 'crossover', 'generation'}.issubset(df_gen_mediano.columns):
             # Llama a la función gráfica para plasmar el historial generacional.
@@ -384,19 +392,30 @@ def ejecutar_reportes_visualizacion(
             )
             for ruta, descripcion in artefactos_conv:  # Recorre los archivos resultantes.
                 imprimir_grafico_guardado(ruta, descripcion)  # Muestra las rutas físicas guardadas.
+                
+            # Generar los gráficos individuales de hipervolumen
+            artefactos_hv = graficar_convergencia_hipervolumen(
+                df_gen_mediano,  # Trayectorias de la réplica mediana seleccionada.
+                dir_salida=cfg.carpetas['metricas_convergencia'],  # Carpeta física destino.
+                etiqueta_modo=cfg.modo_ejecucion,  # Identificador del experimento.
+                dpi=cfg.report_plot_dpi,  # Calidad gráfica.
+                emitir_log=False,  # Apaga salida individual de logs.
+            )
+            for ruta, descripcion in artefactos_hv:  # Recorre los archivos resultantes.
+                imprimir_grafico_guardado(ruta, descripcion)  # Muestra las rutas físicas guardadas.
         else:  # Si los datos históricos no eran válidos para la convergencia.
             # Escribe aviso de advertencia informando de la omisión del bloque.
             logger.warning("      • ⚠️  Convergencia omitida: no hay histórico generacional válido.")
 
-    imprimir_subseccion("Síntesis Estadística Comparativa", icono="📊️")  # Encabezado en terminal.
+    imprimir_subseccion("Estadísticas", icono="📊️")  # Encabezado en terminal.
     if not df_final.empty:  # Si disponemos de resultados históricos consolidados.
         tareas_estadisticas = []  # Lista vacía para registrar las tareas de resúmenes estadísticos.
         # Agrega boxplots si están habilitados en user_config.
-        if 'boxplots' in cfg.graficas_activas: tareas_estadisticas.append(('boxplots', cfg.carpetas['sintesis_boxplots']))
+        if 'boxplots' in cfg.postprocesamiento_activo: tareas_estadisticas.append(('boxplots', cfg.carpetas['sintesis_boxplots']))
         # Agrega violines si están habilitados en user_config.
-        if 'violines' in cfg.graficas_activas: tareas_estadisticas.append(('violin', cfg.carpetas['sintesis_violines']))
+        if 'violines' in cfg.postprocesamiento_activo: tareas_estadisticas.append(('violin', cfg.carpetas['sintesis_violines']))
         # Agrega gráficos de barra media/std si están activos.
-        if 'media_std' in cfg.graficas_activas: tareas_estadisticas.append(('mean_std', cfg.carpetas['sintesis_barras']))
+        if 'media_std' in cfg.postprocesamiento_activo: tareas_estadisticas.append(('mean_std', cfg.carpetas['sintesis_barras']))
         
         resultados_est = {}  # Inicializa el mapeo local de salidas estadísticas.
         if tareas_estadisticas:  # Lanza el pool si hay tareas estadísticas requeridas.
@@ -424,18 +443,18 @@ def ejecutar_reportes_visualizacion(
                     except Exception as e:  # Controla excepciones de paralelización.
                         logger.error(f"      • ⚠️  Error en síntesis estadística paralela: {e}")  # Reporta error.
 
-        if 'boxplots' in cfg.graficas_activas:  # Si boxplots estuvo activo.
-            imprimir_subseccion("Resumen Global (Boxplots)", icono="📦")  # Encabezado en terminal.
+        if 'boxplots' in cfg.postprocesamiento_activo:  # Si boxplots estuvo activo.
+            imprimir_subseccion("Boxplots", icono="📦")  # Encabezado en terminal.
             for ruta, descripcion in resultados_est.get('boxplots', []):  # Itera sobre los archivos boxplot creados.
                 imprimir_grafico_guardado(ruta, descripcion)  # Informa el archivo guardado.
 
-        if 'violines' in cfg.graficas_activas:  # Si violines estuvo activo.
-            imprimir_subseccion("Distribuciones Detalladas (Violin Plots)", icono="🎻")  # Encabezado en terminal.
+        if 'violines' in cfg.postprocesamiento_activo:  # Si violines estuvo activo.
+            imprimir_subseccion("Violin Plots", icono="🎻")  # Encabezado en terminal.
             for ruta, descripcion in resultados_est.get('violin', []):  # Itera sobre los gráficos de violín creados.
                 imprimir_grafico_guardado(ruta, descripcion)  # Informa el archivo de imagen creado en los logs.
 
-        if 'media_std' in cfg.graficas_activas:  # Si media y std estuvo activo.
-            imprimir_subseccion("Análisis de Tendencia Central (Media ± Std)", icono="📉")  # Encabezado en terminal.
+        if 'media_std' in cfg.postprocesamiento_activo:  # Si media y std estuvo activo.
+            imprimir_subseccion("Tendencia Central", icono="📉")  # Encabezado en terminal.
             for ruta, descripcion in resultados_est.get('mean_std', []):  # Itera sobre los gráficos de barra guardados.
                 imprimir_grafico_guardado(ruta, descripcion)  # Informa el archivo guardado en el logger.
 
@@ -450,52 +469,43 @@ def ejecutar_reportes_visualizacion(
         # Inicializa a cero la desviación estándar para la columna del promedio global de ranking.
         df_std_config['Average Ranking Overall'] = 0.0
 
-        resumen_method = df_mean_config.copy()  # Copia el DataFrame de medias de configuración.
-        rank_matrix_method = []  # Lista vacía temporal para acumular los rangos individuales de cada métrica.
-        for m in disponibles:  # Itera a través de las métricas disponibles.
-            asce = False if m in HIGHER_IS_BETTER_METRICS else True  # Invierte el sentido del ranking si la métrica es de maximizar.
-            # Escribe la línea correspondiente.
-            rank_matrix_method.append(resumen_method[m].rank(ascending=asce).values)
-        # Calcula el promedio aritmético de los rankings acumulados a través de las métricas.
-        resumen_method['Average Ranking Overall'] = np.mean(rank_matrix_method, axis=0)
-        # Fusiona la columna del promedio de ranking al DataFrame principal de medias.
-        df_mean_config = pd.merge(df_mean_config, resumen_method[['algorithm', 'init', 'crossover', 'Average Ranking Overall']], on=['algorithm', 'init', 'crossover'])
-
-        # Agrupa por Algoritmo y calcula los valores medios para el ranking global por algoritmo.
-        df_mean_algo = df_final.groupby(['algorithm']).mean(numeric_only=True).reset_index()
-        rank_matrix_algo = []  # Inicializa lista temporal para acumular rankings por algoritmo.
-        for m in disponibles:  # Recorre cada métrica.
-            asce = False if m in HIGHER_IS_BETTER_METRICS else True  # Sentido del orden.
-            # Registra los rangos relativos.
-            rank_matrix_algo.append(df_mean_algo[m].rank(ascending=asce).values)
-        # Calcula y asigna el promedio de rango por algoritmo.
-        df_mean_algo['Average Ranking (Algorithm)'] = np.mean(rank_matrix_algo, axis=0)
-
-        # Agrupa por Inicialización y calcula las medias de métricas.
-        df_mean_init = df_final.groupby(['init']).mean(numeric_only=True).reset_index()
-        rank_matrix_init = []  # Lista temporal para rankings por inicialización.
-        for m in disponibles:  # Recorre las métricas.
-            asce = False if m in HIGHER_IS_BETTER_METRICS else True  # Sentido del orden.
-            # Registra los rangos relativos.
-            rank_matrix_init.append(df_mean_init[m].rank(ascending=asce).values)
-        # Asigna el promedio de rango por inicialización.
-        df_mean_init['Average Ranking (Initialization)'] = np.mean(rank_matrix_init, axis=0)
-
-        # Agrupa por Crossover y calcula medias.
-        df_mean_cross = df_final.groupby(['crossover']).mean(numeric_only=True).reset_index()
-        rank_matrix_cross = []  # Lista temporal para rankings por cruce.
-        for m in disponibles:  # Recorre métricas.
-            asce = False if m in HIGHER_IS_BETTER_METRICS else True  # Sentido del orden.
-            # Registra los rangos relativos.
-            rank_matrix_cross.append(df_mean_cross[m].rank(ascending=asce).values)
-        # Asigna el promedio de rango por crossover.
-        df_mean_cross['Average Ranking (Crossover)'] = np.mean(rank_matrix_cross, axis=0)
-
-        imprimir_subseccion("Ranking por Métrica", icono="🏆")  # Subsección en la consola.
+        # Creación del DataFrame agregado 'resultados_agregados_{modo}.csv'
+        df_agregado = pd.DataFrame()
+        df_agregado['algorithm'] = df_mean_config['algorithm']
+        df_agregado['init'] = df_mean_config['init']
+        df_agregado['crossover'] = df_mean_config['crossover']
         
+        # Mapeo de métricas base en orden estricto
+        metricas_base_ordenadas = [
+            'Range', 'MinSum', 'SumMin', 'MaxToleranceRate', 'AvgToleranceRate', 
+            'AvgHammingDistance', 'Hypervolume', 'IGD+', 'GD+'
+        ]
+        for m in metricas_base_ordenadas:
+            if m in df_mean_config.columns:
+                df_agregado[f'{m}_mean'] = df_mean_config[m]
+                df_agregado[f'{m}_std'] = df_std_config[m]
+        
+        # Insertar resto de columnas secundarias (por ej. execution_time)
+        cols_ignoradas = ['algorithm', 'init', 'crossover', 'run', 'seed'] + metricas_base_ordenadas
+        for c in df_mean_config.columns:
+            if c not in cols_ignoradas:
+                df_agregado[f'{c}_mean'] = df_mean_config[c]
+                if c in df_std_config.columns:
+                    df_agregado[f'{c}_std'] = df_std_config[c]
+                
+        # Guardar en CSV
+        ruta_agregados = os.path.join(cfg.carpetas['comparativa'], f"resultados_agregados_{cfg.modo_ejecucion}.csv")
+        df_agregado.to_csv(ruta_agregados, index=False)
+        imprimir_grafico_guardado(ruta_agregados, "Resultados agregados (Medias y Std)")
+
+        if ('rankings' in cfg.postprocesamiento_activo or 'todas' in cfg.postprocesamiento_activo):
+            imprimir_subseccion("Ranking por Métrica", icono="🏆")  # Subsección en la consola.
+        else:
+            logger.info("      • ⚠️  Impresión de rankings omitida por configuración.")
+            
         # Mapeo estructurado para cada tipo de ranking
         # Cada tupla contiene: (nombre_métrica, ¿ascendente?, flecha_consola, tipo_de_dataframe)
-        metricas_ranking = [
+        metricas_ranking = [] if ('rankings' not in cfg.postprocesamiento_activo and 'todas' not in cfg.postprocesamiento_activo) else [
             ('Range', False, '↑', 'config'),
             ('MinSum', True, '↓', 'config'),
             ('SumMin', True, '↓', 'config'),
@@ -504,11 +514,7 @@ def ejecutar_reportes_visualizacion(
             ('AvgHammingDistance', False, '↑', 'config'),
             ('Hypervolume', False, '↑', 'config'),
             ('IGD+', True, '↓', 'config'),
-            ('GD+', True, '↓', 'config'),
-            ('Average Ranking Overall', True, '↓', 'config'),
-            ('Average Ranking (Algorithm)', True, '↓', 'algorithm'),
-            ('Average Ranking (Initialization)', True, '↓', 'init'),
-            ('Average Ranking (Crossover)', True, '↓', 'crossover')
+            ('GD+', True, '↓', 'config')
         ]
         
         for metrica, ascending, flecha, tipo in metricas_ranking:  # Itera sobre los rankings de métricas.
@@ -571,25 +577,19 @@ def ejecutar_reportes_visualizacion(
                 link_csv = obtener_enlace_terminal(ruta_csv)  # Genera el hipervínculo para la terminal.
                 logger.info(f"         • \033[1mPara más detalles\033[0m: {link_csv}")  # Escribe en consola el acceso directo.
 
-                graficar_hm = 'estadistica' in cfg.graficas_activas  # Booleano que indica si se guardan los heatmaps del test.
-                if tipo == 'config' and 'Average Ranking' not in metrica:  # Kruskal-Wallis + Dunn para configuraciones.
-                    # Llama al motor de validación estadística y post-hoc Dunn.
-                    graficar_analisis_kruskal_dunn(df_final, cfg.carpetas['rankings'], metrica, cfg.modo_ejecucion, indent=9, graficar=graficar_hm)
-                elif 'Average Ranking' in metrica:  # Friedman + Nemenyi para promedios de ranking.
-                    if metrica == 'Average Ranking Overall':  # Agrupación config.
-                        col_friedman = 'config'  # Configuración completa.
-                    elif 'Algorithm' in metrica:  # Agrupación algorithm.
-                        col_friedman = 'algorithm'  # Algoritmo.
-                    elif 'Initialization' in metrica:  # Agrupación init.
-                        col_friedman = 'init'  # Inicialización.
-                    else:  # Agrupación crossover.
-                        col_friedman = 'crossover'  # Operador de cruce.
-                    # Llama al test no paramétrico de Friedman y post-hoc Nemenyi.
-                    graficar_analisis_estadistico(df_final, cfg.carpetas['rankings'], cfg.modo_ejecucion, col_group=col_friedman, indent=9, graficar=graficar_hm)
-                
                 logger.info("") # Inserta línea en blanco de separación estética.
 
-    if 'mcdm' in cfg.graficas_activas:  # Procesa la sección MCDM si está activa en la configuración.
+
+        if 'rankings' in cfg.postprocesamiento_activo or 'todas' in cfg.postprocesamiento_activo:
+            imprimir_subseccion("Validación Estadística (Kruskal-Wallis y Dunn)", icono="🔬")
+            graficar_hm = 'estadistica' in cfg.postprocesamiento_activo or 'todas' in cfg.postprocesamiento_activo
+            metricas_est = ['Range', 'MinSum', 'SumMin', 'MaxToleranceRate', 'AvgToleranceRate', 'AvgHammingDistance', 'Hypervolume', 'IGD+', 'GD+']
+            for metrica in metricas_est:
+                if metrica in df_final.columns:
+                    for col_group in ['config', 'algorithm', 'init', 'crossover']:
+                        graficar_analisis_kruskal_dunn(df_final, cfg.carpetas['rankings'], metrica, cfg.modo_ejecucion, col_group=col_group, indent=9, graficar=graficar_hm)
+
+    if 'mcdm' in cfg.postprocesamiento_activo:  # Procesa la sección MCDM si está activa en la configuración.
         imprimir_subseccion("Análisis de Decisión Multi-Criterio (MCDM)", icono="🎯")  # Encabezado en terminal.
         if df_fronts_mediano is not None and not df_fronts_mediano.empty:  # Si los frentes medianos son correctos.
             try:
@@ -599,6 +599,7 @@ def ejecutar_reportes_visualizacion(
                     dir_salida=cfg.carpetas['decision_mcdm'],  # Carpeta destino física.
                     etiqueta_modo=cfg.modo_ejecucion,  # Identificador del experimento.
                     modo_transformacion_objetivos=cfg.modo_transformacion_objetivos,  # Dirección matemática de optimización.
+                    modo_evaluacion=cfg.modo_evaluacion,  # Modo de evaluación.
                     dpi=cfg.report_plot_dpi,  # Calidad gráfica.
                     emitir_log=True,  # Imprime logs y resúmenes de decisión en terminal.
                 )  # Fin de la llamada a analizar_decision_mcdm.

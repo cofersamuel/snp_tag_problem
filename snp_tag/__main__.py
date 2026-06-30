@@ -29,7 +29,7 @@ import sys  # Acceso a parámetros y funciones del sistema (no utilizado actualm
 from snp_tag.config import FUENTES_DATOS_DISPONIBLES, MODOS_DISPONIBLES
 # Orquestador del pipeline modular para ejecutar la búsqueda evolutiva completa o generar reportes exclusivos (modo report-only-csv).
 from snp_tag.orchestrator import (ejecutar_pipeline,
-                                  ejecutar_pipeline_report_only_csv)
+                                  ejecutar_pipeline_postprocessing)
 from snp_tag.utils.logger import \
     logger  # Registro y salida de mensajes informativos y de error.
 # Generación de hipervínculos interactivos en la terminal.
@@ -62,20 +62,47 @@ def main():
                         default='hinds2005', # 'default='hinds2005'' hace que por defecto se use 'hinds2005'.
                         help='Fuente de datos o conjunto de genotipos de entrada para el pipeline (por defecto: %(default)s)')
     
+    # Adición del argumento opcional '--resume' (o '-r') para reanudar un experimento anterior.
+    parser.add_argument('--resume', '-r',
+                        type=str,
+                        default=None,
+                        help='Ruta al directorio de un experimento previo para reanudarlo (lee la configuración exportada)')
+    
     # Adición de una bandera (booleano) para activar el modo de generación exclusiva de reportes a partir de archivos CSV existentes.
     parser.add_argument(
-        '--report-only-csv',  # Nombre del argumento en la línea de comandos. Se almacena en args.report_only_csv.
+        '--post-processing',  # Nombre del argumento en la línea de comandos. Se almacena en args.post_processing.
         action='store_true',  # Al indicarse la bandera, almacena el valor True.
         help=(  # Mensaje informativo que se muestra al invocar la ayuda del script.
-            "Activa el modo de reporte exclusivo. El sistema selecciona automáticamente los CSV "
-            "más recientes en el directorio snp_tag/input/ para generar las visualizaciones."
+            "Activa el modo de postprocesamiento exclusivo. El sistema selecciona automáticamente los CSV "
+            "más recientes en el directorio snp_tag/input/ para generar visualizaciones y estadísticas."
         ),
     )
-    args = parser.parse_args()  # Procesa y valida los argumentos de la CLI, guardando los valores como atributos en el objeto 'args' (args.mode, args.data_source, args.report_only_csv).
+    args = parser.parse_args()  # Procesa y valida los argumentos de la CLI, guardando los valores como atributos en el objeto 'args' (args.mode, args.data_source, args.post_processing).
     
     try:  # Bloque try-except para capturar y controlar posibles excepciones ocurridas durante la ejecución del pipeline.
-        if args.report_only_csv:  # Condición: si el usuario ha activado la bandera '--report-only-csv'.
-            ruta_base = ejecutar_pipeline_report_only_csv(args) # TOREAD  # Ejecuta el orquestador únicamente en modo "report-only-csv" y obtiene la ruta de resultados.
+        if args.post_processing:  # Condición: si el usuario ha activado la bandera '--post-processing'.
+            import sys
+            argumentos_invalidos = []
+            if '--mode' in sys.argv or '-m' in sys.argv:
+                argumentos_invalidos.append('--mode')
+            if '--data-source' in sys.argv or '-d' in sys.argv:
+                argumentos_invalidos.append('--data-source')
+            if '--resume' in sys.argv or '-r' in sys.argv:
+                argumentos_invalidos.append('--resume')
+            if argumentos_invalidos:
+                parser.error(f"Los argumentos {', '.join(argumentos_invalidos)} no están permitidos con --post-processing. Estos valores se leen de la sección [Argumentos] del archivo exportado.")
+                
+            ruta_base = ejecutar_pipeline_postprocessing(args) # TOREAD  # Ejecuta el orquestador únicamente en modo post-processing y obtiene la ruta de resultados.
+        elif args.resume:  # Condición: reanudar experimento previo.
+            import sys
+            argumentos_invalidos = []
+            if '--mode' in sys.argv or '-m' in sys.argv:
+                argumentos_invalidos.append('--mode')
+            if '--data-source' in sys.argv or '-d' in sys.argv:
+                argumentos_invalidos.append('--data-source')
+            if argumentos_invalidos:
+                parser.error(f"Los argumentos {', '.join(argumentos_invalidos)} no están permitidos con --resume. Estos valores se infieren de la configuración exportada.")
+            ruta_base = ejecutar_pipeline(args)
         else:  # En caso contrario (ejecución normal del pipeline evolutivo).
             ruta_base = ejecutar_pipeline(args)  # Ejecuta la optimización completa y obtiene la ruta del directorio de salida.
         
